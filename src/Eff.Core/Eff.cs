@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public struct Eff<TResult> 
+    [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
+    public struct Eff<TResult>
     {
         private readonly Task<TResult> task;
         private readonly TResult result;
