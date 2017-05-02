@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Core", "Eff.Core\Eff.Core.csproj", "{5AA6CB90-B978-4F62-87EF-6165CF9471E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Demo", "Eff.Demo\Eff.Demo.csproj", "{E6858454-56BA-46D2-85B5-220B1248D6FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Tests", "Eff.Tests\Eff.Tests.csproj", "{E6858454-56BA-46D2-85B5-220B1248D6FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

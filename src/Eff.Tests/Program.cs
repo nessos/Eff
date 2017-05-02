@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Demo
+namespace Eff.Tests
 {
     class Program
     {
