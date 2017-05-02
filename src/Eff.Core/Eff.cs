@@ -32,5 +32,8 @@ namespace Eff.Core
 
         public TResult Result => task == null ? result : task.Result;
         public AggregateException Exception => task != null ? task.Exception : null;
+
+        public EffAwaiter<TResult> GetAwaiter() => new EffAwaiter<TResult>(this);
+        
     }
 }

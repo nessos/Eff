@@ -21,5 +21,21 @@ namespace Eff.Tests
             Assert.Equal(2, Foo(1).Result);
         }
 
+        [Fact]
+        public void AwaitEff()
+        {
+            async Eff<int> Bar(int x)
+            {
+                return x + 1;
+            }
+            async Eff<int> Foo(int x)
+            {
+                var y = await Bar(x);
+                return y + 1;
+            }
+
+            Assert.Equal(3, Foo(1).Result);
+        }
+
     }
 }
