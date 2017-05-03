@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IEffect.cs" />
     <Compile Include="EffAwaiter.cs" />
     <Compile Include="EffMethodBuilder.cs" />
     <Compile Include="Eff.cs" />
