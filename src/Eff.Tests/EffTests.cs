@@ -37,5 +37,17 @@ namespace Eff.Tests
             Assert.Equal(3, Foo(1).Result);
         }
 
+        [Fact]
+        public void AwaitTask()
+        {
+            async Eff<int> Foo(int x)
+            {
+                var y = await Task.FromResult(x + 1);
+                return y + 1;
+            }
+
+            Assert.Equal(3, Foo(1).Result);
+        }
+
     }
 }
