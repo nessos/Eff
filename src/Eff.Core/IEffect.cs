@@ -13,11 +13,13 @@ namespace Eff.Core
 
         string CallerMemberName { get; }
         string CallerFilePath { get; }
-        string CallerLineNumber { get; }
+        int CallerLineNumber { get; }
     }
 
     public interface IEffect<TResult> : IEffect
     {
         TResult GetResult();
+
+        IEffect<TResult> GetAwaiter();
     }
 }

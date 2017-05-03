@@ -49,5 +49,17 @@ namespace Eff.Tests
             Assert.Equal(3, Foo(1).Result);
         }
 
+        [Fact]
+        public void AwaitCustomEffect()
+        {
+            async Eff<DateTime> Foo(int x)
+            {
+                var y = await Effect.DateTimeNow();
+                return y;
+            }
+
+            Assert.Equal(DateTime.Now, Foo(1).Result);
+        }
+
     }
 }
