@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Effects.cs" />
+    <Compile Include="EffectHandler.cs" />
+    <Compile Include="IEffectHandler.cs" />
     <Compile Include="IEffect.cs" />
     <Compile Include="EffAwaiter.cs" />
     <Compile Include="EffMethodBuilder.cs" />

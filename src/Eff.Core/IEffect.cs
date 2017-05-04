@@ -14,6 +14,8 @@ namespace Eff.Core
         string CallerMemberName { get; }
         string CallerFilePath { get; }
         int CallerLineNumber { get; }
+
+        void Accept(IEffectHandler handler);
     }
 
     public interface IEffect<TResult> : IEffect
@@ -21,5 +23,7 @@ namespace Eff.Core
         TResult GetResult();
 
         IEffect<TResult> GetAwaiter();
+
+        void SetResult(TResult result);
     }
 }

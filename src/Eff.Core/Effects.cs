@@ -13,6 +13,9 @@ namespace Eff.Core
         private readonly string sourceFilePath;
         private readonly int sourceLineNumber;
 
+        private DateTime result;
+        private bool haveResult;
+
         public DateTimeNowEffect(string memberName, string sourceFilePath, int sourceLineNumber)
         {
             this.memberName = memberName;
@@ -20,7 +23,7 @@ namespace Eff.Core
             this.sourceLineNumber = sourceLineNumber;
         }
 
-        public bool IsCompleted => throw new NotImplementedException();
+        public bool IsCompleted => haveResult;
 
         public string CallerMemberName => memberName;
 
@@ -28,10 +31,8 @@ namespace Eff.Core
 
         public int CallerLineNumber => sourceLineNumber;
 
-        public DateTime GetResult()
-        {
-            throw new NotImplementedException();
-        }
+        public DateTime GetResult() => result;
+        
 
         public void OnCompleted(Action continuation)
         {
@@ -43,9 +44,18 @@ namespace Eff.Core
             throw new NotImplementedException();
         }
 
-        public IEffect<DateTime> GetAwaiter()
+        public IEffect<DateTime> GetAwaiter() => this;
+        
+
+        public void SetResult(DateTime result)
         {
-            return this;
+            haveResult = true;
+            this.result = result;
+        }
+
+        public void Accept(IEffectHandler handler)
+        {
+            handler.Handle(this);
         }
     }
 
