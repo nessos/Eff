@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EffectExecutionContext.cs" />
     <Compile Include="Effects.cs" />
     <Compile Include="EffectHandler.cs" />
     <Compile Include="IEffectHandler.cs" />

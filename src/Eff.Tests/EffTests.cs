@@ -52,13 +52,14 @@ namespace Eff.Tests
         [Fact]
         public void AwaitCustomEffect()
         {
-            async Eff<DateTime> Foo(int x)
+            async Eff<DateTime> Foo()
             {
                 var y = await Effect.DateTimeNow();
                 return y;
             }
-
-            Assert.Equal(DateTime.Now, Foo(1).Result);
+            var now = DateTime.Now;
+            EffectExecutionContext.Handler = new TestEffectHandler(now);
+            Assert.Equal(now, Foo().Result);
         }
 
     }

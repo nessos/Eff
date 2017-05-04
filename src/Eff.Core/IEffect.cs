@@ -21,9 +21,7 @@ namespace Eff.Core
     public interface IEffect<TResult> : IEffect
     {
         TResult GetResult();
-
         IEffect<TResult> GetAwaiter();
-
         void SetResult(TResult result);
     }
 }

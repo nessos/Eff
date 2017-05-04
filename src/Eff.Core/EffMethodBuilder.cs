@@ -83,7 +83,21 @@ namespace Eff.Core
             where TStateMachine : IAsyncStateMachine
         {
             useBuilder = true;
-            methodBuilder.AwaitUnsafeOnCompleted(ref awaiter, ref stateMachine);
+
+            var handler = EffectExecutionContext.Handler;
+            if (handler == null)
+                throw new InvalidOperationException("EffectExecutionContext handler is empty");
+                
+            switch (awaiter) 
+            {
+                case IEffect effect:
+                    effect.Accept(handler);
+                    stateMachine.MoveNext();
+                    break;
+                default:
+                    methodBuilder.AwaitUnsafeOnCompleted(ref awaiter, ref stateMachine);
+                    break;
+            }
         }
     }
 
