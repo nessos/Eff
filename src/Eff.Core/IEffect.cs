@@ -18,6 +18,11 @@ namespace Eff.Core
         void Accept(IEffectHandler handler);
     }
 
+    public interface IAsyncEffect : IEffect
+    {
+        Task AcceptAsync(IEffectHandler handler);
+    }
+
     public interface IEffect<TResult> : IEffect
     {
         TResult GetResult();

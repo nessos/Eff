@@ -9,8 +9,7 @@ namespace Eff.Core
 {
     public class DateTimeNowEffect : Effect<DateTime>
     {
-        
-        
+
         public DateTimeNowEffect(string memberName, string sourceFilePath, int sourceLineNumber)
             : base (memberName, sourceFilePath, sourceLineNumber)
         {

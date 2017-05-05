@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public class TaskEffect<TResult> : Effect<TResult>
+    public class TaskEffect<TResult> : Effect<TResult>, IAsyncEffect
     {
         private readonly Task<TResult> task;
 
@@ -13,9 +13,16 @@ namespace Eff.Core
             this.task = task;
         }
 
+        public Task<TResult> Task => task;
+
         public override void Accept(IEffectHandler handler)
         {
-            handler.HandleAsync(this);
+            throw new NotSupportedException();
+        }
+
+        public Task AcceptAsync(IEffectHandler handler)
+        {
+            return handler.HandleAsync(this);
         }
 
         public override void OnCompleted(Action continuation)

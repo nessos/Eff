@@ -40,7 +40,6 @@ namespace Eff.Core
         public abstract void OnCompleted(Action continuation);
         public abstract void UnsafeOnCompleted(Action continuation);
         public abstract void Accept(IEffectHandler handler);
-     
     }
 
     public static class Effect
