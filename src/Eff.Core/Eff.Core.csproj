@@ -44,7 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EffectExecutionContext.cs" />
-    <Compile Include="Effects.cs" />
+    <Compile Include="DateTimeNowEffect.cs" />
+    <Compile Include="Effect.cs" />
     <Compile Include="EffectHandler.cs" />
     <Compile Include="IEffectHandler.cs" />
     <Compile Include="IEffect.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="EffMethodBuilder.cs" />
     <Compile Include="Eff.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TaskEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

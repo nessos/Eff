@@ -14,6 +14,11 @@ namespace Eff.Core
         {
             effect.SetResult(DateTime.Now);
         }
+
+        public Task HandleAsync<TResult>(TaskEffect<TResult> effect)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

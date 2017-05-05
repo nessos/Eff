@@ -9,7 +9,8 @@ namespace Eff.Core
 {
     public interface IEffectHandler 
     {
-        void Handle(DateTimeNowEffect effect);    
+        void Handle(DateTimeNowEffect effect);
+        Task HandleAsync<TResult>(TaskEffect<TResult> effect);
     }
 
     

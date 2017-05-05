@@ -19,6 +19,11 @@ namespace Eff.Core
         {
             effect.SetResult(now);
         }
+
+        public Task HandleAsync<TResult>(TaskEffect<TResult> effect)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 

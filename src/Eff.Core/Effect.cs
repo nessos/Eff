@@ -7,56 +7,40 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public class DateTimeNowEffect : IEffect<DateTime>
+    public abstract class Effect<TResult> : IEffect<TResult>
     {
         private readonly string memberName;
         private readonly string sourceFilePath;
         private readonly int sourceLineNumber;
 
-        private DateTime result;
         private bool haveResult;
+        private TResult result;
 
-        public DateTimeNowEffect(string memberName, string sourceFilePath, int sourceLineNumber)
+        public Effect(string memberName, string sourceFilePath, int sourceLineNumber)
         {
             this.memberName = memberName;
             this.sourceFilePath = sourceFilePath;
             this.sourceLineNumber = sourceLineNumber;
         }
 
-        public bool IsCompleted => haveResult;
-
         public string CallerMemberName => memberName;
-
         public string CallerFilePath => sourceFilePath;
-
         public int CallerLineNumber => sourceLineNumber;
 
-        public DateTime GetResult() => result;
-        
+        public bool IsCompleted => haveResult;
+        public TResult GetResult() => result;
+        public IEffect<TResult> GetAwaiter() => this;
 
-        public void OnCompleted(Action continuation)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UnsafeOnCompleted(Action continuation)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEffect<DateTime> GetAwaiter() => this;
-        
-
-        public void SetResult(DateTime result)
+        public void SetResult(TResult result)
         {
             haveResult = true;
             this.result = result;
         }
 
-        public void Accept(IEffectHandler handler)
-        {
-            handler.Handle(this);
-        }
+        public abstract void OnCompleted(Action continuation);
+        public abstract void UnsafeOnCompleted(Action continuation);
+        public abstract void Accept(IEffectHandler handler);
+     
     }
 
     public static class Effect
@@ -66,6 +50,14 @@ namespace Eff.Core
                                                     [CallerLineNumber] int sourceLineNumber = 0)
         {
             return new DateTimeNowEffect(memberName, sourceFilePath, sourceLineNumber);
+        }
+
+        public static TaskEffect<TResult> AsEffect<TResult>(this Task<TResult> task, 
+                                                    [CallerMemberName] string memberName = "",
+                                                    [CallerFilePath] string sourceFilePath = "",
+                                                    [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            return new TaskEffect<TResult>(task, memberName, sourceFilePath, sourceLineNumber);
         }
     }
     
