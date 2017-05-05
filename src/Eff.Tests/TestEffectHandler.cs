@@ -15,14 +15,20 @@ namespace Eff.Core
             this.now = now;
         }
 
-        public void Handle(DateTimeNowEffect effect)
+        public void Handle<TResult>(IEffect<TResult> effect)
         {
-            effect.SetResult(now);
+            switch (effect)
+            {
+                case DateTimeNowEffect dateTimeNowEffect:
+                    dateTimeNowEffect.SetResult(now);
+                    break;
+            }
         }
 
-        public Task HandleAsync<TResult>(TaskEffect<TResult> effect)
+        public async Task HandleAsync<TResult>(TaskEffect<TResult> effect)
         {
-            throw new NotImplementedException();
+            var result = await effect.Task;
+            effect.SetResult(result);
         }
     }
 

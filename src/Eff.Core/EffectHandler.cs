@@ -10,10 +10,16 @@ namespace Eff.Core
     public class EffectHandler : IEffectHandler
     {
 
-        public void Handle(DateTimeNowEffect effect)
+        public void Handle<TResult>(IEffect<TResult> effect)
         {
-            effect.SetResult(DateTime.Now);
+            switch (effect)
+            {
+                case DateTimeNowEffect dateTimeNowEffect:
+                    dateTimeNowEffect.SetResult(DateTime.Now);
+                    break;
+            }
         }
+
 
         public async Task HandleAsync<TResult>(TaskEffect<TResult> effect)
         {
