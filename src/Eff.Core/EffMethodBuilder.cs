@@ -73,7 +73,29 @@ namespace Eff.Core
             where TStateMachine : IAsyncStateMachine
         {
             useBuilder = true;
-            methodBuilder.AwaitOnCompleted(ref awaiter, ref stateMachine);
+
+            var handler = EffectExecutionContext.Handler;
+            if (handler == null)
+                throw new InvalidOperationException("EffectExecutionContext handler is empty");
+
+            switch (awaiter)
+            {
+                case IEffect effect:
+                    var task = effect.Accept(handler);
+                    if (task.IsCompleted)
+                    {
+                        stateMachine.MoveNext();
+                    }
+                    else
+                    {
+                        var _awaiter = task.GetAwaiter();
+                        methodBuilder.AwaitOnCompleted(ref _awaiter, ref stateMachine);
+                    }
+                    break;
+                default:
+                    methodBuilder.AwaitOnCompleted(ref awaiter, ref stateMachine);
+                    break;
+            }
         }
 
 
@@ -91,8 +113,16 @@ namespace Eff.Core
             switch (awaiter) 
             {
                 case IEffect effect:
-                    effect.Accept(handler);
-                    stateMachine.MoveNext();
+                    var task = effect.Accept(handler);
+                    if (task.IsCompleted)
+                    {
+                        stateMachine.MoveNext();
+                    }
+                    else
+                    {
+                        var _awaiter = task.GetAwaiter();
+                        methodBuilder.AwaitUnsafeOnCompleted(ref _awaiter, ref stateMachine);
+                    }
                     break;
                 default:
                     methodBuilder.AwaitUnsafeOnCompleted(ref awaiter, ref stateMachine);
