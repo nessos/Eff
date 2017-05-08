@@ -93,8 +93,7 @@ namespace Eff.Core
                     }
                     break;
                 default:
-                    methodBuilder.AwaitOnCompleted(ref awaiter, ref stateMachine);
-                    break;
+                    throw new InvalidOperationException($"Awaiter {awaiter.GetType().Name} is not an effect.");
             }
         }
 
@@ -125,8 +124,7 @@ namespace Eff.Core
                     }
                     break;
                 default:
-                    methodBuilder.AwaitUnsafeOnCompleted(ref awaiter, ref stateMachine);
-                    break;
+                    throw new InvalidOperationException($"Awaiter {awaiter.GetType().Name} is not an effect.");
             }
         }
     }
