@@ -72,6 +72,23 @@ namespace Eff.Core
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
+            AwaitOnCompleted(ref awaiter, ref stateMachine, true);
+        }
+
+
+        [SecuritySafeCritical]
+        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+            where TAwaiter : ICriticalNotifyCompletion
+            where TStateMachine : IAsyncStateMachine
+        {
+            AwaitOnCompleted(ref awaiter, ref stateMachine, false);
+        }
+
+
+        private void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine, bool safe)
+            where TAwaiter : INotifyCompletion
+            where TStateMachine : IAsyncStateMachine
+        {
             useBuilder = true;
 
             var handler = EffectExecutionContext.Handler;
@@ -89,7 +106,10 @@ namespace Eff.Core
                     else
                     {
                         var _awaiter = task.GetAwaiter();
-                        methodBuilder.AwaitOnCompleted(ref _awaiter, ref stateMachine);
+                        if (safe)
+                            methodBuilder.AwaitOnCompleted(ref _awaiter, ref stateMachine);
+                        else
+                            methodBuilder.AwaitUnsafeOnCompleted(ref _awaiter, ref stateMachine);
                     }
                     break;
                 default:
@@ -98,35 +118,6 @@ namespace Eff.Core
         }
 
 
-        [SecuritySafeCritical]
-        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : ICriticalNotifyCompletion
-            where TStateMachine : IAsyncStateMachine
-        {
-            useBuilder = true;
-
-            var handler = EffectExecutionContext.Handler;
-            if (handler == null)
-                throw new InvalidOperationException("EffectExecutionContext handler is empty");
-                
-            switch (awaiter) 
-            {
-                case IEffect effect:
-                    var task = effect.Accept(handler);
-                    if (task.IsCompleted)
-                    {
-                        stateMachine.MoveNext();
-                    }
-                    else
-                    {
-                        var _awaiter = task.GetAwaiter();
-                        methodBuilder.AwaitUnsafeOnCompleted(ref _awaiter, ref stateMachine);
-                    }
-                    break;
-                default:
-                    throw new InvalidOperationException($"Awaiter {awaiter.GetType().Name} is not an effect.");
-            }
-        }
     }
 
 }
