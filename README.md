@@ -1,5 +1,5 @@
 # Eff
-A library design for programming with effects and handlers in C#, inspired by the [Eff] programming language and the implementation of Algebraic Effects in [OCaml] [Eff Directly in OCaml].
+A library design for programming with effects and handlers in C#, inspired by the [Eff] programming language and the implementation of Algebraic Effects in [OCaml], [Eff Directly in OCaml].
 
 ``` csharp
 // Effect example
