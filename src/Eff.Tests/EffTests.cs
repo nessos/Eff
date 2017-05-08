@@ -70,8 +70,26 @@ namespace Eff.Tests
                 var y = await Task.Run(() => x + 1).AsEffect();
                 return y + 1;
             }
-            var now = DateTime.Now;
-            EffectExecutionContext.Handler = new TestEffectHandler(now);
+            
+            EffectExecutionContext.Handler = new TestEffectHandler();
+            Assert.Equal(3, Foo(1).Result);
+        }
+
+        [Fact]
+        public void AwaitTaskDelay()
+        {
+            async Task<int> Bar(int x)
+            {
+                await Task.Delay(1000);
+                return x + 1;
+            }
+            async Eff<int> Foo(int x)
+            {
+                var y = await Bar(x).AsEffect();
+                return y + 1;
+            }
+            
+            EffectExecutionContext.Handler = new TestEffectHandler();
             Assert.Equal(3, Foo(1).Result);
         }
 

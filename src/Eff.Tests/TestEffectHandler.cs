@@ -15,6 +15,9 @@ namespace Eff.Core
             this.now = now;
         }
 
+        public TestEffectHandler() : this(DateTime.Now)
+        { }
+
         public async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
         {
             switch (effect)
