@@ -3,7 +3,7 @@ A library design for programming with effects and handlers in C#, inspired by th
 
 ``` csharp
 // Effect example
-async Eff<DateTime> Foo()
+async Eff<int> Foo()
 {
     var y = await Effect.Random();
     return y;
