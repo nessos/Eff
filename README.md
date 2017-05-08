@@ -31,7 +31,7 @@ public class EffectHandler : IEffectHandler
     }
 }
 
-// Apply state effect and execute
+// Set effect handler and execute
 EffectExecutionContext.Handler = new EffectHandler(new Random());
 var x = Foo().Result;
 ```
