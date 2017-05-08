@@ -15,7 +15,7 @@ namespace Eff.Core
             this.now = now;
         }
 
-        public void Handle<TResult>(IEffect<TResult> effect)
+        public async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
         {
             switch (effect)
             {
@@ -23,12 +23,16 @@ namespace Eff.Core
                     dateTimeNowEffect.SetResult(now);
                     break;
             }
+
+            return ValueTuple.Create();
         }
 
-        public async Task HandleAsync<TResult>(TaskEffect<TResult> effect)
+        public async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
         {
             var result = await effect.Task;
             effect.SetResult(result);
+
+            return ValueTuple.Create();
         }
     }
 

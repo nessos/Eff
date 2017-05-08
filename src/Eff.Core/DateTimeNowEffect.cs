@@ -15,9 +15,9 @@ namespace Eff.Core
         {
         }
 
-        public override void Accept(IEffectHandler handler)
+        public override ValueTask<ValueTuple> Accept(IEffectHandler handler)
         {
-            handler.Handle(this);
+            return handler.Handle(this);
         }
 
         public override void OnCompleted(Action continuation)

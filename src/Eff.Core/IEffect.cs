@@ -15,13 +15,10 @@ namespace Eff.Core
         string CallerFilePath { get; }
         int CallerLineNumber { get; }
 
-        void Accept(IEffectHandler handler);
+        ValueTask<ValueTuple> Accept(IEffectHandler handler);
     }
 
-    public interface IAsyncEffect : IEffect
-    {
-        Task AcceptAsync(IEffectHandler handler);
-    }
+    
 
     public interface IEffect<TResult> : IEffect
     {

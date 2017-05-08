@@ -9,8 +9,8 @@ namespace Eff.Core
 {
     public interface IEffectHandler 
     {
-        void Handle<TResult>(IEffect<TResult> effect);
-        Task HandleAsync<TResult>(TaskEffect<TResult> effect);
+        ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
+        ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect);
     }
 
     
