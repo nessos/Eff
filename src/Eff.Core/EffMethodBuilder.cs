@@ -113,7 +113,7 @@ namespace Eff.Core
                     }
                     break;
                 default:
-                    throw new InvalidOperationException($"Awaiter {awaiter.GetType().Name} is not an effect.");
+                    throw new InvalidOperationException($"Awaiter {awaiter.GetType().Name} is not an effect. Try to use obj.AsEffect().");
             }
         }
 

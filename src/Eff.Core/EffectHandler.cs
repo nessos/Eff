@@ -28,6 +28,13 @@ namespace Eff.Core
             effect.SetResult(result);
             return ValueTuple.Create();
         }
+
+        public async ValueTask<ValueTuple> Handle(TaskEffect effect)
+        {
+            await effect.Task;
+            effect.SetResult(ValueTuple.Create());
+            return ValueTuple.Create();
+        }
     }
 
 

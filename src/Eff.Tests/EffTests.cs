@@ -94,11 +94,11 @@ namespace Eff.Tests
         }
 
         [Fact]
-        public void AwaitTaskAndTaskEffect()
+        public void AwaitSequenceOfTaskEffects()
         {
             async Eff<int> Bar(int x)
             {
-                await Task.Delay(1000);
+                await Task.Delay(1000).AsEffect();
                 var y = await Task.Run(() => x + 1).AsEffect();
                 return y;
             }

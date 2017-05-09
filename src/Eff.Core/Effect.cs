@@ -58,6 +58,14 @@ namespace Eff.Core
         {
             return new TaskEffect<TResult>(task, memberName, sourceFilePath, sourceLineNumber);
         }
+
+        public static TaskEffect AsEffect(this Task task,
+                                            [CallerMemberName] string memberName = "",
+                                            [CallerFilePath] string sourceFilePath = "",
+                                            [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            return new TaskEffect(task, memberName, sourceFilePath, sourceLineNumber);
+        }
     }
     
 }
