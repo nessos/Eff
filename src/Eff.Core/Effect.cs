@@ -15,6 +15,7 @@ namespace Eff.Core
 
         protected bool haveResult;
         protected TResult result;
+        protected Exception exception;
 
         public Effect(string memberName, string sourceFilePath, int sourceLineNumber)
         {
@@ -28,7 +29,12 @@ namespace Eff.Core
         public int CallerLineNumber => sourceLineNumber;
 
         public bool IsCompleted => haveResult;
-        public virtual TResult GetResult() => result;
+        public virtual TResult GetResult()
+        {
+            if (exception != null)
+                throw exception;
+            else return result;
+        }
         public IEffect<TResult> GetAwaiter() => this;
 
         public void SetResult(TResult result)
@@ -40,6 +46,11 @@ namespace Eff.Core
         public abstract void OnCompleted(Action continuation);
         public abstract void UnsafeOnCompleted(Action continuation);
         public abstract ValueTask<ValueTuple> Accept(IEffectHandler handler);
+
+        public void SetException(Exception ex)
+        {
+            exception = ex;
+        }
     }
 
     public static class Effect

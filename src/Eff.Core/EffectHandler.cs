@@ -15,7 +15,6 @@ namespace Eff.Core
             return ValueTuple.Create();
         }
 
-
         public virtual async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
         {
             var result = await effect.Task;
