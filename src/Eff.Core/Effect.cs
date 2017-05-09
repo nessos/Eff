@@ -67,12 +67,12 @@ namespace Eff.Core
             return new TaskEffect(task, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        public static EffEffect<TResult> AsEffect<TResult>(this Eff<TResult> eff,
+        public static EffTaskEffect<TResult> AsEffect<TResult>(this EffTask<TResult> eff,
                                             [CallerMemberName] string memberName = "",
                                             [CallerFilePath] string sourceFilePath = "",
                                             [CallerLineNumber] int sourceLineNumber = 0)
         {
-            return new EffEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber);
+            return new EffTaskEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber);
         }
     }
     

@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestEffectHandler.cs" />
-    <Compile Include="EffTests.cs" />
+    <Compile Include="EffectTests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

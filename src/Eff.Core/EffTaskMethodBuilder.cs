@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public struct EffMethodBuilder<TResult>
+    public struct EffTaskMethodBuilder<TResult>
     {
         private AsyncTaskMethodBuilder<TResult> methodBuilder;
         private TResult result;
         private bool haveResult;
         private bool useBuilder;
 
-        public static EffMethodBuilder<TResult> Create() =>
-            new EffMethodBuilder<TResult>()
+        public static EffTaskMethodBuilder<TResult> Create() =>
+            new EffTaskMethodBuilder<TResult>()
             {
                 methodBuilder = AsyncTaskMethodBuilder<TResult>.Create()
             };
@@ -51,18 +51,18 @@ namespace Eff.Core
             methodBuilder.SetException(exception);
         }
 
-        public Eff<TResult> Task
+        public EffTask<TResult> Task
         {
             get
             {
                 if (haveResult)
                 {
-                    return new Eff<TResult>(result);
+                    return new EffTask<TResult>(result);
                 }
                 else
                 {
                     useBuilder = true;
-                    return new Eff<TResult>(methodBuilder.Task);
+                    return new EffTask<TResult>(methodBuilder.Task);
                 }
             }
         }

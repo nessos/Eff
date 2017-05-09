@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
-    public struct Eff<TResult>
+    [AsyncMethodBuilder(typeof(EffTaskMethodBuilder<>))]
+    public struct EffTask<TResult>
     {
         private readonly Task<TResult> task;
         private readonly TResult result;
 
-        public Eff(TResult result)
+        public EffTask(TResult result)
         {
             this.task = null;
             this.result = result;
         }
-        public Eff(Task<TResult> task)
+        public EffTask(Task<TResult> task)
         {
             this.task = task;
             this.result = default(TResult);
@@ -33,7 +33,7 @@ namespace Eff.Core
         public TResult Result => task == null ? result : task.Result;
         public AggregateException Exception => task != null ? task.Exception : null;
 
-        public EffAwaiter<TResult> GetAwaiter() => new EffAwaiter<TResult>(this);
+        public EffTaskAwaiter<TResult> GetAwaiter() => new EffTaskAwaiter<TResult>(this);
         
     }
 }

@@ -8,12 +8,12 @@ using Xunit;
 
 namespace Eff.Tests
 {
-    public class EffTests
+    public class EffectTests
     {
         [Fact]
         public void SimpleReturn()
         {
-            async Eff<int> Foo(int x)
+            async EffTask<int> Foo(int x)
             {
                 return x + 1;
             }
@@ -24,11 +24,11 @@ namespace Eff.Tests
         [Fact]
         public void AwaitEff()
         {
-            async Eff<int> Bar(int x)
+            async EffTask<int> Bar(int x)
             {
                 return x + 1;
             }
-            async Eff<int> Foo(int x)
+            async EffTask<int> Foo(int x)
             {
                 var y = await Bar(x).AsEffect();
                 return y + 1;
@@ -40,7 +40,7 @@ namespace Eff.Tests
         [Fact]
         public void AwaitTask()
         {
-            async Eff<int> Foo(int x)
+            async EffTask<int> Foo(int x)
             {
                 var y = await Task.FromResult(x + 1);
                 return y + 1;
@@ -52,7 +52,7 @@ namespace Eff.Tests
         [Fact]
         public void AwaitCustomEffect()
         {
-            async Eff<DateTime> Foo()
+            async EffTask<DateTime> Foo()
             {
                 var y = await Effect.DateTimeNow();
                 return y;
@@ -65,7 +65,7 @@ namespace Eff.Tests
         [Fact]
         public void AwaitTaskEffect()
         {
-            async Eff<int> Foo(int x)
+            async EffTask<int> Foo(int x)
             {
                 var y = await Task.Run(() => x + 1).AsEffect();
                 return y + 1;
@@ -83,7 +83,7 @@ namespace Eff.Tests
                 await Task.Delay(1000);
                 return x + 1;
             }
-            async Eff<int> Foo(int x)
+            async EffTask<int> Foo(int x)
             {
                 var y = await Bar(x).AsEffect();
                 return y + 1;
@@ -96,13 +96,13 @@ namespace Eff.Tests
         [Fact]
         public void AwaitSequenceOfTaskEffects()
         {
-            async Eff<int> Bar(int x)
+            async EffTask<int> Bar(int x)
             {
                 await Task.Delay(1000).AsEffect();
                 var y = await Task.Run(() => x + 1).AsEffect();
                 return y;
             }
-            async Eff<int> Foo(int x)
+            async EffTask<int> Foo(int x)
             {
                 var y = await Bar(x).AsEffect();
                 return y + 1;

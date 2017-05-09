@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public struct EffAwaiter<TResult> : ICriticalNotifyCompletion
+    public struct EffTaskAwaiter<TResult> : ICriticalNotifyCompletion
     {
-        private readonly Eff<TResult> eff;
+        private readonly EffTask<TResult> eff;
    
-        internal EffAwaiter(Eff<TResult> eff)
+        internal EffTaskAwaiter(EffTask<TResult> eff)
         {
             this.eff = eff;
         }

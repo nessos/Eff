@@ -36,7 +36,7 @@ namespace Eff.Core
             return ValueTuple.Create();
         }
 
-        public async ValueTask<ValueTuple> Handle<TResult>(EffEffect<TResult> effect)
+        public async ValueTask<ValueTuple> Handle<TResult>(EffTaskEffect<TResult> effect)
         {
             var result = await effect.Eff;
             effect.SetResult(result);
