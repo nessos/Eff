@@ -9,24 +9,24 @@ namespace Eff.Core
 {
     public struct EffTaskAwaiter<TResult> : ICriticalNotifyCompletion
     {
-        private readonly EffTask<TResult> eff;
+        private readonly EffTask<TResult> effTask;
    
-        internal EffTaskAwaiter(EffTask<TResult> eff)
+        internal EffTaskAwaiter(EffTask<TResult> effTask)
         {
-            this.eff = eff;
+            this.effTask = effTask;
         }
 
-        public bool IsCompleted => eff.IsCompleted;
-        public TResult GetResult() => eff.Result;
+        public bool IsCompleted => effTask.IsCompleted;
+        public TResult GetResult() => effTask.Result;
         
 
         public void OnCompleted(Action continuation)
         {
-            eff.AsTask().ConfigureAwait(continueOnCapturedContext: true).GetAwaiter().OnCompleted(continuation);
+            effTask.AsTask().ConfigureAwait(continueOnCapturedContext: true).GetAwaiter().OnCompleted(continuation);
         }
         public void UnsafeOnCompleted(Action continuation)
         {
-            eff.AsTask().ConfigureAwait(continueOnCapturedContext: true).GetAwaiter().UnsafeOnCompleted(continuation);
+            effTask.AsTask().ConfigureAwait(continueOnCapturedContext: true).GetAwaiter().UnsafeOnCompleted(continuation);
         }
     }
 }

@@ -87,7 +87,7 @@ namespace Eff.Tests
             async EffTask<int> Bar(int x)
             {
                 await Task.Delay(1000).AsEffect();
-                var y = await Task.Run(() => x + 1).AsEffect();
+                var y = await Task.FromResult(x + 1).AsEffect();
                 return y;
             }
             async EffTask<int> Foo(int x)
@@ -97,7 +97,8 @@ namespace Eff.Tests
             }
 
             EffectExecutionContext.Handler = new TestEffectHandler();
-            Assert.Equal(3, Foo(1).Result);
+            var foo = Foo(1);
+            Assert.Equal(3, foo.Result);
         }
 
     }

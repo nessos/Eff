@@ -5,15 +5,15 @@ namespace Eff.Core
 {
     public class EffTaskEffect<TResult> : Effect<TResult>
     {
-        private readonly EffTask<TResult> eff;
+        private readonly EffTask<TResult> effTask;
 
-        public EffTaskEffect(EffTask<TResult> eff, string memberName, string sourceFilePath, int sourceLineNumber)
+        public EffTaskEffect(EffTask<TResult> effTask, string memberName, string sourceFilePath, int sourceLineNumber)
             : base(memberName, sourceFilePath, sourceLineNumber)
         {
-            this.eff = eff;
+            this.effTask = effTask;
         }
 
-        public EffTask<TResult> Eff => eff;
+        public EffTask<TResult> EffTask => effTask;
 
         public override ValueTask<ValueTuple> Accept(IEffectHandler handler)
         {
@@ -30,6 +30,4 @@ namespace Eff.Core
             throw new NotSupportedException();
         }
     }
-
-    
 }
