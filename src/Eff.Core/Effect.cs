@@ -13,8 +13,8 @@ namespace Eff.Core
         private readonly string sourceFilePath;
         private readonly int sourceLineNumber;
 
-        private bool haveResult;
-        private TResult result;
+        protected bool haveResult;
+        protected TResult result;
 
         public Effect(string memberName, string sourceFilePath, int sourceLineNumber)
         {
@@ -28,7 +28,7 @@ namespace Eff.Core
         public int CallerLineNumber => sourceLineNumber;
 
         public bool IsCompleted => haveResult;
-        public TResult GetResult() => result;
+        public virtual TResult GetResult() => result;
         public IEffect<TResult> GetAwaiter() => this;
 
         public void SetResult(TResult result)
