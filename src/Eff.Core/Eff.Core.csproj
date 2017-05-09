@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EffectExecutionContext.cs" />
-    <Compile Include="DateTimeNowEffect.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="EffectHandler.cs" />
     <Compile Include="IEffectHandler.cs" />

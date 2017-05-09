@@ -44,12 +44,6 @@ namespace Eff.Core
 
     public static class Effect
     {
-        public static DateTimeNowEffect DateTimeNow([CallerMemberName] string memberName = "",
-                                                    [CallerFilePath] string sourceFilePath = "",
-                                                    [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            return new DateTimeNowEffect(memberName, sourceFilePath, sourceLineNumber);
-        }
 
         public static TaskEffect<TResult> AsEffect<TResult>(this Task<TResult> task, 
                                                     [CallerMemberName] string memberName = "",
