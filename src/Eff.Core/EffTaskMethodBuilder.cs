@@ -98,7 +98,13 @@ namespace Eff.Core
             switch (awaiter)
             {
                 case IEffect effect:
-                    var task = effect.Accept(handler);
+                    async ValueTask<ValueTuple> ApplyEffectHandler(IEffectHandler _handler)
+                    {
+                        await effect.Accept(_handler);
+                        EffectExecutionContext.Handler = _handler; // restore effect handler
+                        return ValueTuple.Create();
+                    }
+                    var task = ApplyEffectHandler(handler);
                     if (task.IsCompleted)
                     {
                         stateMachine.MoveNext();
