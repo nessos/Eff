@@ -30,7 +30,7 @@ namespace Eff.Tests
             }
             async Eff<int> Foo(int x)
             {
-                var y = await Bar(x);
+                var y = await Bar(x).AsEffect();
                 return y + 1;
             }
 
@@ -104,7 +104,7 @@ namespace Eff.Tests
             }
             async Eff<int> Foo(int x)
             {
-                var y = await Bar(x);
+                var y = await Bar(x).AsEffect();
                 return y + 1;
             }
 
