@@ -22,7 +22,7 @@ namespace Eff.Tests
         }
 
         [Fact]
-        public void AwaitEff()
+        public void AwaitEffTaskEffect()
         {
             async EffTask<int> Bar(int x)
             {
@@ -31,18 +31,6 @@ namespace Eff.Tests
             async EffTask<int> Foo(int x)
             {
                 var y = await Bar(x).AsEffect();
-                return y + 1;
-            }
-
-            Assert.Equal(3, Foo(1).Result);
-        }
-
-        [Fact]
-        public void AwaitTask()
-        {
-            async EffTask<int> Foo(int x)
-            {
-                var y = await Task.FromResult(x + 1);
                 return y + 1;
             }
 
