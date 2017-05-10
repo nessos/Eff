@@ -100,9 +100,25 @@ namespace Eff.Core
                 case IEffect effect:
                     async ValueTask<ValueTuple> ApplyEffectHandler(IEffectHandler _handler)
                     {
-                        await effect.Accept(_handler);
-                        EffectExecutionContext.Handler = _handler; // restore effect handler
-                        return ValueTuple.Create();
+                        try
+                        {
+                            await effect.Accept(_handler);
+                            return ValueTuple.Create();
+                        }
+                        catch (AggregateException ex)
+                        {
+                            effect.SetException(ex.InnerException);
+                            return ValueTuple.Create();
+                        }
+                        catch (Exception ex)
+                        {
+                            effect.SetException(ex);
+                            return ValueTuple.Create();
+                        }
+                        finally
+                        {
+                            EffectExecutionContext.Handler = _handler; // restore effect handler
+                        }
                     }
                     var task = ApplyEffectHandler(handler);
                     if (task.IsCompleted)

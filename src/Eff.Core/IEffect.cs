@@ -16,6 +16,7 @@ namespace Eff.Core
         int CallerLineNumber { get; }
 
         ValueTask<ValueTuple> Accept(IEffectHandler handler);
+        void SetException(Exception ex);
     }
 
     
@@ -25,6 +26,5 @@ namespace Eff.Core
         TResult GetResult();
         IEffect<TResult> GetAwaiter();
         void SetResult(TResult result);
-        void SetException(Exception ex);
     }
 }

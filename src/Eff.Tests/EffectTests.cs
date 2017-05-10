@@ -131,7 +131,7 @@ namespace Eff.Tests
 
             EffectExecutionContext.Handler = new TestEffectHandler();
             var ex = Foo(0).Exception;
-            Assert.IsType<DivideByZeroException>(ex.InnerException.InnerException);
+            Assert.IsType<DivideByZeroException>(ex.InnerException);
         }
 
     }
