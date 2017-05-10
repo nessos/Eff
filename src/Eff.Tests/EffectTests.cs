@@ -101,5 +101,38 @@ namespace Eff.Tests
             Assert.Equal(3, foo.Result);
         }
 
+
+        [Fact]
+        public void TestExceptionPropagation()
+        {
+            async EffTask<int> Foo(int x)
+            {    
+                return 1 / x;
+            }
+
+            EffectExecutionContext.Handler = new TestEffectHandler();
+            var ex = Foo(0).Exception;
+            Assert.IsType<DivideByZeroException>(ex.InnerException);
+        }
+
+        [Fact]
+        public void TestExceptionPropagationWithAwait()
+        {
+            async EffTask<int> Bar(int x)
+            {
+                return 1 / x;
+            }
+
+            async EffTask<int> Foo(int x)
+            {
+                var y = await Bar(x).AsEffect();
+                return y;
+            }
+
+            EffectExecutionContext.Handler = new TestEffectHandler();
+            var ex = Foo(0).Exception;
+            Assert.IsType<DivideByZeroException>(ex.InnerException.InnerException);
+        }
+
     }
 }

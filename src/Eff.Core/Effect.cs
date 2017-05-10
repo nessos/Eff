@@ -29,7 +29,7 @@ namespace Eff.Core
         public int CallerLineNumber => sourceLineNumber;
 
         public bool IsCompleted => haveResult;
-        public virtual TResult GetResult()
+        public TResult GetResult()
         {
             if (exception != null)
                 throw exception;

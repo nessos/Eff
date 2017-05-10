@@ -20,14 +20,6 @@ namespace Eff.Core
             return handler.Handle(this);
         }
 
-        public override TResult GetResult()
-        {
-            if (base.haveResult)
-                return base.GetResult();
-            else
-                return task.Result;
-        }
-
         public override void OnCompleted(Action continuation)
         {
             throw new NotSupportedException();
