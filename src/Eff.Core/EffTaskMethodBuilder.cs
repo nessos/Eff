@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public struct EffTaskMethodBuilder<TResult>
+    public class EffTaskMethodBuilder<TResult>
     {
         private AsyncTaskMethodBuilder<TResult> methodBuilder;
         private TResult result;
         private bool haveResult;
         private bool useBuilder;
+        private IEffectHandler handler;
 
         public static EffTaskMethodBuilder<TResult> Create() =>
             new EffTaskMethodBuilder<TResult>()
@@ -23,6 +24,10 @@ namespace Eff.Core
 
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
+            handler = EffectExecutionContext.Handler;
+            if (handler == null)
+                throw new EffException("EffectExecutionContext handler is empty");
+
             methodBuilder.Start(ref stateMachine);
         }
 
@@ -89,11 +94,7 @@ namespace Eff.Core
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            useBuilder = true;
-
-            var handler = EffectExecutionContext.Handler;
-            if (handler == null)
-                throw new EffException("EffectExecutionContext handler is empty");
+            useBuilder = true;            
 
             switch (awaiter)
             {
@@ -116,10 +117,6 @@ namespace Eff.Core
                         {
                             effect.SetException(ex);
                             return ValueTuple.Create();
-                        }
-                        finally
-                        {
-                            EffectExecutionContext.Handler = _handler; // restore effect handler
                         }
                     }
                     var task = ApplyEffectHandler(handler);
