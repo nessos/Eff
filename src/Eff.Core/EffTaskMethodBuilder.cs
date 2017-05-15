@@ -93,7 +93,7 @@ namespace Eff.Core
 
             var handler = EffectExecutionContext.Handler;
             if (handler == null)
-                throw new InvalidOperationException("EffectExecutionContext handler is empty");
+                throw new EffException("EffectExecutionContext handler is empty");
 
             switch (awaiter)
             {
@@ -135,7 +135,7 @@ namespace Eff.Core
                     }
                     break;
                 default:
-                    throw new InvalidOperationException($"Awaiter {awaiter.GetType().Name} is not an effect. Try to use obj.AsEffect().");
+                    throw new EffException($"Awaiter {awaiter.GetType().Name} is not an effect. Try to use obj.AsEffect().");
             }
         }
 

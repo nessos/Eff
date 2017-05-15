@@ -49,6 +49,7 @@
     <Compile Include="EffectExecutionContext.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="EffectHandler.cs" />
+    <Compile Include="EffException.cs" />
     <Compile Include="IEffectHandler.cs" />
     <Compile Include="IEffect.cs" />
     <Compile Include="EffTaskAwaiter.cs" />
