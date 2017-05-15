@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public struct ExceptionLog
+    public class ExceptionLog
     {
-        public string CallerMemberName;
-        public string CallerFilePath;
-        public int CallerLineNumber;
-        public Exception Exception;
+        public string CallerMemberName { get; set; }
+        public string CallerFilePath { get; set; }
+        public int CallerLineNumber { get; set; }
+        public Exception Exception { get; set; }
     }
 
-    public struct ResultLog
+    public class ResultLog
     {
-        public string CallerMemberName;
-        public string CallerFilePath;
-        public int CallerLineNumber;
-        public object Result;
+        public string CallerMemberName { get; set; }
+        public string CallerFilePath { get; set; }
+        public int CallerLineNumber { get; set; }
+        public object Result { get; set; }
     }
 }
