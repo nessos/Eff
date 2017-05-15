@@ -7,13 +7,10 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public class EffectHandler : IEffectHandler
+    public abstract class EffectHandler : IEffectHandler
     {
 
-        public virtual async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
-        {
-            return ValueTuple.Create();
-        }
+        public abstract ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
 
         public virtual async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
         {
@@ -36,17 +33,17 @@ namespace Eff.Core
             return ValueTuple.Create();
         }
 
-        public void HandleSetException(Exception exception)
+        public virtual void HandleSetException(Exception exception)
         {
             
         }
 
-        public void HandleSetResult<Result>(Result result)
+        public virtual void HandleSetResult<Result>(Result result)
         {
             
         }
 
-        public void HandleStart<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
+        public virtual void HandleStart<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
             
         }

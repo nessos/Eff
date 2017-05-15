@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public class TestEffectHandler : IEffectHandler
+    public class TestEffectHandler : EffectHandler
     {
         private readonly DateTime now;
         public TestEffectHandler(DateTime now)
@@ -19,7 +19,7 @@ namespace Eff.Core
         public TestEffectHandler() : this(DateTime.Now)
         { }
 
-        public async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
+        public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
         {
             switch (effect)
             {
@@ -29,43 +29,6 @@ namespace Eff.Core
             }
 
             return ValueTuple.Create();
-        }
-
-        public async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
-        {
-            var result = await effect.Task;
-            effect.SetResult(result);
-
-            return ValueTuple.Create();
-        }
-
-        public async ValueTask<ValueTuple> Handle(TaskEffect effect)
-        {
-            await effect.Task;
-            effect.SetResult(ValueTuple.Create());
-            return ValueTuple.Create();
-        }
-
-        public async ValueTask<ValueTuple> Handle<TResult>(EffTaskEffect<TResult> effect)
-        {
-            var result = await effect.EffTask;
-            effect.SetResult(result);
-            return ValueTuple.Create();
-        }
-
-        public void HandleStart<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
-        {
-            
-        }
-
-        public void HandleSetResult<Result>(Result result)
-        {
-            
-        }
-
-        public void HandleSetException(Exception exception)
-        {
-            
         }
     }
 
