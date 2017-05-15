@@ -121,6 +121,9 @@ namespace Eff.Core
                             effect.SetException(ex);
                             return ValueTuple.Create();
                         }
+                        finally
+                        {
+                        }
                     }
                     var task = ApplyEffectHandler(handler);
                     if (task.IsCompleted)

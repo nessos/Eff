@@ -30,6 +30,16 @@ namespace Eff.Core
 
             return ValueTuple.Create();
         }
+
+        public override ValueTask<ValueTuple> Log(ExceptionLog log)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ValueTask<ValueTuple> Log<TResult>(ResultLog<TResult> log)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 
