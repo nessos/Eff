@@ -10,23 +10,6 @@ namespace Eff.Core
     public abstract class EffectHandler : IEffectHandler
     {
 
-        public struct ExceptionLog
-        {
-            public string CallerMemberName;
-            public string CallerFilePath;
-            public int CallerLineNumber;
-            public Exception Exception;
-        }
-
-        public struct ResultLog<TResult>
-        {
-            public string CallerMemberName;
-            public string CallerFilePath;
-            public int CallerLineNumber;
-            public TResult result;
-        }
-
-
         public abstract ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
         public abstract ValueTask<ValueTuple> Log(ExceptionLog log);
         public abstract ValueTask<ValueTuple> Log<TResult>(ResultLog<TResult> log);

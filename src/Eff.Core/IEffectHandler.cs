@@ -10,10 +10,16 @@ namespace Eff.Core
     public interface IEffectHandler 
     {
 
+
+        ValueTask<ValueTuple> Log(ExceptionLog log);
+        ValueTask<ValueTuple> Log<TResult>(ResultLog<TResult> log);
+
         ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
         ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect);
         ValueTask<ValueTuple> Handle(TaskEffect effect);
         ValueTask<ValueTuple> Handle<TResult>(EffTaskEffect<TResult> effect);
+
+        
     }
 
     
