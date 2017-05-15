@@ -37,7 +37,10 @@ namespace Eff.Core
         public TResult GetResult()
         {
             if (exception != null)
+            {
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(exception).Throw();
                 throw exception;
+            }
             else return result;
         }
         public IEffect<TResult> GetAwaiter() => this;
