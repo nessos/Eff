@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public class EffTaskMethodBuilder<TResult>
+    public struct EffTaskMethodBuilder<TResult>
     {
         private AsyncTaskMethodBuilder<TResult> methodBuilder;
         private TResult result;
@@ -16,18 +16,21 @@ namespace Eff.Core
         private bool useBuilder;
         private IEffectHandler handler;
 
-        public static EffTaskMethodBuilder<TResult> Create() =>
-            new EffTaskMethodBuilder<TResult>()
-            {
-                methodBuilder = AsyncTaskMethodBuilder<TResult>.Create()
-            };
-
-        public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
+        public static EffTaskMethodBuilder<TResult> Create()
         {
-            handler = EffectExecutionContext.Handler;
+            var handler = EffectExecutionContext.Handler;
             if (handler == null)
                 throw new EffException("EffectExecutionContext handler is empty");
 
+            return new EffTaskMethodBuilder<TResult>()
+            {
+                handler = handler,
+                methodBuilder = AsyncTaskMethodBuilder<TResult>.Create()
+            };
+        }
+
+        public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
+        {            
             handler.HandleStart(ref stateMachine);
             methodBuilder.Start(ref stateMachine);
         }
