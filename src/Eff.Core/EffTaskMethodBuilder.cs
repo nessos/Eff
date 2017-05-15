@@ -30,8 +30,7 @@ namespace Eff.Core
         }
 
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
-        {            
-            handler.HandleStart(ref stateMachine);
+        {
             methodBuilder.Start(ref stateMachine);
         }
 
@@ -46,7 +45,6 @@ namespace Eff.Core
         {
             if (useBuilder)
             {
-                handler.HandleSetResult(result);
                 methodBuilder.SetResult(result);
             }
             else
@@ -58,7 +56,6 @@ namespace Eff.Core
 
         public void SetException(Exception exception)
         {
-            handler.HandleSetException(exception);
             methodBuilder.SetException(exception);
         }
 

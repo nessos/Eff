@@ -33,20 +33,6 @@ namespace Eff.Core
             return ValueTuple.Create();
         }
 
-        public virtual void HandleSetException(Exception exception)
-        {
-            
-        }
-
-        public virtual void HandleSetResult<Result>(Result result)
-        {
-            
-        }
-
-        public virtual void HandleStart<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
-        {
-            
-        }
     }
 
 
