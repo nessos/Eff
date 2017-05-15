@@ -103,6 +103,8 @@ namespace Eff.Core
                         try
                         {
                             await effect.Accept(_handler);
+                            if (!effect.IsCompleted)
+                                throw new EffException($"Effect {effect.GetType().Name} is not completed.");
                             return ValueTuple.Create();
                         }
                         catch (AggregateException ex)

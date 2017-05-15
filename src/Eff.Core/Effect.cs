@@ -13,7 +13,7 @@ namespace Eff.Core
         private readonly string sourceFilePath;
         private readonly int sourceLineNumber;
 
-        protected bool haveResult;
+        protected bool hasResult;
         protected TResult result;
         protected Exception exception;
 
@@ -28,7 +28,8 @@ namespace Eff.Core
         public string CallerFilePath => sourceFilePath;
         public int CallerLineNumber => sourceLineNumber;
 
-        public bool IsCompleted => haveResult;
+        public bool IsCompleted => hasResult || exception != null;
+
         public TResult GetResult()
         {
             if (exception != null)
@@ -39,7 +40,7 @@ namespace Eff.Core
 
         public void SetResult(TResult result)
         {
-            haveResult = true;
+            hasResult = true;
             this.result = result;
         }
 
