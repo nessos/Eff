@@ -152,6 +152,28 @@ namespace Eff.Tests
             var ex = Foo(0).Exception;
             Assert.IsType<DivideByZeroException>(ex.InnerException);
             Assert.Equal(1, handler.ExceptionLogs.Count);
+            Assert.Equal(ex.InnerException, handler.ExceptionLogs[0].Exception);
+        }
+
+        [Fact]
+        public void TestTraceLog()
+        {
+            async EffTask<int> Bar(int x)
+            {
+                return x + 1;
+            }
+
+            async EffTask<int> Foo(int x)
+            {
+                var y = await Bar(x).AsEffect();
+                return y;
+            }
+            var handler = new TestEffectHandler();
+            EffectExecutionContext.Handler = handler;
+            var result = Foo(1).Result;
+            Assert.Equal(2, result);
+            Assert.Equal(1, handler.TraceLogs.Count);
+            Assert.Equal(result, (int)handler.TraceLogs[0].Result);
         }
 
     }
