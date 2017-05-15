@@ -11,9 +11,15 @@ namespace Eff.Core
     public class TestEffectHandler : EffectHandler
     {
         private readonly DateTime now;
-        public TestEffectHandler(DateTime now)
+
+        public List<ExceptionLog> ExceptionLogs { get; }
+        public List<ResultLog> TraceLogs { get; }
+
+        public TestEffectHandler(DateTime now) : base(true, true)
         {
             this.now = now;
+            ExceptionLogs = new List<ExceptionLog>();
+            TraceLogs = new List<ResultLog>();
         }
 
         public TestEffectHandler() : this(DateTime.Now)
@@ -31,14 +37,18 @@ namespace Eff.Core
             return ValueTuple.Create();
         }
 
-        public override ValueTask<ValueTuple> Log(ExceptionLog log)
+        
+
+        public override async ValueTask<ValueTuple> Log(ExceptionLog log)
         {
-            throw new NotImplementedException();
+            ExceptionLogs.Add(log);
+            return ValueTuple.Create();
         }
 
-        public override ValueTask<ValueTuple> Log<TResult>(ResultLog<TResult> log)
+        public override async ValueTask<ValueTuple> Log(ResultLog log)
         {
-            throw new NotImplementedException();
+            TraceLogs.Add(log);
+            return ValueTuple.Create();
         }
     }
 

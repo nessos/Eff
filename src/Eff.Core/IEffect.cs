@@ -17,6 +17,10 @@ namespace Eff.Core
 
         ValueTask<ValueTuple> Accept(IEffectHandler handler);
         void SetException(Exception ex);
+
+        bool HasResult { get; }
+        Exception Exception { get; }
+        object Result { get; }
     }
 
     

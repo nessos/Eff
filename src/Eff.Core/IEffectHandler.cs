@@ -9,10 +9,11 @@ namespace Eff.Core
 {
     public interface IEffectHandler 
     {
-
+        bool EnableExceptionLogging { get; }
+        bool EnableTraceLogging { get; }
 
         ValueTask<ValueTuple> Log(ExceptionLog log);
-        ValueTask<ValueTuple> Log<TResult>(ResultLog<TResult> log);
+        ValueTask<ValueTuple> Log(ResultLog log);
 
         ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
         ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect);

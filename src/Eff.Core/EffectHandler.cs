@@ -10,9 +10,19 @@ namespace Eff.Core
     public abstract class EffectHandler : IEffectHandler
     {
 
+        public bool EnableExceptionLogging { get; }
+        public bool EnableTraceLogging { get; }
+
+        public EffectHandler(bool enableExceptionLogging = false, 
+                             bool enableTraceLogging = false)
+        {
+            EnableExceptionLogging = enableExceptionLogging;
+            EnableTraceLogging = enableTraceLogging;
+        }
+
         public abstract ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
         public abstract ValueTask<ValueTuple> Log(ExceptionLog log);
-        public abstract ValueTask<ValueTuple> Log<TResult>(ResultLog<TResult> log);
+        public abstract ValueTask<ValueTuple> Log(ResultLog log);
 
         public virtual async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
         {

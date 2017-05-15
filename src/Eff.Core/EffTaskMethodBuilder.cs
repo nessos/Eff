@@ -123,6 +123,26 @@ namespace Eff.Core
                         }
                         finally
                         {
+                            if (_handler.EnableExceptionLogging && effect.Exception != null)
+                            {
+                                await _handler.Log(new ExceptionLog
+                                {
+                                    CallerFilePath = effect.CallerFilePath,
+                                    CallerLineNumber = effect.CallerLineNumber,
+                                    CallerMemberName = effect.CallerMemberName,
+                                    Exception = effect.Exception,
+                                });
+                            }
+                            if (_handler.EnableTraceLogging && effect.HasResult)
+                            {
+                                await _handler.Log(new ResultLog
+                                {
+                                    CallerFilePath = effect.CallerFilePath,
+                                    CallerLineNumber = effect.CallerLineNumber,
+                                    CallerMemberName = effect.CallerMemberName,
+                                    Result = effect.Result,
+                                });
+                            }
                         }
                     }
                     var task = ApplyEffectHandler(handler);

@@ -30,6 +30,10 @@ namespace Eff.Core
 
         public bool IsCompleted => hasResult || exception != null;
 
+        public bool HasResult => hasResult;
+        public Exception Exception => exception;
+        public object Result => result;
+
         public TResult GetResult()
         {
             if (exception != null)

@@ -134,5 +134,25 @@ namespace Eff.Tests
             Assert.IsType<DivideByZeroException>(ex.InnerException);
         }
 
+        [Fact]
+        public void TestExceptionLog()
+        {
+            async EffTask<int> Bar(int x)
+            {
+                return 1 / x;
+            }
+
+            async EffTask<int> Foo(int x)
+            {
+                var y = await Bar(x).AsEffect();
+                return y;
+            }
+            var handler = new TestEffectHandler();
+            EffectExecutionContext.Handler = handler;
+            var ex = Foo(0).Exception;
+            Assert.IsType<DivideByZeroException>(ex.InnerException);
+            Assert.Equal(1, handler.ExceptionLogs.Count);
+        }
+
     }
 }

@@ -14,11 +14,11 @@ namespace Eff.Core
         public Exception Exception;
     }
 
-    public struct ResultLog<TResult>
+    public struct ResultLog
     {
         public string CallerMemberName;
         public string CallerFilePath;
         public int CallerLineNumber;
-        public TResult result;
+        public object Result;
     }
 }
