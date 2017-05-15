@@ -52,6 +52,21 @@ namespace Eff.Core
             effect.SetResult(result);
             return ValueTuple.Create();
         }
+
+        public void HandleStart<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
+        {
+            
+        }
+
+        public void HandleSetResult<Result>(Result result)
+        {
+            
+        }
+
+        public void HandleSetException(Exception exception)
+        {
+            
+        }
     }
 
 

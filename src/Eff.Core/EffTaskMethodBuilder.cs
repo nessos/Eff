@@ -28,6 +28,7 @@ namespace Eff.Core
             if (handler == null)
                 throw new EffException("EffectExecutionContext handler is empty");
 
+            handler.HandleStart(ref stateMachine);
             methodBuilder.Start(ref stateMachine);
         }
 
@@ -42,6 +43,7 @@ namespace Eff.Core
         {
             if (useBuilder)
             {
+                handler.HandleSetResult(result);
                 methodBuilder.SetResult(result);
             }
             else
@@ -53,6 +55,7 @@ namespace Eff.Core
 
         public void SetException(Exception exception)
         {
+            handler.HandleSetException(exception);
             methodBuilder.SetException(exception);
         }
 
@@ -94,7 +97,7 @@ namespace Eff.Core
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
-            useBuilder = true;            
+            useBuilder = true;
 
             switch (awaiter)
             {

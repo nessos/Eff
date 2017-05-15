@@ -9,6 +9,11 @@ namespace Eff.Core
 {
     public interface IEffectHandler 
     {
+
+        void HandleStart<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine;
+        void HandleSetResult<Result>(Result result);
+        void HandleSetException(Exception exception);
+
         ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
         ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect);
         ValueTask<ValueTuple> Handle(TaskEffect effect);
