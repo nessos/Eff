@@ -12,9 +12,13 @@ namespace Eff.Core
 
         public bool EnableExceptionLogging { get; }
         public bool EnableTraceLogging { get; }
+        public bool EnableParametersLogging { get; }
+        public bool EnableLocalVariablesLogging { get; }
 
         public EffectHandler(bool enableExceptionLogging = false, 
-                             bool enableTraceLogging = false)
+                             bool enableTraceLogging = false,
+                             bool enableParametersLogging = false,
+                             bool enableLocalVariablesLogging = false)
         {
             EnableExceptionLogging = enableExceptionLogging;
             EnableTraceLogging = enableTraceLogging;

@@ -11,6 +11,8 @@ namespace Eff.Core
     {
         bool EnableExceptionLogging { get; }
         bool EnableTraceLogging { get; }
+        bool EnableParametersLogging { get; }
+        bool EnableLocalVariablesLogging { get; }
 
         ValueTask<ValueTuple> Log(ExceptionLog log);
         ValueTask<ValueTuple> Log(ResultLog log);

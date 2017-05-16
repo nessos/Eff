@@ -15,7 +15,7 @@ namespace Eff.Core
         public List<ExceptionLog> ExceptionLogs { get; }
         public List<ResultLog> TraceLogs { get; }
 
-        public TestEffectHandler(DateTime now) : base(true, true)
+        public TestEffectHandler(DateTime now) : base(true, true, true, true)
         {
             this.now = now;
             ExceptionLogs = new List<ExceptionLog>();

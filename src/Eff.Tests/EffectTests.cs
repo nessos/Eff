@@ -58,7 +58,7 @@ namespace Eff.Tests
                 var y = await Task.Run(() => x + 1).AsEffect();
                 return y + 1;
             }
-            
+
             EffectExecutionContext.Handler = new TestEffectHandler();
             Assert.Equal(3, Foo(1).Result);
         }
@@ -76,7 +76,7 @@ namespace Eff.Tests
                 var y = await Bar(x).AsEffect();
                 return y + 1;
             }
-            
+
             EffectExecutionContext.Handler = new TestEffectHandler();
             Assert.Equal(3, Foo(1).Result);
         }
@@ -126,7 +126,7 @@ namespace Eff.Tests
         public void TestExceptionPropagation()
         {
             async EffTask<int> Foo(int x)
-            {    
+            {
                 return 1 / x;
             }
 
@@ -196,5 +196,22 @@ namespace Eff.Tests
             Assert.Equal(result, (int)handler.TraceLogs[0].Result);
         }
 
+        [Fact]
+        public void TestParametersLogging()
+        {
+            async EffTask<int> Foo(int x)
+            {
+                var y = await Task.FromResult(1).AsEffect();
+                return x + y;
+            }
+            var handler = new TestEffectHandler();
+            EffectExecutionContext.Handler = handler;
+            var result = Foo(1).Result;
+            Assert.Equal(2, result);
+            Assert.Equal(1, handler.TraceLogs.Count);
+            Assert.Equal(1, handler.TraceLogs[0].Parameters.Length);
+            Assert.Equal("x", handler.TraceLogs[0].Parameters[0].name);
+            Assert.Equal(1, (int)handler.TraceLogs[0].Parameters[0].value);
+        }
     }
 }
