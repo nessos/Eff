@@ -103,6 +103,16 @@ namespace Eff.Core
                              .ToArray();
         }
 
+        private static (string name, object value)[] GetLocalVariables(IAsyncStateMachine _stateMachine)
+        {
+            var fieldInfos = _stateMachine.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+            return fieldInfos.Where(fieldInfo => !fieldInfo.Name.StartsWith("<>"))
+                             .Where(fieldInfo => fieldInfo.Name.StartsWith("<"))
+                             .Select(fieldInfo => (fieldInfo.Name.Substring(1, fieldInfo.Name.LastIndexOf(">") - 1), fieldInfo.GetValue(_stateMachine)))
+                             .ToArray();
+        }
+
         private void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine, bool safe)
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
@@ -142,6 +152,7 @@ namespace Eff.Core
                                     CallerMemberName = effect.CallerMemberName,
                                     Exception = effect.Exception,
                                     Parameters = _handler.EnableParametersLogging ? GetParameters(_stateMachine) : null,
+                                    LocalVariables = _handler.EnableLocalVariablesLogging ? GetLocalVariables(_stateMachine) : null,
                                 });
                             }
                             if (_handler.EnableTraceLogging && effect.HasResult)
@@ -153,6 +164,7 @@ namespace Eff.Core
                                     CallerMemberName = effect.CallerMemberName,
                                     Result = effect.Result,
                                     Parameters = _handler.EnableParametersLogging ? GetParameters(_stateMachine) : null,
+                                    LocalVariables = _handler.EnableLocalVariablesLogging ? GetLocalVariables(_stateMachine) : null,
                                 });
                             }
                             EffectExecutionContext.Handler = _handler; // restore EffectHandler

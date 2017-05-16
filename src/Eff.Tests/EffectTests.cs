@@ -213,5 +213,23 @@ namespace Eff.Tests
             Assert.Equal("x", handler.TraceLogs[0].Parameters[0].name);
             Assert.Equal(1, (int)handler.TraceLogs[0].Parameters[0].value);
         }
+
+        [Fact]
+        public void TestLocalVariablesLogging()
+        {
+            async EffTask<int> Foo(int x)
+            {
+                var y = await Task.FromResult(1).AsEffect();
+                return x + y;
+            }
+            var handler = new TestEffectHandler();
+            EffectExecutionContext.Handler = handler;
+            var result = Foo(1).Result;
+            Assert.Equal(2, result);
+            Assert.Equal(1, handler.TraceLogs.Count);
+            Assert.Equal(1, handler.TraceLogs[0].LocalVariables.Length);
+            Assert.Equal("y", handler.TraceLogs[0].LocalVariables[0].name);
+            Assert.Equal(0, (int)handler.TraceLogs[0].LocalVariables[0].value);
+        }
     }
 }
