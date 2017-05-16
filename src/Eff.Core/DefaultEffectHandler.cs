@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public class DefaultEffectHandler : EffectHandler
+    internal class DefaultEffectHandler : EffectHandler
     {
         public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
         {
