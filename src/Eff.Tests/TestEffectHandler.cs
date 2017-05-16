@@ -42,6 +42,19 @@ namespace Eff.Core
         public override async ValueTask<ValueTuple> Log(ExceptionLog log)
         {
             ExceptionLogs.Add(log);
+
+            var ex = log.Exception;
+            if (!ex.Data.Contains("StackTraceLog"))
+            {
+                var queue = new Queue<ExceptionLog>();
+                queue.Enqueue(log);
+                ex.Data["StackTraceLog"] = queue;
+
+                return ValueTuple.Create();
+            }
+
+            ((Queue<ExceptionLog>)ex.Data["StackTraceLog"]).Enqueue(log);
+
             return ValueTuple.Create();
         }
 
