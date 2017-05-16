@@ -143,6 +143,7 @@ namespace Eff.Core
                                     Result = effect.Result,
                                 });
                             }
+                            EffectExecutionContext.Handler = _handler; // restore EffectHandler
                         }
                     }
                     var task = ApplyEffectHandler(handler);

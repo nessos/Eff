@@ -101,6 +101,26 @@ namespace Eff.Tests
             Assert.Equal(3, foo.Result);
         }
 
+        [Fact]
+        public void AwaitCombinationOfEffandTaskEffects()
+        {
+            async EffTask<int> Bar(int x)
+            {
+                var y = await Task.FromResult(x + 1).AsEffect();
+                return y;
+            }
+            async EffTask<int> Foo(int x)
+            {
+                await Task.Delay(1000).AsEffect();
+                var y = await Bar(x).AsEffect();
+                return y + 1;
+            }
+
+            EffectExecutionContext.Handler = new TestEffectHandler();
+            var foo = Foo(1);
+            Assert.Equal(3, foo.Result);
+        }
+
 
         [Fact]
         public void TestExceptionPropagation()
