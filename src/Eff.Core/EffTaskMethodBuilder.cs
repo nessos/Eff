@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text;
@@ -93,6 +94,15 @@ namespace Eff.Core
         }
 
 
+        private static (string name, object value)[] GetParameters(IAsyncStateMachine _stateMachine)
+        {
+            var fieldInfos = _stateMachine.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+            return fieldInfos.Where(fieldInfo => !fieldInfo.Name.StartsWith("<"))
+                             .Select(fieldInfo => (fieldInfo.Name, fieldInfo.GetValue(_stateMachine)))
+                             .ToArray();
+        }
+
         private void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine, bool safe)
             where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
@@ -102,7 +112,7 @@ namespace Eff.Core
             switch (awaiter)
             {
                 case IEffect effect:
-                    async ValueTask<ValueTuple> ApplyEffectHandler(IEffectHandler _handler)
+                    async ValueTask<ValueTuple> ApplyEffectHandler(IEffectHandler _handler, IAsyncStateMachine _stateMachine)
                     {
                         try
                         {
@@ -131,6 +141,7 @@ namespace Eff.Core
                                     CallerLineNumber = effect.CallerLineNumber,
                                     CallerMemberName = effect.CallerMemberName,
                                     Exception = effect.Exception,
+                                    Parameters = _handler.EnableParametersLogging ? GetParameters(_stateMachine) : null,
                                 });
                             }
                             if (_handler.EnableTraceLogging && effect.HasResult)
@@ -141,12 +152,14 @@ namespace Eff.Core
                                     CallerLineNumber = effect.CallerLineNumber,
                                     CallerMemberName = effect.CallerMemberName,
                                     Result = effect.Result,
+                                    Parameters = _handler.EnableParametersLogging ? GetParameters(_stateMachine) : null,
                                 });
                             }
                             EffectExecutionContext.Handler = _handler; // restore EffectHandler
                         }
                     }
-                    var task = ApplyEffectHandler(handler);
+                    IAsyncStateMachine boxedStateMachine = handler.EnableParametersLogging || handler.EnableLocalVariablesLogging ? stateMachine : default(TStateMachine);
+                    var task = ApplyEffectHandler(handler, boxedStateMachine);
                     if (task.IsCompleted)
                     {
                         stateMachine.MoveNext();

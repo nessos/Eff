@@ -22,6 +22,8 @@ namespace Eff.Core
         {
             EnableExceptionLogging = enableExceptionLogging;
             EnableTraceLogging = enableTraceLogging;
+            EnableParametersLogging = enableParametersLogging;
+            EnableLocalVariablesLogging = enableLocalVariablesLogging;
         }
 
         public abstract ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
