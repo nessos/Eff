@@ -1,6 +1,7 @@
 ﻿using Eff.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -220,16 +221,20 @@ namespace Eff.Tests
             async EffTask<int> Foo(int x)
             {
                 var y = await Task.FromResult(1).AsEffect();
+                await Task.Delay(10).AsEffect();
                 return x + y;
             }
             var handler = new TestEffectHandler();
             EffectExecutionContext.Handler = handler;
             var result = Foo(1).Result;
             Assert.Equal(2, result);
-            Assert.Equal(1, handler.TraceLogs.Count);
+            Assert.Equal(2, handler.TraceLogs.Count);
             Assert.Equal(1, handler.TraceLogs[0].LocalVariables.Length);
             Assert.Equal("y", handler.TraceLogs[0].LocalVariables[0].name);
             Assert.Equal(0, (int)handler.TraceLogs[0].LocalVariables[0].value);
+            Assert.Equal(1, handler.TraceLogs[1].LocalVariables.Length);
+            Assert.Equal("y", handler.TraceLogs[1].LocalVariables[0].name);
+            Assert.Equal(1, (int)handler.TraceLogs[1].LocalVariables[0].value);
         }
     }
 }
