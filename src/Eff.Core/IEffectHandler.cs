@@ -22,6 +22,7 @@ namespace Eff.Core
         ValueTask<ValueTuple> Handle(TaskEffect effect);
         ValueTask<ValueTuple> Handle<TResult>(EffTaskEffect<TResult> effect);
         ValueTask<ValueTuple> Handle<TResult>(FuncEffect<TResult> effect);
+        ValueTask<ValueTuple> Handle(ActionEffect effect);
 
 
     }

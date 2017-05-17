@@ -249,5 +249,19 @@ namespace Eff.Tests
             EffectExecutionContext.Handler = new TestEffectHandler();
             Assert.Equal(3, Foo(1).Result);
         }
+
+        [Fact]
+        public void AwaitActionEffect()
+        {
+            async EffTask<int> Foo(int x)
+            {
+                int y = 0;
+                await Effect.Action(() => y = x + 1);
+                return y + 1;
+            }
+
+            EffectExecutionContext.Handler = new TestEffectHandler();
+            Assert.Equal(3, Foo(1).Result);
+        }
     }
 }

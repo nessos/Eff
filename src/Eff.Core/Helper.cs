@@ -41,5 +41,13 @@ namespace Eff.Core
         {
             return new FuncEffect<TResult>(func, memberName, sourceFilePath, sourceLineNumber);
         }
+
+        public static ActionEffect Action(Action action,
+                                    [CallerMemberName] string memberName = "",
+                                    [CallerFilePath] string sourceFilePath = "",
+                                    [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            return new ActionEffect(action, memberName, sourceFilePath, sourceLineNumber);
+        }
     }
 }
