@@ -43,7 +43,7 @@ namespace Eff.Tests
         {
             async EffTask<DateTime> Foo()
             {
-                var y = await Effect.DateTimeNow();
+                var y = await CustomEffect.DateTimeNow();
                 return y;
             }
             var now = DateTime.Now;
@@ -235,6 +235,19 @@ namespace Eff.Tests
             Assert.Equal(1, handler.TraceLogs[1].LocalVariables.Length);
             Assert.Equal("y", handler.TraceLogs[1].LocalVariables[0].name);
             Assert.Equal(1, (int)handler.TraceLogs[1].LocalVariables[0].value);
+        }
+
+        [Fact]
+        public void AwaitFuncEffect()
+        {
+            async EffTask<int> Foo(int x)
+            {
+                var y = await Effect.Func(() => x + 1);
+                return y + 1;
+            }
+
+            EffectExecutionContext.Handler = new TestEffectHandler();
+            Assert.Equal(3, Foo(1).Result);
         }
     }
 }

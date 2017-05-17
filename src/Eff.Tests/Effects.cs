@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Eff.Tests
 {
-    public static class Effect
+
+    public static class CustomEffect
     {
         public static DateTimeNowEffect DateTimeNow([CallerMemberName] string memberName = "",
                                                     [CallerFilePath] string sourceFilePath = "",

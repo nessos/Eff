@@ -51,6 +51,12 @@ namespace Eff.Core
             return ValueTuple.Create();
         }
 
+        public async ValueTask<ValueTuple> Handle<TResult>(FuncEffect<TResult> effect)
+        {
+            var result = effect.Func();
+            effect.SetResult(result);
+            return ValueTuple.Create();
+        }
     }
 
 
