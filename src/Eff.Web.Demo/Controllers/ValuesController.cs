@@ -1,4 +1,6 @@
-﻿using Eff.Core;
+﻿#pragma warning disable 1998
+
+using Eff.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
