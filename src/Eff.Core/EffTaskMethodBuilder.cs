@@ -16,6 +16,8 @@ namespace Eff.Core
         private bool haveResult;
         private bool useBuilder;
         private IEffectHandler handler;
+        private (string name, FieldInfo fieldInfo)[] parametersInfo;
+        private (string name, FieldInfo fieldInfo)[] localVariablesInfo;
 
         public static EffTaskMethodBuilder<TResult> Create()
         {
@@ -94,23 +96,16 @@ namespace Eff.Core
         }
 
 
-        private static (string name, object value)[] GetParameters(IAsyncStateMachine _stateMachine)
+        private static (string name, object value)[] GetParameters((string name, FieldInfo fieldInfo)[] parametersInfo, IAsyncStateMachine _stateMachine)
         {
-            var fieldInfos = _stateMachine.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            return fieldInfos.Where(fieldInfo => !fieldInfo.Name.StartsWith("<"))
-                             .Select(fieldInfo => (fieldInfo.Name, fieldInfo.GetValue(_stateMachine)))
-                             .ToArray();
+            return parametersInfo.Select(parameter => (parameter.name, parameter.fieldInfo.GetValue(_stateMachine)))
+                                 .ToArray();
         }
 
-        private static (string name, object value)[] GetLocalVariables(IAsyncStateMachine _stateMachine)
+        private static (string name, object value)[] GetLocalVariables((string name, FieldInfo fieldInfo)[] localVariablesInfo, IAsyncStateMachine _stateMachine)
         {
-            var fieldInfos = _stateMachine.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            return fieldInfos.Where(fieldInfo => !fieldInfo.Name.StartsWith("<>"))
-                             .Where(fieldInfo => fieldInfo.Name.StartsWith("<"))
-                             .Select(fieldInfo => (fieldInfo.Name.Substring(1, fieldInfo.Name.LastIndexOf(">") - 1), fieldInfo.GetValue(_stateMachine)))
-                             .ToArray();
+            return localVariablesInfo.Select(local => (local.name, local.fieldInfo.GetValue(_stateMachine)))
+                                     .ToArray();
         }
 
         private void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine, bool safe)
@@ -118,6 +113,26 @@ namespace Eff.Core
             where TStateMachine : IAsyncStateMachine
         {
             useBuilder = true;
+            if (handler.EnableParametersLogging && this.parametersInfo == null)
+            {
+                var fieldInfos = stateMachine.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+                this.parametersInfo = fieldInfos.Where(fieldInfo => !fieldInfo.Name.StartsWith("<"))
+                                           .Select(fieldInfo => (fieldInfo.Name, fieldInfo))
+                                           .ToArray();
+            }
+            if (handler.EnableLocalVariablesLogging && this.localVariablesInfo == null)
+            {
+                var fieldInfos = stateMachine.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+                this.localVariablesInfo = fieldInfos.Where(fieldInfo => !fieldInfo.Name.StartsWith("<>"))
+                                               .Where(fieldInfo => fieldInfo.Name.StartsWith("<"))
+                                               .Select(fieldInfo => (fieldInfo.Name.Substring(1, fieldInfo.Name.LastIndexOf(">") - 1), fieldInfo))
+                                               .ToArray();
+            }
+
+            (string name, FieldInfo fieldInfo)[] parametersInfo = this.parametersInfo;
+            (string name, FieldInfo fieldInfo)[] localVariablesInfo = this.localVariablesInfo;
 
             switch (awaiter)
             {
@@ -151,8 +166,8 @@ namespace Eff.Core
                                     CallerLineNumber = effect.CallerLineNumber,
                                     CallerMemberName = effect.CallerMemberName,
                                     Exception = effect.Exception,
-                                    Parameters = _handler.EnableParametersLogging ? GetParameters(_stateMachine) : null,
-                                    LocalVariables = _handler.EnableLocalVariablesLogging ? GetLocalVariables(_stateMachine) : null,
+                                    Parameters = _handler.EnableParametersLogging ? GetParameters(parametersInfo, _stateMachine) : null,
+                                    LocalVariables = _handler.EnableLocalVariablesLogging ? GetLocalVariables(localVariablesInfo, _stateMachine) : null,
                                 });
                             }
                             if (_handler.EnableTraceLogging && effect.HasResult)
@@ -163,8 +178,8 @@ namespace Eff.Core
                                     CallerLineNumber = effect.CallerLineNumber,
                                     CallerMemberName = effect.CallerMemberName,
                                     Result = effect.Result,
-                                    Parameters = _handler.EnableParametersLogging ? GetParameters(_stateMachine) : null,
-                                    LocalVariables = _handler.EnableLocalVariablesLogging ? GetLocalVariables(_stateMachine) : null,
+                                    Parameters = _handler.EnableParametersLogging ? GetParameters(parametersInfo, _stateMachine) : null,
+                                    LocalVariables = _handler.EnableLocalVariablesLogging ? GetLocalVariables(localVariablesInfo, _stateMachine) : null,
                                 });
                             }
                             EffectExecutionContext.Handler = _handler; // restore EffectHandler
