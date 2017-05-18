@@ -16,7 +16,7 @@ namespace Eff.Web.Demo.Controllers
 
         public ValuesController()
         {
-            
+            EffectExecutionContext.Handler = new DefaultEffectHandler();
         }
 
         // GET api/values
@@ -25,10 +25,14 @@ namespace Eff.Web.Demo.Controllers
         //    return new string[] { "value1", "value2" };
         //}
 
-        public async EffTask<IEnumerable<string>> Get()
+        public Task<IEnumerable<string>> Get()
         {
-            
-            return new string[] { "value1", "value2" };
+            async EffTask<IEnumerable<string>> Get()
+            {
+                return new string[] { "value1", "value2" };
+            }
+
+            return Get().AsTask();
         }
 
         // GET api/values/5

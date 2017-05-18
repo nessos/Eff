@@ -10,7 +10,7 @@ namespace Eff.Core
     public static class EffectExecutionContext
     {
         [ThreadStatic]
-        public static IEffectHandler Handler = new DefaultEffectHandler();
+        public static IEffectHandler Handler;
         
     }
 
