@@ -13,7 +13,7 @@ async EffTask<int> Foo()
 public class CustomEffectHandler : EffectHandler
 {
     private readonly Random random;
-    public EffectHandler(Random random)
+    public CustomEffectHandler(Random random)
     {
         this.random = random;
     }
