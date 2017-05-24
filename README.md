@@ -10,7 +10,7 @@ async EffTask<int> Foo()
 }
     
 // Effect handler
-public class EffectHandler : EffectHandler
+public class CustomEffectHandler : EffectHandler
 {
     private readonly Random random;
     public EffectHandler(Random random)
@@ -32,7 +32,7 @@ public class EffectHandler : EffectHandler
 }
 
 // Set effect handler and execute
-EffectExecutionContext.Handler = new EffectHandler(new Random());
+EffectExecutionContext.Handler = new CustomEffectHandler(new Random());
 var x = Foo().Result;
 ```
 
