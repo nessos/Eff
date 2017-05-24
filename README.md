@@ -10,7 +10,7 @@ async EffTask<int> Foo()
 }
     
 // Effect handler
-public class EffectHandler : IEffectHandler
+public class EffectHandler : EffectHandler
 {
     private readonly Random random;
     public EffectHandler(Random random)
@@ -18,7 +18,7 @@ public class EffectHandler : IEffectHandler
         this.random = random;
     }
 
-    public async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
+    public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
     {
         switch (effect)
         {
