@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Eff</id>
+    <version>$version$</version>
+    <title>Eff</title>
+    <authors>Nessos Information Technologies</authors>
+    <owners>Nessos Information Technologies</owners>
+    <licenseUrl>http://github.com/nessos/Eff/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/nessos/Eff</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Programming with effects and handlers in C#</description>
+    <releaseNotes>First release</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>C# effects handlers</tags>
+  </metadata>
+</package>
