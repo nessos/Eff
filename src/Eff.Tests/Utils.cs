@@ -12,26 +12,30 @@ namespace Eff.Tests
     {
         public static string StackTraceLog(this Exception ex)
         {
-            var builder = new StringBuilder();
-            foreach (var item in (Queue<ExceptionLog>)ex.Data["StackTraceLog"])
+            if (ex.Data["StackTraceLog"] is Queue<ExceptionLog> queue)
             {
-                builder.AppendLine($"at {item.CallerMemberName} in {Path.GetFileName(item.CallerFilePath)}: line {item.CallerLineNumber}");
-                builder.Append("paremeters:");
-                foreach (var (name, value) in item.Parameters)
+                var builder = new StringBuilder();
+                foreach (var item in queue)
                 {
-                     builder.Append($" ({name}, {value}) ");
-                }
-                builder.AppendLine();
+                    builder.AppendLine($"at {item.CallerMemberName} in {Path.GetFileName(item.CallerFilePath)}: line {item.CallerLineNumber}");
+                    builder.Append("paremeters:");
+                    foreach (var (name, value) in item.Parameters)
+                    {
+                        builder.Append($" ({name}, {value}) ");
+                    }
+                    builder.AppendLine();
 
-                builder.Append("locals:");
-                foreach (var (name, value) in item.LocalVariables)
-                {
-                    builder.Append($" ({name}, {value}) ");
+                    builder.Append("locals:");
+                    foreach (var (name, value) in item.LocalVariables)
+                    {
+                        builder.Append($" ({name}, {value}) ");
+                    }
+                    builder.AppendLine();
                 }
-                builder.AppendLine();
+
+                return builder.ToString();
             }
-
-            return builder.ToString();
+            else return string.Empty;
         }
     }
 }
