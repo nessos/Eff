@@ -36,6 +36,11 @@ EffectExecutionContext.Handler = new CustomEffectHandler(new Random());
 var x = Foo().Result;
 ```
 
+## Install
+via [NuGet](https://www.nuget.org/packages/Eff):
+```
+PM> Install-Package Eff
+```
 
 [Eff]: http://math.andrej.com/wp-content/uploads/2012/03/eff.pdf
 [OCaml]: http://www.lpw25.net/ocaml2015-abs2.pdf
