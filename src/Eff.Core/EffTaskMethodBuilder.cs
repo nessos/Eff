@@ -113,30 +113,33 @@ namespace Eff.Core
             where TStateMachine : IAsyncStateMachine
         {
             useBuilder = true;
-            if (handler.EnableParametersLogging && this.parametersInfo == null)
-            {
-                var fieldInfos = stateMachine.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-                this.parametersInfo = fieldInfos.Where(fieldInfo => !fieldInfo.Name.StartsWith("<"))
-                                           .Select(fieldInfo => (fieldInfo.Name, fieldInfo))
-                                           .ToArray();
-            }
-            if (handler.EnableLocalVariablesLogging && this.localVariablesInfo == null)
-            {
-                var fieldInfos = stateMachine.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-                this.localVariablesInfo = fieldInfos.Where(fieldInfo => !fieldInfo.Name.StartsWith("<>"))
-                                               .Where(fieldInfo => fieldInfo.Name.StartsWith("<"))
-                                               .Select(fieldInfo => (fieldInfo.Name.Substring(1, fieldInfo.Name.LastIndexOf(">") - 1), fieldInfo))
-                                               .ToArray();
-            }
-
-            (string name, FieldInfo fieldInfo)[] parametersInfo = this.parametersInfo;
-            (string name, FieldInfo fieldInfo)[] localVariablesInfo = this.localVariablesInfo;
 
             switch (awaiter)
             {
                 case IEffect effect:
+
+                    if ((effect.CaptureState || handler.EnableParametersLogging) && this.parametersInfo == null)
+                    {
+                        var fieldInfos = stateMachine.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+                        this.parametersInfo = fieldInfos.Where(fieldInfo => !fieldInfo.Name.StartsWith("<"))
+                                                   .Select(fieldInfo => (fieldInfo.Name, fieldInfo))
+                                                   .ToArray();
+                    }
+                    if ((effect.CaptureState || handler.EnableLocalVariablesLogging) && this.localVariablesInfo == null)
+                    {
+                        var fieldInfos = stateMachine.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+                        this.localVariablesInfo = fieldInfos.Where(fieldInfo => !fieldInfo.Name.StartsWith("<>"))
+                                                       .Where(fieldInfo => fieldInfo.Name.StartsWith("<"))
+                                                       .Select(fieldInfo => (fieldInfo.Name.Substring(1, fieldInfo.Name.LastIndexOf(">") - 1), fieldInfo))
+                                                       .ToArray();
+                    }
+
+                    (string name, FieldInfo fieldInfo)[] parametersInfo = this.parametersInfo;
+                    (string name, FieldInfo fieldInfo)[] localVariablesInfo = this.localVariablesInfo;
+
                     async ValueTask<ValueTuple> ApplyEffectHandler(IEffectHandler _handler, IAsyncStateMachine _stateMachine)
                     {
                         try
@@ -185,7 +188,13 @@ namespace Eff.Core
                             EffectExecutionContext.Handler = _handler; // restore EffectHandler
                         }
                     }
-                    IAsyncStateMachine boxedStateMachine = handler.EnableParametersLogging || handler.EnableLocalVariablesLogging ? stateMachine : default(TStateMachine);
+                    IAsyncStateMachine boxedStateMachine = effect.CaptureState || handler.EnableParametersLogging || handler.EnableLocalVariablesLogging ? stateMachine : default(TStateMachine);
+                    if (effect.CaptureState)
+                    {
+                        var parameters = GetParameters(parametersInfo, boxedStateMachine);
+                        var localVariables = GetLocalVariables(localVariablesInfo, boxedStateMachine);
+                        effect.SetState(parameters, localVariables);
+                    }
                     var task = ApplyEffectHandler(handler, boxedStateMachine);
                     if (task.IsCompleted)
                     {

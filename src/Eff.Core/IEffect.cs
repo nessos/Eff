@@ -15,6 +15,13 @@ namespace Eff.Core
         string CallerFilePath { get; }
         int CallerLineNumber { get; }
 
+        bool CaptureState { get; }
+        (string name, object value)[] Parameters { get; }
+        (string name, object value)[] LocalVariables { get; }
+
+        void SetState((string name, object value)[] parameters, 
+                      (string name, object value)[] localVariables);
+
         ValueTask<ValueTuple> Accept(IEffectHandler handler);
         void SetException(Exception ex);
 

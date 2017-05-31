@@ -16,12 +16,16 @@ namespace Eff.Core
         protected bool hasResult;
         protected TResult result;
         protected Exception exception;
+        private readonly bool captureState;
+        private (string name, object value)[] parameters;
+        private (string name, object value)[] localVariables;
 
-        public Effect(string memberName, string sourceFilePath, int sourceLineNumber)
+        public Effect(string memberName, string sourceFilePath, int sourceLineNumber, bool captureState = false)
         {
             this.memberName = memberName;
             this.sourceFilePath = sourceFilePath;
             this.sourceLineNumber = sourceLineNumber;
+            this.captureState = captureState;
         }
 
         public string CallerMemberName => memberName;
@@ -33,6 +37,10 @@ namespace Eff.Core
         public bool HasResult => hasResult;
         public Exception Exception => exception;
         public object Result => result;
+
+        public bool CaptureState => captureState;
+        public (string name, object value)[] Parameters => parameters;
+        public (string name, object value)[] LocalVariables => localVariables;
 
         public TResult GetResult()
         {
@@ -58,6 +66,12 @@ namespace Eff.Core
         public void SetException(Exception ex)
         {
             exception = ex;
+        }
+
+        public void SetState((string name, object value)[] parameters, (string name, object value)[] localVariables)
+        {
+            this.parameters = parameters;
+            this.localVariables = localVariables;
         }
     }
 
