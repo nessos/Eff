@@ -7,8 +7,8 @@ namespace Eff.Core
     {
         private readonly Func<TResult> func;
 
-        public FuncEffect(Func<TResult> func, string memberName, string sourceFilePath, int sourceLineNumber)
-            : base(memberName, sourceFilePath, sourceLineNumber)
+        public FuncEffect(Func<TResult> func, string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
+            : base(memberName, sourceFilePath, sourceLineNumber, captureState)
         {
             this.func = func;
         }

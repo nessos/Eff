@@ -11,8 +11,8 @@ namespace Eff.Tests
     public class DateTimeNowEffect : Effect<DateTime>
     {
 
-        public DateTimeNowEffect(string memberName, string sourceFilePath, int sourceLineNumber)
-            : base (memberName, sourceFilePath, sourceLineNumber)
+        public DateTimeNowEffect(string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
+            : base (memberName, sourceFilePath, sourceLineNumber, captureState)
         {
         }
 

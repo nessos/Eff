@@ -7,8 +7,8 @@ namespace Eff.Core
     {
         private readonly Action action;
 
-        public ActionEffect(Action action, string memberName, string sourceFilePath, int sourceLineNumber)
-            : base(memberName, sourceFilePath, sourceLineNumber)
+        public ActionEffect(Action action, string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
+            : base(memberName, sourceFilePath, sourceLineNumber, captureState)
         {
             this.action = action;
         }

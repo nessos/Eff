@@ -13,41 +13,46 @@ namespace Eff.Core
         public static TaskEffect<TResult> AsEffect<TResult>(this Task<TResult> task,
                                                     [CallerMemberName] string memberName = "",
                                                     [CallerFilePath] string sourceFilePath = "",
-                                                    [CallerLineNumber] int sourceLineNumber = 0)
+                                                    [CallerLineNumber] int sourceLineNumber = 0,
+                                                    bool captureState = false)
         {
-            return new TaskEffect<TResult>(task, memberName, sourceFilePath, sourceLineNumber);
+            return new TaskEffect<TResult>(task, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
         public static TaskEffect AsEffect(this Task task,
                                             [CallerMemberName] string memberName = "",
                                             [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0)
+                                            [CallerLineNumber] int sourceLineNumber = 0, 
+                                            bool captureState = false)
         {
-            return new TaskEffect(task, memberName, sourceFilePath, sourceLineNumber);
+            return new TaskEffect(task, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
         public static EffTaskEffect<TResult> AsEffect<TResult>(this EffTask<TResult> eff,
                                             [CallerMemberName] string memberName = "",
                                             [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0)
+                                            [CallerLineNumber] int sourceLineNumber = 0,
+                                            bool captureState = false)
         {
-            return new EffTaskEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber);
+            return new EffTaskEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
         public static FuncEffect<TResult> Func<TResult>(Func<TResult> func,
                                             [CallerMemberName] string memberName = "",
                                             [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0)
+                                            [CallerLineNumber] int sourceLineNumber = 0,
+                                            bool captureState = false)
         {
-            return new FuncEffect<TResult>(func, memberName, sourceFilePath, sourceLineNumber);
+            return new FuncEffect<TResult>(func, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
         public static ActionEffect Action(Action action,
                                     [CallerMemberName] string memberName = "",
                                     [CallerFilePath] string sourceFilePath = "",
-                                    [CallerLineNumber] int sourceLineNumber = 0)
+                                    [CallerLineNumber] int sourceLineNumber = 0,
+                                    bool captureState = false)
         {
-            return new ActionEffect(action, memberName, sourceFilePath, sourceLineNumber);
+            return new ActionEffect(action, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
     }
 }

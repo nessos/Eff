@@ -12,9 +12,10 @@ namespace Eff.Tests
     {
         public static DateTimeNowEffect DateTimeNow([CallerMemberName] string memberName = "",
                                                     [CallerFilePath] string sourceFilePath = "",
-                                                    [CallerLineNumber] int sourceLineNumber = 0)
+                                                    [CallerLineNumber] int sourceLineNumber = 0,
+                                                    bool captureState = false)
         {
-            return new DateTimeNowEffect(memberName, sourceFilePath, sourceLineNumber);
+            return new DateTimeNowEffect(memberName, sourceFilePath, sourceLineNumber, captureState);
         }
     }
 }

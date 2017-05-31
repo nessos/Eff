@@ -7,8 +7,8 @@ namespace Eff.Core
     {
         private readonly Task<TResult> task;
 
-        public TaskEffect(Task<TResult> task, string memberName, string sourceFilePath, int sourceLineNumber)
-            : base(memberName, sourceFilePath, sourceLineNumber)
+        public TaskEffect(Task<TResult> task, string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
+            : base(memberName, sourceFilePath, sourceLineNumber, captureState)
         {
             this.task = task;
         }
@@ -35,8 +35,8 @@ namespace Eff.Core
     {
         private readonly Task task;
 
-        public TaskEffect(Task task, string memberName, string sourceFilePath, int sourceLineNumber)
-            : base(memberName, sourceFilePath, sourceLineNumber)
+        public TaskEffect(Task task, string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
+            : base(memberName, sourceFilePath, sourceLineNumber, captureState)
         {
             this.task = task;
         }

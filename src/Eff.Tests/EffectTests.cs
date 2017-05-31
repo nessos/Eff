@@ -265,5 +265,26 @@ namespace Eff.Tests
             EffectExecutionContext.Handler = new TestEffectHandler();
             Assert.Equal(3, Foo(1).Result);
         }
+
+        [Fact]
+        public void AwaitCaptureStateEffect()
+        {
+            async EffTask<int> Foo(int x)
+            {
+                var y = await Task.FromResult(1).AsEffect();
+                await Task.Delay(10).AsEffect(captureState : true);
+                return x + y;
+            }
+            var handler = new TestEffectHandler();
+            EffectExecutionContext.Handler = handler;
+            var result = Foo(1).Result;
+            Assert.Equal(2, result);
+            Assert.Equal(1, handler.CaptureStateParameters.Length);
+            Assert.Equal("x", handler.CaptureStateParameters[0].name);
+            Assert.Equal(1, (int)handler.CaptureStateParameters[0].value);
+            Assert.Equal(1, handler.CaptureStateLocalVariables.Length);
+            Assert.Equal("y", handler.CaptureStateLocalVariables[0].name);
+            Assert.Equal(1, (int)handler.CaptureStateLocalVariables[0].value);
+        }
     }
 }

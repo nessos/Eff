@@ -20,7 +20,7 @@ namespace Eff.Core
         private (string name, object value)[] parameters;
         private (string name, object value)[] localVariables;
 
-        public Effect(string memberName, string sourceFilePath, int sourceLineNumber, bool captureState = false)
+        public Effect(string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
         {
             this.memberName = memberName;
             this.sourceFilePath = sourceFilePath;

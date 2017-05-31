@@ -39,7 +39,23 @@ namespace Eff.Core
             return ValueTuple.Create();
         }
 
-        
+        public (string name, object value)[] CaptureStateParameters { private set; get; }
+        public (string name, object value)[] CaptureStateLocalVariables { private set; get; }
+        public override async ValueTask<ValueTuple> Handle(TaskEffect effect)
+        {
+            if (effect.CaptureState)
+            {
+                CaptureStateParameters = effect.Parameters;
+                CaptureStateLocalVariables = effect.LocalVariables;
+            }
+
+            await effect.Task;
+            effect.SetResult(ValueTuple.Create());
+
+            return ValueTuple.Create();
+        }
+
+
 
         public override async ValueTask<ValueTuple> Log(ExceptionLog log)
         {
