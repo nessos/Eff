@@ -153,8 +153,14 @@ namespace Eff.Tests
             }
 
             EffectExecutionContext.Handler = new TestEffectHandler();
-            var ex = Foo(0).Exception;
-            Assert.IsType<DivideByZeroException>(ex.InnerException);
+            try
+            {
+                var _ = Foo(0).Result;
+            }
+            catch (AggregateException ex)
+            {
+                Assert.IsType<DivideByZeroException>(ex.InnerException);
+            }
         }
 
         [Fact]
@@ -172,10 +178,16 @@ namespace Eff.Tests
             }
             var handler = new TestEffectHandler();
             EffectExecutionContext.Handler = handler;
-            var ex = Foo(0).Exception;
-            Assert.IsType<DivideByZeroException>(ex.InnerException);
-            Assert.Equal(1, handler.ExceptionLogs.Count);
-            Assert.Equal(ex.InnerException, handler.ExceptionLogs[0].Exception);
+            try
+            {
+                var _ = Foo(0).Result;
+            }
+            catch (AggregateException ex)
+            {
+                Assert.IsType<DivideByZeroException>(ex.InnerException);
+                Assert.Equal(1, handler.ExceptionLogs.Count);
+                Assert.Equal(ex.InnerException, handler.ExceptionLogs[0].Exception);
+            }
         }
 
         [Fact]

@@ -185,6 +185,7 @@ namespace Eff.Core
                                     LocalVariables = _handler.EnableLocalVariablesLogging ? GetLocalVariables(localVariablesInfo, _stateMachine) : null,
                                 });
                             }
+                            await System.Threading.Tasks.Task.Yield();
                             EffectExecutionContext.Handler = _handler; // restore EffectHandler
                         }
                     }
@@ -196,18 +197,13 @@ namespace Eff.Core
                         effect.SetState(parameters, localVariables);
                     }
                     var task = ApplyEffectHandler(handler, boxedStateMachine);
-                    if (task.IsCompleted)
-                    {
-                        stateMachine.MoveNext();
-                    }
+                    
+                    var _awaiter = task.GetAwaiter();
+                    if (safe)
+                        methodBuilder.AwaitOnCompleted(ref _awaiter, ref stateMachine);
                     else
-                    {
-                        var _awaiter = task.GetAwaiter();
-                        if (safe)
-                            methodBuilder.AwaitOnCompleted(ref _awaiter, ref stateMachine);
-                        else
-                            methodBuilder.AwaitUnsafeOnCompleted(ref _awaiter, ref stateMachine);
-                    }
+                        methodBuilder.AwaitUnsafeOnCompleted(ref _awaiter, ref stateMachine);
+                    
                     break;
                 default:
                     throw new EffException($"Awaiter {awaiter.GetType().Name} is not an effect. Try to use obj.AsEffect().");
