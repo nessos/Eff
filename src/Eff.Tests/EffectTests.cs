@@ -286,5 +286,24 @@ namespace Eff.Tests
             Assert.Equal("y", handler.CaptureStateLocalVariables[0].name);
             Assert.Equal(1, (int)handler.CaptureStateLocalVariables[0].value);
         }
+
+        [Fact]
+        public void TestEffectsinLoops()
+        {
+            async EffTask<int> Foo(int x)
+            {
+                int sum = x;
+                for (int i = 0; i < 10000; i++)
+                {
+                    sum += await Task.FromResult(1).AsEffect();
+                }
+                
+                return sum;
+            }
+            var handler = new TestEffectHandler();
+            EffectExecutionContext.Handler = handler;
+            var result = Foo(0).Result;
+            Assert.Equal(10000, result);
+        }
     }
 }
