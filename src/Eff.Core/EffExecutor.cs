@@ -17,7 +17,7 @@ namespace Eff.Core
             var effMethodHandler = new EffMethodHandler<TResult>();
             var result = default(TResult);
             var done = false;
-            while (done)
+            while (!done)
             {
                 switch (eff)
                 {
