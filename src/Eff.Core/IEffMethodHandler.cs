@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public interface IEffMethodHandler
+    public interface IEffMethodHandler<TResult>
     {
-        ValueTask<Eff<TResult>> Handle<TSource, TResult>(Await<TSource, TResult> await, IEffectHandler handler);
-        ValueTask<Eff<TResult>> Handle<TResult>(SetResult<TResult> setResult, IEffectHandler handler);
-        ValueTask<Eff<TResult>> Handle<TResult>(SetException<TResult> setException, IEffectHandler handler);
+        ValueTask<Eff<TResult>> Handle<TSource>(Await<TSource, TResult> await, IEffectHandler handler);
+        ValueTask<Eff<TResult>> Handle(SetResult<TResult> setResult, IEffectHandler handler);
+        ValueTask<Eff<TResult>> Handle(SetException<TResult> setException, IEffectHandler handler);
     }
 
 

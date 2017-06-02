@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public class EffMethodHandler : IEffMethodHandler
+    public class EffMethodHandler<TResult> : IEffMethodHandler<TResult>
     {
-        public ValueTask<Eff<TResult>> Handle<TSource, TResult>(Await<TSource, TResult> await, IEffectHandler handler)
+        public ValueTask<Eff<TResult>> Handle<TSource>(Await<TSource, TResult> await, IEffectHandler handler)
         {
             throw new NotImplementedException();
         }
 
-        public ValueTask<Eff<TResult>> Handle<TResult>(SetResult<TResult> setResult, IEffectHandler handler)
+        public ValueTask<Eff<TResult>> Handle(SetResult<TResult> setResult, IEffectHandler handler)
         {
             throw new NotImplementedException();
         }
 
-        public ValueTask<Eff<TResult>> Handle<TResult>(SetException<TResult> setException, IEffectHandler handler)
+        public ValueTask<Eff<TResult>> Handle(SetException<TResult> setException, IEffectHandler handler)
         {
             throw new NotImplementedException();
         }

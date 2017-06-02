@@ -48,7 +48,6 @@
   <ItemGroup>
     <Compile Include="EffMethodHandler.cs" />
     <Compile Include="IEffMethodHandler.cs" />
-    <Compile Include="EffectExecutionContext.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="DefaultEffectHandler.cs" />
     <Compile Include="EffectHandler.cs" />

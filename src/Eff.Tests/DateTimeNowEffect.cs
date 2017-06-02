@@ -16,10 +16,7 @@ namespace Eff.Tests
         {
         }
 
-        public override ValueTask<ValueTuple> Accept(IEffMethodHandler handler)
-        {
-            return handler.Handle(this);
-        }
+        
 
         public override void OnCompleted(Action continuation)
         {

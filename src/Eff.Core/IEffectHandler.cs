@@ -19,7 +19,7 @@ namespace Eff.Core
 
         ValueTask<TResult> Handle<TResult>(IEffect<TResult> effect);
         ValueTask<TResult> Handle<TResult>(TaskEffect<TResult> effect);
-        ValueTask<ValueTuple> Handle(TaskEffect effect);        
+        ValueTask<ValueTuple> Handle(TaskEffect effect);
         ValueTask<TResult> Handle<TResult>(FuncEffect<TResult> effect);
         ValueTask<ValueTuple> Handle(ActionEffect effect);
 

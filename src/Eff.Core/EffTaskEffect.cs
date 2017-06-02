@@ -15,12 +15,6 @@ namespace Eff.Core
 
         public Eff<TResult> EffTask => effTask;
 
-        public override async ValueTask<ValueTuple> Accept(IEffMethodHandler handler)
-        {
-            //return handler.Handle(this);
-            return ValueTuple.Create();
-        }
-
         public override void OnCompleted(Action continuation)
         {
             throw new NotSupportedException();

@@ -22,7 +22,7 @@ namespace Eff.Core
         void SetState((string name, object value)[] parameters, 
                       (string name, object value)[] localVariables);
 
-        ValueTask<ValueTuple> Accept(IEffMethodHandler handler);
+        
         void SetException(Exception ex);
 
         bool HasResult { get; }

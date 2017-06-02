@@ -15,11 +15,6 @@ namespace Eff.Core
 
         public Func<TResult> Func => func;
 
-        public override ValueTask<ValueTuple> Accept(IEffMethodHandler handler)
-        {
-            throw new NotSupportedException();
-        }
-
         public override void OnCompleted(Action continuation)
         {
             throw new NotSupportedException();

@@ -10,7 +10,7 @@ namespace Eff.Core
     [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
     public abstract class Eff<TResult>
     {
-        public abstract ValueTask<Eff<TResult>> Handle(IEffMethodHandler effHandler, IEffectHandler effectHandler);
+        public abstract ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler);
     }
 
     public class Await<TSource, TResult> : Eff<TResult>
@@ -28,7 +28,7 @@ namespace Eff.Core
             this.failure = failure;
         }
 
-        public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler effHandler, IEffectHandler effectHandler)
+        public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
         {
             return effHandler.Handle(this, effectHandler);
         }
@@ -43,7 +43,7 @@ namespace Eff.Core
             this.result = result;
         }
 
-        public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler effHandler, IEffectHandler effectHandler)
+        public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
         {
             throw new NotImplementedException();
         }
@@ -58,7 +58,7 @@ namespace Eff.Core
             this.exception = exception;
         }
 
-        public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler effHandler, IEffectHandler effectHandler)
+        public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
         {
             throw new NotImplementedException();
         }
