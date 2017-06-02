@@ -28,6 +28,10 @@ namespace Eff.Core
             this.failure = failure;
         }
 
+        public IEffect<TSource> Effect => effect;
+        public Func<TSource, Eff<TResult>> Success => success;
+        public Func<Exception, Eff<TResult>> Failure => failure;
+
         public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
         {
             return effHandler.Handle(this, effectHandler);
@@ -43,9 +47,11 @@ namespace Eff.Core
             this.result = result;
         }
 
+        public TResult Result => result;
+
         public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
         {
-            throw new NotImplementedException();
+            return effHandler.Handle(this, effectHandler);
         }
     }
 
@@ -58,9 +64,11 @@ namespace Eff.Core
             this.exception = exception;
         }
 
+        public Exception Exception => exception;
+
         public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
         {
-            throw new NotImplementedException();
+            return effHandler.Handle(this, effectHandler);
         }
     }
 
