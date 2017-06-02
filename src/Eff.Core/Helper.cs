@@ -28,7 +28,7 @@ namespace Eff.Core
             return new TaskEffect(task, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
-        public static EffTaskEffect<TResult> AsEffect<TResult>(this EffTask<TResult> eff,
+        public static EffTaskEffect<TResult> AsEffect<TResult>(this Eff<TResult> eff,
                                             [CallerMemberName] string memberName = "",
                                             [CallerFilePath] string sourceFilePath = "",
                                             [CallerLineNumber] int sourceLineNumber = 0,

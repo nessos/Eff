@@ -17,11 +17,10 @@ namespace Eff.Core
         ValueTask<ValueTuple> Log(ExceptionLog log);
         ValueTask<ValueTuple> Log(ResultLog log);
 
-        ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
-        ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect);
-        ValueTask<ValueTuple> Handle(TaskEffect effect);
-        ValueTask<ValueTuple> Handle<TResult>(EffTaskEffect<TResult> effect);
-        ValueTask<ValueTuple> Handle<TResult>(FuncEffect<TResult> effect);
+        ValueTask<TResult> Handle<TResult>(IEffect<TResult> effect);
+        ValueTask<TResult> Handle<TResult>(TaskEffect<TResult> effect);
+        ValueTask<ValueTuple> Handle(TaskEffect effect);        
+        ValueTask<TResult> Handle<TResult>(FuncEffect<TResult> effect);
         ValueTask<ValueTuple> Handle(ActionEffect effect);
 
 

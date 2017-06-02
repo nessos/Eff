@@ -27,7 +27,7 @@ namespace Eff.Web.Demo.Controllers
 
         public Task<IEnumerable<string>> Get()
         {
-            async EffTask<IEnumerable<string>> Get()
+            async Eff<IEnumerable<string>> Get()
             {
                 return new string[] { "value1", "value2" };
             }

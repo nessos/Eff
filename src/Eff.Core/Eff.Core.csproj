@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EffMethodHandler.cs" />
+    <Compile Include="IEffMethodHandler.cs" />
     <Compile Include="EffectExecutionContext.cs" />
     <Compile Include="Effect.cs" />
     <Compile Include="DefaultEffectHandler.cs" />
@@ -55,9 +57,8 @@
     <Compile Include="Helper.cs" />
     <Compile Include="IEffectHandler.cs" />
     <Compile Include="IEffect.cs" />
-    <Compile Include="EffTaskAwaiter.cs" />
-    <Compile Include="EffTaskMethodBuilder.cs" />
-    <Compile Include="EffTask.cs" />
+    <Compile Include="EffMethodBuilder.cs" />
+    <Compile Include="Eff.cs" />
     <Compile Include="LogTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EffTaskEffect.cs" />

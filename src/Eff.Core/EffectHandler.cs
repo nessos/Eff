@@ -28,42 +28,37 @@ namespace Eff.Core
             EnableLocalVariablesLogging = enableLocalVariablesLogging;
         }
 
-        public abstract ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
+        public abstract ValueTask<TResult> Handle<TResult>(IEffect<TResult> effect);
         public abstract ValueTask<ValueTuple> Log(ExceptionLog log);
         public abstract ValueTask<ValueTuple> Log(ResultLog log);
 
-        public virtual async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
+        public virtual async ValueTask<TResult> Handle<TResult>(TaskEffect<TResult> effect)
         {
             var result = await effect.Task;
-            effect.SetResult(result);
-            return ValueTuple.Create();
+            
+            return result;
         }
 
         public virtual async ValueTask<ValueTuple> Handle(TaskEffect effect)
         {
             await effect.Task;
-            effect.SetResult(ValueTuple.Create());
+            
             return ValueTuple.Create();
         }
 
-        public virtual async ValueTask<ValueTuple> Handle<TResult>(EffTaskEffect<TResult> effect)
-        {
-            var result = await effect.EffTask;
-            effect.SetResult(result);
-            return ValueTuple.Create();
-        }
 
-        public virtual async ValueTask<ValueTuple> Handle<TResult>(FuncEffect<TResult> effect)
+
+        public virtual async ValueTask<TResult> Handle<TResult>(FuncEffect<TResult> effect)
         {
             var result = effect.Func();
-            effect.SetResult(result);
-            return ValueTuple.Create();
+            
+            return result;
         }
 
         public virtual async ValueTask<ValueTuple> Handle(ActionEffect effect)
         {
             effect.Action();
-            effect.SetResult(ValueTuple.Create());
+            
             return ValueTuple.Create();
         }
     }

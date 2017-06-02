@@ -11,17 +11,17 @@ namespace Eff.Tests
 {
     class Program
     {
-        static async EffTask<int> Baz(int x)
+        static async Eff<int> Baz(int x)
         {
             return x + 1;
         }
 
-        static async EffTask<int> Bar(int x)
+        static async Eff<int> Bar(int x)
         {
             return 1 / x;
         }
 
-        static async EffTask<int> Foo(int x)
+        static async Eff<int> Foo(int x)
         {
             var y = await Baz(x).AsEffect();
             var z = await Bar(x).AsEffect();

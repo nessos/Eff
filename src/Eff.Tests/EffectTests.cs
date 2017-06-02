@@ -16,7 +16,7 @@ namespace Eff.Tests
         [Fact]
         public void SimpleReturn()
         {
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 return x + 1;
             }
@@ -27,11 +27,11 @@ namespace Eff.Tests
         [Fact]
         public void AwaitEffTaskEffect()
         {
-            async EffTask<int> Bar(int x)
+            async Eff<int> Bar(int x)
             {
                 return x + 1;
             }
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 var y = await Bar(x).AsEffect();
                 return y + 1;
@@ -43,7 +43,7 @@ namespace Eff.Tests
         [Fact]
         public void AwaitCustomEffect()
         {
-            async EffTask<DateTime> Foo()
+            async Eff<DateTime> Foo()
             {
                 var y = await CustomEffect.DateTimeNow();
                 return y;
@@ -56,7 +56,7 @@ namespace Eff.Tests
         [Fact]
         public void AwaitTaskEffect()
         {
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 var y = await Task.Run(() => x + 1).AsEffect();
                 return y + 1;
@@ -74,7 +74,7 @@ namespace Eff.Tests
                 await Task.Delay(1000);
                 return x + 1;
             }
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 var y = await Bar(x).AsEffect();
                 return y + 1;
@@ -87,13 +87,13 @@ namespace Eff.Tests
         [Fact]
         public void AwaitSequenceOfTaskEffects()
         {
-            async EffTask<int> Bar(int x)
+            async Eff<int> Bar(int x)
             {
                 await Task.Delay(1000).AsEffect();
                 var y = await Task.FromResult(x + 1).AsEffect();
                 return y;
             }
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 var y = await Bar(x).AsEffect();
                 return y + 1;
@@ -107,12 +107,12 @@ namespace Eff.Tests
         [Fact]
         public void AwaitCombinationOfEffandTaskEffects()
         {
-            async EffTask<int> Bar(int x)
+            async Eff<int> Bar(int x)
             {
                 var y = await Task.FromResult(x + 1).AsEffect();
                 return y;
             }
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 await Task.Delay(1000).AsEffect();
                 var y = await Bar(x).AsEffect();
@@ -128,7 +128,7 @@ namespace Eff.Tests
         [Fact]
         public void TestExceptionPropagation()
         {
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 return 1 / x;
             }
@@ -141,12 +141,12 @@ namespace Eff.Tests
         [Fact]
         public void TestExceptionPropagationWithAwait()
         {
-            async EffTask<int> Bar(int x)
+            async Eff<int> Bar(int x)
             {
                 return 1 / x;
             }
 
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 var y = await Bar(x).AsEffect();
                 return y;
@@ -166,12 +166,12 @@ namespace Eff.Tests
         [Fact]
         public void TestExceptionLog()
         {
-            async EffTask<int> Bar(int x)
+            async Eff<int> Bar(int x)
             {
                 return 1 / x;
             }
 
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 var y = await Bar(x).AsEffect();
                 return y;
@@ -193,12 +193,12 @@ namespace Eff.Tests
         [Fact]
         public void TestTraceLog()
         {
-            async EffTask<int> Bar(int x)
+            async Eff<int> Bar(int x)
             {
                 return x + 1;
             }
 
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 var y = await Bar(x).AsEffect();
                 return y;
@@ -214,7 +214,7 @@ namespace Eff.Tests
         [Fact]
         public void TestParametersLogging()
         {
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 var y = await Task.FromResult(1).AsEffect();
                 return x + y;
@@ -232,7 +232,7 @@ namespace Eff.Tests
         [Fact]
         public void TestLocalVariablesLogging()
         {
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 var y = await Task.FromResult(1).AsEffect();
                 await Task.Delay(10).AsEffect();
@@ -254,7 +254,7 @@ namespace Eff.Tests
         [Fact]
         public void AwaitFuncEffect()
         {
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 var y = await Effect.Func(() => x + 1);
                 return y + 1;
@@ -267,7 +267,7 @@ namespace Eff.Tests
         [Fact]
         public void AwaitActionEffect()
         {
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 int y = 0;
                 await Effect.Action(() => y = x + 1);
@@ -281,7 +281,7 @@ namespace Eff.Tests
         [Fact]
         public void AwaitCaptureStateEffect()
         {
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 var y = await Task.FromResult(1).AsEffect();
                 await Task.Delay(10).AsEffect(captureState : true);
@@ -302,7 +302,7 @@ namespace Eff.Tests
         [Fact]
         public void TestEffectsinLoops()
         {
-            async EffTask<int> Foo(int x)
+            async Eff<int> Foo(int x)
             {
                 int sum = x;
                 for (int i = 0; i < 10000; i++)

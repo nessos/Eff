@@ -61,7 +61,7 @@ namespace Eff.Core
 
         public abstract void OnCompleted(Action continuation);
         public abstract void UnsafeOnCompleted(Action continuation);
-        public abstract ValueTask<ValueTuple> Accept(IEffectHandler handler);
+        public abstract ValueTask<ValueTuple> Accept(IEffMethodHandler handler);
 
         public void SetException(Exception ex)
         {
@@ -72,6 +72,14 @@ namespace Eff.Core
         {
             this.parameters = parameters;
             this.localVariables = localVariables;
+        }
+
+        public Eff<TSource> Await<TSource>(Func<Eff<TSource>> continuation)
+        {
+            Func<TResult, Eff<TSource>> success = result => { SetResult(result); return continuation(); };
+            Func<Exception, Eff<TSource>> failure = exception => { SetException(exception); return continuation(); };
+
+            return new Await<TResult, TSource>(this, success, failure);
         }
     }
 

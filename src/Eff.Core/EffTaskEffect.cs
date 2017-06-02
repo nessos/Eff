@@ -5,19 +5,20 @@ namespace Eff.Core
 {
     public class EffTaskEffect<TResult> : Effect<TResult>
     {
-        private readonly EffTask<TResult> effTask;
+        private readonly Eff<TResult> effTask;
 
-        public EffTaskEffect(EffTask<TResult> effTask, string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
+        public EffTaskEffect(Eff<TResult> effTask, string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
             : base(memberName, sourceFilePath, sourceLineNumber, captureState)
         {
             this.effTask = effTask;
         }
 
-        public EffTask<TResult> EffTask => effTask;
+        public Eff<TResult> EffTask => effTask;
 
-        public override ValueTask<ValueTuple> Accept(IEffectHandler handler)
+        public override async ValueTask<ValueTuple> Accept(IEffMethodHandler handler)
         {
-            return handler.Handle(this);
+            //return handler.Handle(this);
+            return ValueTuple.Create();
         }
 
         public override void OnCompleted(Action continuation)
