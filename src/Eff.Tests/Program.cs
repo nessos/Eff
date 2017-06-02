@@ -32,8 +32,8 @@ namespace Eff.Tests
         {
             try
             {
-                EffectExecutionContext.Handler = new TestEffectHandler();
-                var _ = Foo(0).Result;
+                var handler = new TestEffectHandler();
+                var _ = Foo(0).Run(handler).Result;
             }
             catch(AggregateException ex)
             {

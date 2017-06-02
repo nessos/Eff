@@ -13,10 +13,10 @@ namespace Eff.Web.Demo.Controllers
 {
     public class ValuesController : ApiController
     {
-
+        private readonly IEffectHandler handler;
         public ValuesController()
         {
-            EffectExecutionContext.Handler = new DefaultEffectHandler();
+            handler = new DefaultEffectHandler();
         }
 
         // GET api/values
@@ -32,7 +32,7 @@ namespace Eff.Web.Demo.Controllers
                 return new string[] { "value1", "value2" };
             }
 
-            return Get().AsTask();
+            return Get().Run(handler);
         }
 
         // GET api/values/5

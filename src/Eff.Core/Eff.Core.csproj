@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EffExecutor.cs" />
     <Compile Include="EffMethodHandler.cs" />
     <Compile Include="IEffMethodHandler.cs" />
     <Compile Include="Effect.cs" />

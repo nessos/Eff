@@ -12,7 +12,6 @@ namespace Eff.Web.Demo.Helpers
     {
         public override void Log(ExceptionLoggerContext context)
         {
-            var handler = EffectExecutionContext.Handler;
             Trace.TraceError($"Exc: {context.ExceptionContext.Exception}");
         }
     }

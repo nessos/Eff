@@ -21,7 +21,8 @@ namespace Eff.Tests
                 return x + 1;
             }
 
-            Assert.Equal(2, Foo(1).Result);
+            var handler = new TestEffectHandler();
+            Assert.Equal(2, Foo(1).Run(handler).Result);
         }
 
         [Fact]
@@ -37,7 +38,8 @@ namespace Eff.Tests
                 return y + 1;
             }
 
-            Assert.Equal(3, Foo(1).Result);
+            var handler = new TestEffectHandler();
+            Assert.Equal(3, Foo(1).Run(handler).Result);
         }
 
         [Fact]
@@ -49,8 +51,8 @@ namespace Eff.Tests
                 return y;
             }
             var now = DateTime.Now;
-            EffectExecutionContext.Handler = new TestEffectHandler(now);
-            Assert.Equal(now, Foo().Result);
+            var handler = new TestEffectHandler(now);
+            Assert.Equal(now, Foo().Run(handler).Result);
         }
 
         [Fact]
@@ -62,8 +64,8 @@ namespace Eff.Tests
                 return y + 1;
             }
 
-            EffectExecutionContext.Handler = new TestEffectHandler();
-            Assert.Equal(3, Foo(1).Result);
+            var handler = new TestEffectHandler();
+            Assert.Equal(3, Foo(1).Run(handler).Result);
         }
 
         [Fact]
@@ -80,8 +82,8 @@ namespace Eff.Tests
                 return y + 1;
             }
 
-            EffectExecutionContext.Handler = new TestEffectHandler();
-            Assert.Equal(3, Foo(1).Result);
+            var handler = new TestEffectHandler();
+            Assert.Equal(3, Foo(1).Run(handler).Result);
         }
 
         [Fact]
@@ -99,8 +101,8 @@ namespace Eff.Tests
                 return y + 1;
             }
 
-            EffectExecutionContext.Handler = new TestEffectHandler();
-            var foo = Foo(1);
+            var handler = new TestEffectHandler();
+            var foo = Foo(1).Run(handler);
             Assert.Equal(3, foo.Result);
         }
 
@@ -119,8 +121,8 @@ namespace Eff.Tests
                 return y + 1;
             }
 
-            EffectExecutionContext.Handler = new TestEffectHandler();
-            var foo = Foo(1);
+            var handler = new TestEffectHandler();
+            var foo = Foo(1).Run(handler);
             Assert.Equal(3, foo.Result);
         }
 
@@ -133,8 +135,8 @@ namespace Eff.Tests
                 return 1 / x;
             }
 
-            EffectExecutionContext.Handler = new TestEffectHandler();
-            var ex = Foo(0).Exception;
+            var handler = new TestEffectHandler();
+            var ex = Foo(0).Run(handler).Exception;
             Assert.IsType<DivideByZeroException>(ex.InnerException);
         }
 
@@ -152,10 +154,10 @@ namespace Eff.Tests
                 return y;
             }
 
-            EffectExecutionContext.Handler = new TestEffectHandler();
+            var handler = new TestEffectHandler();
             try
             {
-                var _ = Foo(0).Result;
+                var _ = Foo(0).Run(handler).Result;
             }
             catch (AggregateException ex)
             {
@@ -177,10 +179,9 @@ namespace Eff.Tests
                 return y;
             }
             var handler = new TestEffectHandler();
-            EffectExecutionContext.Handler = handler;
             try
             {
-                var _ = Foo(0).Result;
+                var _ = Foo(0).Run(handler).Result;
             }
             catch (AggregateException ex)
             {
@@ -203,9 +204,8 @@ namespace Eff.Tests
                 var y = await Bar(x).AsEffect();
                 return y;
             }
-            var handler = new TestEffectHandler();
-            EffectExecutionContext.Handler = handler;
-            var result = Foo(1).Result;
+            var handler = new TestEffectHandler();            
+            var result = Foo(1).Run(handler).Result;
             Assert.Equal(2, result);
             Assert.Equal(1, handler.TraceLogs.Count);
             Assert.Equal(result, (int)handler.TraceLogs[0].Result);
@@ -220,8 +220,7 @@ namespace Eff.Tests
                 return x + y;
             }
             var handler = new TestEffectHandler();
-            EffectExecutionContext.Handler = handler;
-            var result = Foo(1).Result;
+            var result = Foo(1).Run(handler).Result;
             Assert.Equal(2, result);
             Assert.Equal(1, handler.TraceLogs.Count);
             Assert.Equal(1, handler.TraceLogs[0].Parameters.Length);
@@ -239,8 +238,7 @@ namespace Eff.Tests
                 return x + y;
             }
             var handler = new TestEffectHandler();
-            EffectExecutionContext.Handler = handler;
-            var result = Foo(1).Result;
+            var result = Foo(1).Run(handler).Result;
             Assert.Equal(2, result);
             Assert.Equal(2, handler.TraceLogs.Count);
             Assert.Equal(1, handler.TraceLogs[0].LocalVariables.Length);
@@ -260,8 +258,8 @@ namespace Eff.Tests
                 return y + 1;
             }
 
-            EffectExecutionContext.Handler = new TestEffectHandler();
-            Assert.Equal(3, Foo(1).Result);
+            var handler = new TestEffectHandler();
+            Assert.Equal(3, Foo(1).Run(handler).Result);
         }
 
         [Fact]
@@ -274,8 +272,8 @@ namespace Eff.Tests
                 return y + 1;
             }
 
-            EffectExecutionContext.Handler = new TestEffectHandler();
-            Assert.Equal(3, Foo(1).Result);
+            var handler = new TestEffectHandler();
+            Assert.Equal(3, Foo(1).Run(handler).Result);
         }
 
         [Fact]
@@ -288,8 +286,7 @@ namespace Eff.Tests
                 return x + y;
             }
             var handler = new TestEffectHandler();
-            EffectExecutionContext.Handler = handler;
-            var result = Foo(1).Result;
+            var result = Foo(1).Run(handler).Result;
             Assert.Equal(2, result);
             Assert.Equal(1, handler.CaptureStateParameters.Length);
             Assert.Equal("x", handler.CaptureStateParameters[0].name);
@@ -313,8 +310,7 @@ namespace Eff.Tests
                 return sum;
             }
             var handler = new TestEffectHandler();
-            EffectExecutionContext.Handler = handler;
-            var result = Foo(0).Result;
+            var result = Foo(0).Run(handler).Result;
             Assert.Equal(10000, result);
         }
     }
