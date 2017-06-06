@@ -74,11 +74,6 @@ namespace Eff.Core
             this.localVariables = localVariables;
         }
 
-        public Eff<TSource> Await<TSource>(Func<Eff<TSource>> continuation)
-        {
-            return new Await<TResult, TSource>(this, continuation);
-        }
-
         public virtual ValueTask<ValueTuple> Accept(IEffectHandler handler)
         {
             return handler.Handle(this);

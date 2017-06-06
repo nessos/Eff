@@ -14,7 +14,6 @@ namespace Eff.Core
         
         public static async Task<TResult> Run<TResult>(this Eff<TResult> eff, IEffectHandler handler)
         {
-            var effMethodHandler = new EffMethodHandler<TResult>();
             var result = default(TResult);
             var done = false;
             while (!done)
@@ -28,9 +27,27 @@ namespace Eff.Core
                     case Delay<TResult> delay:
                         eff = delay.Func();
                         break;
-                    default:
-                        eff = await eff.Handle(effMethodHandler, handler);
+                    case Await<TResult> awaitEff:
+                        var effect = awaitEff.Effect;
+                        try
+                        {
+                            await effect.Accept(handler);
+                            if (!effect.IsCompleted)
+                                throw new EffException($"Effect {effect.GetType().Name} is not completed.");
+                        }
+                        catch (AggregateException ex)
+                        {
+                            effect.SetException(ex.InnerException);
+                        }
+                        catch (Exception ex)
+                        {
+                            effect.SetException(ex);
+                        }
+
+                        eff = awaitEff.Continuation();
                         break;
+                    default:
+                        throw new NotSupportedException($"{eff.GetType().Name}");
                 }
             }
 

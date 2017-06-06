@@ -31,7 +31,6 @@ namespace Eff.Core
 
         ValueTask<ValueTuple> Accept(IEffectHandler handler);
 
-        Eff<TResult> Await<TResult>(Func<Eff<TResult>> continuation);
     }
 
     

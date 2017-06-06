@@ -10,28 +10,22 @@ namespace Eff.Core
     [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
     public abstract class Eff<TResult>
     {
-        public abstract ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler);
     }
 
-    public class Await<TSource, TResult> : Eff<TResult>
+    public class Await<TResult> : Eff<TResult>
     {
-        private readonly IEffect<TSource> effect;
+        private readonly IEffect effect;
         private readonly Func<Eff<TResult>> continuation;
 
-        public Await(IEffect<TSource> effect, 
-                        Func<Eff<TResult>> continuation)
+        public Await(IEffect effect, Func<Eff<TResult>> continuation)
         {
             this.effect = effect;
             this.continuation = continuation;
         }
 
-        public IEffect<TSource> Effect => effect;
+        public IEffect Effect => effect;
         public Func<Eff<TResult>> Continuation => continuation;
         
-        public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
-        {
-            return effHandler.Handle(this, effectHandler);
-        }
     }
 
     public class SetResult<TResult> : Eff<TResult>
@@ -45,10 +39,6 @@ namespace Eff.Core
 
         public TResult Result => result;
 
-        public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
-        {
-            return effHandler.Handle(this, effectHandler);
-        }
     }
 
     public class SetException<TResult> : Eff<TResult>
@@ -62,10 +52,6 @@ namespace Eff.Core
 
         public Exception Exception => exception;
 
-        public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
-        {
-            return effHandler.Handle(this, effectHandler);
-        }
     }
 
     public class Delay<TResult> : Eff<TResult>
@@ -78,11 +64,6 @@ namespace Eff.Core
         }
 
         public Func<Eff<TResult>> Func => func;
-
-        public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
-        {
-            return effHandler.Handle(this, effectHandler);
-        }
     }
 
 

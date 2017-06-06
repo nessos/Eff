@@ -86,7 +86,7 @@ namespace Eff.Core
             {
                 case IEffect effect:
 
-                    this.eff = effect.Await<TResult>(() =>
+                    this.eff = new Await<TResult>(effect, () =>
                     {
                         this.stateMachine.MoveNext();
                         return this.eff;
