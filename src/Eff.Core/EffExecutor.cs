@@ -20,6 +20,9 @@ namespace Eff.Core
             {
                 switch (eff)
                 {
+                    case SetException<TResult> setException:
+                        System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(setException.Exception).Throw();
+                        break;
                     case SetResult<TResult> setResult:
                         result = setResult.Result;
                         done = true;
