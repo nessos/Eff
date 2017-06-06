@@ -28,13 +28,13 @@ namespace Eff.Core
             return new TaskEffect(task, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
-        public static EffTaskEffect<TResult> AsEffect<TResult>(this Eff<TResult> eff,
+        public static EffEffect<TResult> AsEffect<TResult>(this Eff<TResult> eff,
                                             [CallerMemberName] string memberName = "",
                                             [CallerFilePath] string sourceFilePath = "",
                                             [CallerLineNumber] int sourceLineNumber = 0,
                                             bool captureState = false)
         {
-            return new EffTaskEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber, captureState);
+            return new EffEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
         public static FuncEffect<TResult> Func<TResult>(Func<TResult> func,

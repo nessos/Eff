@@ -27,7 +27,7 @@ namespace Eff.Core
         public TestEffectHandler() : this(DateTime.Now)
         { }
 
-        public override async ValueTask<TResult> Handle<TResult>(IEffect<TResult> effect)
+        public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
         {
             switch (effect)
             {
@@ -36,7 +36,7 @@ namespace Eff.Core
                     break;
             }
 
-            return default(TResult);//ValueTuple.Create();
+            return ValueTuple.Create();
         }
 
         public (string name, object value)[] CaptureStateParameters { private set; get; }

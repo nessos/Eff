@@ -29,6 +29,8 @@ namespace Eff.Core
         Exception Exception { get; }
         object Result { get; }
 
+        ValueTask<ValueTuple> Accept(IEffectHandler handler);
+
         Eff<TResult> Await<TResult>(Func<Eff<TResult>> continuation);
     }
 

@@ -11,9 +11,9 @@ namespace Eff.Core
 {
     public class DefaultEffectHandler : EffectHandler
     {
-        public override async ValueTask<TResult> Handle<TResult>(IEffect<TResult> effect)
+        public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
         {
-            return default(TResult);
+            return ValueTuple.Create();
         }
 
         public override async ValueTask<ValueTuple> Log(ExceptionLog log)

@@ -14,24 +14,7 @@ namespace Eff.Core
         public async ValueTask<Eff<TResult>> Handle<TSource>(Await<TSource, TResult> awaitEff, IEffectHandler handler)
         {
             var result = default(TSource);
-            switch (awaitEff.Effect)
-            {
-                case TaskEffect<TSource> taskEffect:
-                    result = await handler.Handle(taskEffect);
-                    break;
-                case TaskEffect taskEffect:
-                    await handler.Handle(taskEffect);
-                    break;
-                case FuncEffect<TSource> funcEffect:
-                    result = await handler.Handle(funcEffect);
-                    break;
-                case ActionEffect actionEffect:
-                    await handler.Handle(actionEffect);
-                    break;
-                default:
-                    result = await handler.Handle(awaitEff.Effect);
-                    break;
-            }
+            await awaitEff.Effect.Accept(handler);
             return awaitEff.Success(result);
         }
 

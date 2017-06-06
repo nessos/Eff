@@ -24,6 +24,11 @@ namespace Eff.Core
         {
             throw new NotSupportedException();
         }
+
+        public override ValueTask<ValueTuple> Accept(IEffectHandler handler)
+        {
+            return handler.Handle(this);
+        }
     }
 
     public class TaskEffect : Effect<ValueTuple>
@@ -46,6 +51,11 @@ namespace Eff.Core
         public override void UnsafeOnCompleted(Action continuation)
         {
             throw new NotSupportedException();
+        }
+
+        public override ValueTask<ValueTuple> Accept(IEffectHandler handler)
+        {
+            return handler.Handle(this);
         }
     }
 }

@@ -81,6 +81,11 @@ namespace Eff.Core
 
             return new Await<TResult, TSource>(this, success, failure);
         }
+
+        public virtual ValueTask<ValueTuple> Accept(IEffectHandler handler)
+        {
+            return handler.Handle(this);
+        }
     }
 
     

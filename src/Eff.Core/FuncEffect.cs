@@ -24,6 +24,11 @@ namespace Eff.Core
         {
             throw new NotSupportedException();
         }
+
+        public override ValueTask<ValueTuple> Accept(IEffectHandler handler)
+        {
+            return handler.Handle(this);
+        }
     }
 
     

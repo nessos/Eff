@@ -26,7 +26,7 @@ namespace Eff.Tests
         }
 
         [Fact]
-        public void AwaitEffTaskEffect()
+        public void AwaitEffEffect()
         {
             async Eff<int> Bar(int x)
             {
