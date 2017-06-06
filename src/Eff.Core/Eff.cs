@@ -16,22 +16,18 @@ namespace Eff.Core
     public class Await<TSource, TResult> : Eff<TResult>
     {
         private readonly IEffect<TSource> effect;
-        private readonly Func<TSource, Eff<TResult>> success;
-        private readonly Func<Exception, Eff<TResult>> failure;
+        private readonly Func<Eff<TResult>> continuation;
 
         public Await(IEffect<TSource> effect, 
-                        Func<TSource, Eff<TResult>> success,
-                        Func<Exception, Eff<TResult>> failure)
+                        Func<Eff<TResult>> continuation)
         {
             this.effect = effect;
-            this.success = success;
-            this.failure = failure;
+            this.continuation = continuation;
         }
 
         public IEffect<TSource> Effect => effect;
-        public Func<TSource, Eff<TResult>> Success => success;
-        public Func<Exception, Eff<TResult>> Failure => failure;
-
+        public Func<Eff<TResult>> Continuation => continuation;
+        
         public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
         {
             return effHandler.Handle(this, effectHandler);

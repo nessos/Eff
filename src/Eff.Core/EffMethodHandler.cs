@@ -13,9 +13,24 @@ namespace Eff.Core
     {
         public async ValueTask<Eff<TResult>> Handle<TSource>(Await<TSource, TResult> awaitEff, IEffectHandler handler)
         {
-            var result = default(TSource);
-            await awaitEff.Effect.Accept(handler);
-            return awaitEff.Success(result);
+            var effect = awaitEff.Effect;
+            try
+            {
+                await effect.Accept(handler);
+                if (!effect.IsCompleted)
+                    throw new EffException($"Effect {effect.GetType().Name} is not completed.");
+            }
+            catch (AggregateException ex)
+            {
+                effect.SetException(ex.InnerException);
+            }
+            catch (Exception ex)
+            {
+                effect.SetException(ex);
+            }
+
+            return awaitEff.Continuation();
+            
         }
 
         public async ValueTask<Eff<TResult>> Handle(SetResult<TResult> setResult, IEffectHandler handler)
@@ -30,7 +45,7 @@ namespace Eff.Core
 
         public async ValueTask<Eff<TResult>> Handle(Delay<TResult> delay, IEffectHandler handler)
         {
-            return delay;
+            return delay.Func();
         }
     }
 

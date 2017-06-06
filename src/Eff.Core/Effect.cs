@@ -76,10 +76,7 @@ namespace Eff.Core
 
         public Eff<TSource> Await<TSource>(Func<Eff<TSource>> continuation)
         {
-            Func<TResult, Eff<TSource>> success = result => { SetResult(result); return continuation(); };
-            Func<Exception, Eff<TSource>> failure = exception => { SetException(exception); return continuation(); };
-
-            return new Await<TResult, TSource>(this, success, failure);
+            return new Await<TResult, TSource>(this, continuation);
         }
 
         public virtual ValueTask<ValueTuple> Accept(IEffectHandler handler)
