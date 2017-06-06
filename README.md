@@ -3,7 +3,7 @@ A library design for programming with effects and handlers in C# 7, inspired by 
 
 ``` csharp
 // Effect example
-async EffTask<int> Foo()
+async Eff<int> Foo()
 {
     var y = await Effect.Random();
     return y;
@@ -32,8 +32,8 @@ public class CustomEffectHandler : EffectHandler
 }
 
 // Set effect handler and execute
-EffectExecutionContext.Handler = new CustomEffectHandler(new Random());
-var x = Foo().Result;
+var handler = new CustomEffectHandler(new Random());
+var x = Foo().Run(handler).Result;
 ```
 
 ## Install
