@@ -25,6 +25,9 @@ namespace Eff.Core
                         result = setResult.Result;
                         done = true;
                         break;
+                    case Delay<TResult> delay:
+                        eff = delay.Func();
+                        break;
                     default:
                         eff = await eff.Handle(effMethodHandler, handler);
                         break;

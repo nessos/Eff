@@ -72,5 +72,22 @@ namespace Eff.Core
         }
     }
 
+    public class Delay<TResult> : Eff<TResult>
+    {
+        private readonly Func<Eff<TResult>> func;
+
+        public Delay(Func<Eff<TResult>> func)
+        {
+            this.func = func;
+        }
+
+        public Func<Eff<TResult>> Func => func;
+
+        public override ValueTask<Eff<TResult>> Handle(IEffMethodHandler<TResult> effHandler, IEffectHandler effectHandler)
+        {
+            return effHandler.Handle(this, effectHandler);
+        }
+    }
+
 
 }

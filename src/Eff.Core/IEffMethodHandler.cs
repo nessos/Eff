@@ -14,6 +14,7 @@ namespace Eff.Core
         ValueTask<Eff<TResult>> Handle<TSource>(Await<TSource, TResult> await, IEffectHandler handler);
         ValueTask<Eff<TResult>> Handle(SetResult<TResult> setResult, IEffectHandler handler);
         ValueTask<Eff<TResult>> Handle(SetException<TResult> setException, IEffectHandler handler);
+        ValueTask<Eff<TResult>> Handle(Delay<TResult> delay, IEffectHandler handler);
     }
 
 

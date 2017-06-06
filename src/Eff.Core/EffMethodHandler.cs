@@ -44,6 +44,11 @@ namespace Eff.Core
         {
             return setException;
         }
+
+        public async ValueTask<Eff<TResult>> Handle(Delay<TResult> delay, IEffectHandler handler)
+        {
+            return delay;
+        }
     }
 
 

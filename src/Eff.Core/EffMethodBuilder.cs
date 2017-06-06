@@ -24,6 +24,11 @@ namespace Eff.Core
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
             this.stateMachine = stateMachine;
+            this.eff = new Delay<TResult>(() =>
+            {
+                this.stateMachine.MoveNext();
+                return this.eff;
+            });
         }
 
         public void SetStateMachine(IAsyncStateMachine stateMachine)
