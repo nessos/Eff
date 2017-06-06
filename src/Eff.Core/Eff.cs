@@ -16,16 +16,19 @@ namespace Eff.Core
     {
         private readonly IEffect effect;
         private readonly Func<Eff<TResult>> continuation;
+        private readonly IAsyncStateMachine stateMachine;
 
-        public Await(IEffect effect, Func<Eff<TResult>> continuation)
+        public Await(IEffect effect, Func<Eff<TResult>> continuation, IAsyncStateMachine stateMachine)
         {
             this.effect = effect;
             this.continuation = continuation;
+            this.stateMachine = stateMachine;
         }
 
         public IEffect Effect => effect;
         public Func<Eff<TResult>> Continuation => continuation;
-        
+        public IAsyncStateMachine StateMachine => stateMachine;
+
     }
 
     public class SetResult<TResult> : Eff<TResult>
