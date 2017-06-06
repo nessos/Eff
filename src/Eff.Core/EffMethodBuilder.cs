@@ -13,6 +13,7 @@ namespace Eff.Core
     {
         private Eff<TResult> eff;
         private IAsyncStateMachine stateMachine;
+        private Func<Eff<TResult>> continuation;
         private (string name, FieldInfo fieldInfo)[] parametersInfo;
         private (string name, FieldInfo fieldInfo)[] localVariablesInfo;
 
@@ -24,11 +25,12 @@ namespace Eff.Core
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
             this.stateMachine = stateMachine;
-            this.eff = new Delay<TResult>(() =>
+            this.continuation = () =>
             {
                 this.stateMachine.MoveNext();
                 return this.eff;
-            });
+            };
+            this.eff = new Delay<TResult>(continuation);
         }
 
         public void SetStateMachine(IAsyncStateMachine stateMachine)
@@ -86,11 +88,7 @@ namespace Eff.Core
             {
                 case IEffect effect:
 
-                    this.eff = new Await<TResult>(effect, () =>
-                    {
-                        this.stateMachine.MoveNext();
-                        return this.eff;
-                    });
+                    this.eff = new Await<TResult>(effect, continuation);
 
                     //if ((effect.CaptureState || handler.EnableParametersLogging) && this.parametersInfo == null)
                     //{
