@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Examples.StackTrace", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Examples.TraceLog", "examples\Eff.Examples.TraceLog\Eff.Examples.TraceLog.csproj", "{1684FBF6-A493-436D-A974-BDA80CD7F4F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Examples.CancellationToken", "Eff.Examples.CancellationToken\Eff.Examples.CancellationToken.csproj", "{AFC2490D-411B-4180-A106-06A065E9C598}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Examples.CancellationToken", "examples\Eff.Examples.CancellationToken\Eff.Examples.CancellationToken.csproj", "{AFC2490D-411B-4180-A106-06A065E9C598}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

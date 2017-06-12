@@ -59,7 +59,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Eff.Core\Eff.Core.csproj">
+    <ProjectReference Include="..\..\Eff.Core\Eff.Core.csproj">
       <Project>{5aa6cb90-b978-4f62-87ef-6165cf9471e7}</Project>
       <Name>Eff.Core</Name>
     </ProjectReference>
