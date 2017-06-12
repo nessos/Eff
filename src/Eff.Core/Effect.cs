@@ -59,10 +59,6 @@ namespace Eff.Core
             this.result = result;
         }
 
-        public abstract void OnCompleted(Action continuation);
-        public abstract void UnsafeOnCompleted(Action continuation);
-        
-
         public void SetException(Exception ex)
         {
             exception = ex;
@@ -77,6 +73,16 @@ namespace Eff.Core
         public virtual ValueTask<ValueTuple> Accept(IEffectHandler handler)
         {
             return handler.Handle(this);
+        }
+
+        public virtual void OnCompleted(Action continuation)
+        {
+            throw new NotSupportedException();
+        }
+
+        public virtual void UnsafeOnCompleted(Action continuation)
+        {
+            throw new NotSupportedException();
         }
     }
 

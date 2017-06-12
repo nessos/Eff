@@ -16,17 +16,6 @@ namespace Eff.Tests
         {
         }
 
-        
-
-        public override void OnCompleted(Action continuation)
-        {
-            throw new NotSupportedException();
-        }
-
-        public override void UnsafeOnCompleted(Action continuation)
-        {
-            throw new NotSupportedException();
-        }
     }
 
     

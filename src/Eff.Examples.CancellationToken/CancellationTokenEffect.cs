@@ -15,16 +15,6 @@ namespace Eff.Examples.CancellationToken
             : base(memberName, sourceFilePath, sourceLineNumber, captureState)
         {
         }
-
-        public override void OnCompleted(Action continuation)
-        {
-            throw new NotSupportedException();
-        }
-
-        public override void UnsafeOnCompleted(Action continuation)
-        {
-            throw new NotSupportedException();
-        }
     }
 
 }
