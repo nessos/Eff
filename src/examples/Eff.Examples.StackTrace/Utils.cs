@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Tests
+namespace Eff.Examples.StackTrace
 {
     static class Utils
     {

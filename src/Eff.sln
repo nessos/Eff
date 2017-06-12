@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Tests", "Eff.Tests\Eff.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Web.Demo", "Eff.Web.Demo\Eff.Web.Demo.csproj", "{9342349D-4D00-4266-A1BF-6427161578C7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{5AEC4D76-A776-48B1-919C-DCDEA0E7B610}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Examples.StackTrace", "examples\Eff.Examples.StackTrace\Eff.Examples.StackTrace.csproj", "{9954D857-2E41-442D-B7F9-1471FA82D96C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +31,15 @@ Global
 		{9342349D-4D00-4266-A1BF-6427161578C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9342349D-4D00-4266-A1BF-6427161578C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9342349D-4D00-4266-A1BF-6427161578C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9954D857-2E41-442D-B7F9-1471FA82D96C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9954D857-2E41-442D-B7F9-1471FA82D96C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9954D857-2E41-442D-B7F9-1471FA82D96C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9954D857-2E41-442D-B7F9-1471FA82D96C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9954D857-2E41-442D-B7F9-1471FA82D96C} = {5AEC4D76-A776-48B1-919C-DCDEA0E7B610}
 	EndGlobalSection
 EndGlobal
