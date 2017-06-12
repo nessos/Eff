@@ -16,7 +16,8 @@ namespace Eff.Examples.CancellationToken
         {
             while (true)
             {
-                await Task.Delay(5000, await Effect.CancellationToken()).AsEffect();
+                Console.WriteLine("Step!");
+                await Task.Delay(1000, await Effect.CancellationToken()).AsEffect();
             }
             return 42;
         }
