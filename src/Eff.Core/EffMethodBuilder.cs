@@ -28,7 +28,7 @@ namespace Eff.Core
                 this.stateMachine.MoveNext();
                 return this.eff;
             };
-            this.eff = new Delay<TResult>(continuation);
+            this.eff = new Delay<TResult>(continuation, this.stateMachine);
         }
 
         public void SetStateMachine(IAsyncStateMachine stateMachine)
@@ -38,12 +38,12 @@ namespace Eff.Core
 
         public void SetResult(TResult result)
         {
-            this.eff = new SetResult<TResult>(result);
+            this.eff = new SetResult<TResult>(result, this.stateMachine);
         }
 
         public void SetException(Exception exception)
         {
-            this.eff = new SetException<TResult>(exception);
+            this.eff = new SetException<TResult>(exception, this.stateMachine);
         }
 
         public Eff<TResult> Task => this.eff;
