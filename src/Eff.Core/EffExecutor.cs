@@ -1,6 +1,7 @@
 ﻿#pragma warning disable 1998
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -48,6 +49,9 @@ namespace Eff.Core
             return localVariablesInfo;
         }
 
+        private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> parametersInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
+        private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> localVariablesInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
+
         public static async Task<TResult> Run<TResult>(this Eff<TResult> eff, IEffectHandler handler)
         {
             if (eff == null)
@@ -78,9 +82,9 @@ namespace Eff.Core
 
                         // Initialize State Info
                         if ((effect.CaptureState || handler.EnableParametersLogging) && parametersInfo == null)
-                            parametersInfo = GetParametersInfo(awaitEff.StateMachine);
+                            parametersInfo = parametersInfoCache.GetOrAdd(awaitEff.StateMachine.GetType(), _ => GetParametersInfo(awaitEff.StateMachine));
                         if ((effect.CaptureState || handler.EnableLocalVariablesLogging) && localVariablesInfo == null)
-                            localVariablesInfo = GetLocalVariablesInfo(awaitEff.StateMachine);
+                            localVariablesInfo = localVariablesInfoCache.GetOrAdd(awaitEff.StateMachine.GetType(), _ => GetLocalVariablesInfo(awaitEff.StateMachine));
 
                         // Initialize State Values
                         var parameters = default((string name, object value)[]);
