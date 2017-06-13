@@ -50,6 +50,11 @@ namespace Eff.Core
 
         public static async Task<TResult> Run<TResult>(this Eff<TResult> eff, IEffectHandler handler)
         {
+            if (eff == null)
+                throw new ArgumentNullException(nameof(eff));
+            if (handler == null)
+                throw new ArgumentNullException(nameof(handler));
+
             var parametersInfo = default((string name, FieldInfo fieldInfo)[]);
             var localVariablesInfo = default((string name, FieldInfo fieldInfo)[]);
             var result = default(TResult);
