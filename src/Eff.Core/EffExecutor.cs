@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -14,16 +15,14 @@ namespace Eff.Core
     public static class EffExecutor
     {
 
-        private static (string name, object value)[] GetParameters((string name, FieldInfo fieldInfo)[] parametersInfo, IAsyncStateMachine _stateMachine)
+        private static (string name, object value)[] GetValues((string name, FieldInfo fieldInfo)[] fieldsInfo, IAsyncStateMachine _stateMachine)
         {
-            return parametersInfo.Select(parameter => (parameter.name, parameter.fieldInfo.GetValue(_stateMachine)))
-                                 .ToArray();
-        }
-
-        private static (string name, object value)[] GetLocalVariables((string name, FieldInfo fieldInfo)[] localVariablesInfo, IAsyncStateMachine _stateMachine)
-        {
-            return localVariablesInfo.Select(local => (local.name, local.fieldInfo.GetValue(_stateMachine)))
-                                     .ToArray();
+            var result = new(string name, object value)[fieldsInfo.Length];
+            for (int j = 0; j < result.Length; j++)
+            {
+                result[j] = (fieldsInfo[j].name, fieldsInfo[j].fieldInfo.GetValue(_stateMachine));
+            }
+            return result;
         }
 
         private static (string name, FieldInfo fieldInfo)[] GetParametersInfo(IAsyncStateMachine stateMachine)
@@ -36,7 +35,6 @@ namespace Eff.Core
                                        .ToArray();
             return parametersInfo;
         }
-
         private static (string name, FieldInfo fieldInfo)[] GetLocalVariablesInfo(IAsyncStateMachine stateMachine)
         {
             var fieldInfos = stateMachine.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
@@ -91,16 +89,16 @@ namespace Eff.Core
                         var localVariables = default((string name, object value)[]);
                         if (effect.CaptureState)
                         {
-                            parameters = GetParameters(parametersInfo, awaitEff.StateMachine);
-                            localVariables = GetLocalVariables(localVariablesInfo, awaitEff.StateMachine);
+                            parameters = GetValues(parametersInfo, awaitEff.StateMachine);
+                            localVariables = GetValues(localVariablesInfo, awaitEff.StateMachine);
                             effect.SetState(parameters, localVariables);
                         }
                         else
                         {
                             if (handler.EnableParametersLogging)
-                                parameters = GetParameters(parametersInfo, awaitEff.StateMachine);
+                                parameters = GetValues(parametersInfo, awaitEff.StateMachine);
                             if (handler.EnableLocalVariablesLogging)
-                                localVariables = GetLocalVariables(localVariablesInfo, awaitEff.StateMachine);
+                                localVariables = GetValues(localVariablesInfo, awaitEff.StateMachine);
                         }
 
                         // Execute Effect
