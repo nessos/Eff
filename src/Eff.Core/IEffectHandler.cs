@@ -9,13 +9,6 @@ namespace Eff.Core
 {
     public interface IEffectHandler 
     {
-        bool EnableExceptionLogging { get; }
-        bool EnableTraceLogging { get; }
-        bool EnableParametersLogging { get; }
-        bool EnableLocalVariablesLogging { get; }
-
-        ValueTask<ValueTuple> Log(ExceptionLog log);
-        ValueTask<ValueTuple> Log(ResultLog log);
 
         ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
         ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect);
@@ -23,6 +16,11 @@ namespace Eff.Core
         ValueTask<ValueTuple> Handle<TResult>(FuncEffect<TResult> effect);
         ValueTask<ValueTuple> Handle(ActionEffect effect);
         ValueTask<ValueTuple> Handle<TResult>(EffEffect<TResult> effect);
+
+        ValueTask<TResult> Handle<TResult>(SetResult<TResult> setResult);
+        ValueTask<ValueTuple> Handle<TResult>(SetException<TResult> setException);
+        ValueTask<Eff<TResult>> Handle<TResult>(Delay<TResult> delay);
+        ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff);
 
     }
 
