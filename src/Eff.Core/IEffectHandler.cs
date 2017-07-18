@@ -12,9 +12,7 @@ namespace Eff.Core
 
         ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
         ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect);
-        ValueTask<ValueTuple> Handle(TaskEffect effect);
         ValueTask<ValueTuple> Handle<TResult>(FuncEffect<TResult> effect);
-        ValueTask<ValueTuple> Handle(ActionEffect effect);
         ValueTask<ValueTuple> Handle<TResult>(EffEffect<TResult> effect);
 
         ValueTask<TResult> Handle<TResult>(SetResult<TResult> setResult);

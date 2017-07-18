@@ -51,7 +51,6 @@
     <Compile Include="DefaultEffectHandler.cs" />
     <Compile Include="EffectHandler.cs" />
     <Compile Include="EffException.cs" />
-    <Compile Include="ActionEffect.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="IEffectHandler.cs" />
     <Compile Include="IEffect.cs" />

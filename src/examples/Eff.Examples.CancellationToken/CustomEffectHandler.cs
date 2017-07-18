@@ -19,14 +19,6 @@ namespace Eff.Examples.CancellationToken
             this.token = token;
         }
 
-        public override async ValueTask<ValueTuple> Handle(TaskEffect effect)
-        {
-            token.ThrowIfCancellationRequested();
-            await base.Handle(effect);
-
-            return ValueTuple.Create();
-        }
-
         public override async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
         {
             token.ThrowIfCancellationRequested();

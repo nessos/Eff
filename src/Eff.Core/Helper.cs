@@ -19,13 +19,14 @@ namespace Eff.Core
             return new TaskEffect<TResult>(task, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
-        public static TaskEffect AsEffect(this Task task,
-                                            [CallerMemberName] string memberName = "",
-                                            [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0, 
-                                            bool captureState = false)
+        public static TaskEffect<ValueTuple> AsEffect(this Task task,
+                                                        [CallerMemberName] string memberName = "",
+                                                        [CallerFilePath] string sourceFilePath = "",
+                                                        [CallerLineNumber] int sourceLineNumber = 0, 
+                                                        bool captureState = false)
         {
-            return new TaskEffect(task, memberName, sourceFilePath, sourceLineNumber, captureState);
+            async Task<ValueTuple> Wrap() { await task; return ValueTuple.Create(); }
+            return new TaskEffect<ValueTuple>(Wrap(), memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
         public static EffEffect<TResult> AsEffect<TResult>(this Eff<TResult> eff,
@@ -46,13 +47,13 @@ namespace Eff.Core
             return new FuncEffect<TResult>(func, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
-        public static ActionEffect Action(Action action,
-                                    [CallerMemberName] string memberName = "",
-                                    [CallerFilePath] string sourceFilePath = "",
-                                    [CallerLineNumber] int sourceLineNumber = 0,
-                                    bool captureState = false)
+        public static FuncEffect<ValueTuple> Action(Action action,
+                                                    [CallerMemberName] string memberName = "",
+                                                    [CallerFilePath] string sourceFilePath = "",
+                                                    [CallerLineNumber] int sourceLineNumber = 0,
+                                                    bool captureState = false)
         {
-            return new ActionEffect(action, memberName, sourceFilePath, sourceLineNumber, captureState);
+            return new FuncEffect<ValueTuple>(() => { action(); return ValueTuple.Create(); }, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
     }
 }
