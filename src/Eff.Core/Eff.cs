@@ -16,66 +16,66 @@ namespace Eff.Core
     {
         private readonly IEffect effect;
         private readonly Func<Eff<TResult>> continuation;
-        private readonly IAsyncStateMachine stateMachine;
+        private readonly object state;
 
-        public Await(IEffect effect, Func<Eff<TResult>> continuation, IAsyncStateMachine stateMachine)
+        public Await(IEffect effect, Func<Eff<TResult>> continuation, object state)
         {
             this.effect = effect;
             this.continuation = continuation;
-            this.stateMachine = stateMachine;
+            this.state = state;
         }
 
         public IEffect Effect => effect;
         public Func<Eff<TResult>> Continuation => continuation;
-        public IAsyncStateMachine StateMachine => stateMachine;
+        public object State => state;
 
     }
 
     public class SetResult<TResult> : Eff<TResult>
     {
         private readonly TResult result;
-        private readonly IAsyncStateMachine stateMachine;
+        private readonly object state;
 
-        public SetResult(TResult result, IAsyncStateMachine stateMachine)
+        public SetResult(TResult result, object state)
         {
             this.result = result;
-            this.stateMachine = stateMachine;
+            this.state = state;
         }
 
         public TResult Result => result;
-        public IAsyncStateMachine StateMachine => stateMachine;
+        public object State => state;
 
     }
 
     public class SetException<TResult> : Eff<TResult>
     {
         private readonly Exception exception;
-        private readonly IAsyncStateMachine stateMachine;
+        private readonly object state;
 
-        public SetException(Exception exception, IAsyncStateMachine stateMachine)
+        public SetException(Exception exception, object state)
         {
             this.exception = exception;
-            this.stateMachine = stateMachine;
+            this.state = state;
         }
 
         public Exception Exception => exception;
-        public IAsyncStateMachine StateMachine => stateMachine;
+        public object State => state;
 
     }
 
     public class Delay<TResult> : Eff<TResult>
     {
         private readonly Func<Eff<TResult>> func;
-        private readonly IAsyncStateMachine stateMachine;
+        private readonly object state;
 
-        public Delay(Func<Eff<TResult>> func, IAsyncStateMachine stateMachine)
+        public Delay(Func<Eff<TResult>> func, object state)
         {
             this.func = func;
-            this.stateMachine = stateMachine;
+            this.state = state;
         }
 
         public Func<Eff<TResult>> Func => func;
-        public IAsyncStateMachine StateMachine => stateMachine;
+        public object State => state;
     }
 
 
