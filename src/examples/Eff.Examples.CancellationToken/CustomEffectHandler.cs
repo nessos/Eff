@@ -12,9 +12,7 @@ namespace Eff.Examples.CancellationToken
     {
         private readonly System.Threading.CancellationToken token;
         public CustomEffectHandler(System.Threading.CancellationToken token) 
-            : base(enableExceptionLogging : true, 
-                   enableParametersLogging : true, 
-                   enableLocalVariablesLogging : true)
+            : base()
         {
             this.token = token;
         }
@@ -38,15 +36,6 @@ namespace Eff.Examples.CancellationToken
             return ValueTuple.Create();
         }
 
-        public override async ValueTask<ValueTuple> Log(ExceptionLog log)
-        {
-            return ValueTuple.Create();
-        }
-
-        public override async ValueTask<ValueTuple> Log(ResultLog log)
-        {
-            
-            return ValueTuple.Create();
-        }
+        
     }
 }

@@ -12,9 +12,7 @@ namespace Eff.Examples.StackTrace
     {
 
         public CustomEffectHandler() 
-            : base(enableExceptionLogging : true, 
-                   enableParametersLogging : true, 
-                   enableLocalVariablesLogging : true)
+            : base()
         {
             
         }
@@ -25,7 +23,28 @@ namespace Eff.Examples.StackTrace
             return ValueTuple.Create();
         }
 
-        public override async ValueTask<ValueTuple> Log(ExceptionLog log)
+        public override async ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
+        {
+            var eff = await base.Handle(awaitEff);
+            var effect = awaitEff.Effect;
+            if (effect.Exception != null)
+            {
+                await Log(new ExceptionLog
+                {
+                    CallerFilePath = effect.CallerFilePath,
+                    CallerLineNumber = effect.CallerLineNumber,
+                    CallerMemberName = effect.CallerMemberName,
+                    Exception = effect.Exception,
+                    Parameters = Eff.Core.Utils.GetParametersValues(awaitEff.State),
+                    LocalVariables = Eff.Core.Utils.GetLocalVariablesValues(awaitEff.State),
+                });
+            }
+            
+
+            return eff;
+        }
+
+        public async ValueTask<ValueTuple> Log(ExceptionLog log)
         {
             var ex = log.Exception;
             if (!ex.Data.Contains("StackTraceLog"))
@@ -39,12 +58,6 @@ namespace Eff.Examples.StackTrace
 
             ((Queue<ExceptionLog>)ex.Data["StackTraceLog"]).Enqueue(log);
 
-            return ValueTuple.Create();
-        }
-
-        public override async ValueTask<ValueTuple> Log(ResultLog log)
-        {
-            
             return ValueTuple.Create();
         }
     }

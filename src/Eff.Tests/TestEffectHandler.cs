@@ -17,7 +17,7 @@ namespace Eff.Core
         public List<ExceptionLog> ExceptionLogs { get; }
         public List<ResultLog> TraceLogs { get; }
 
-        public TestEffectHandler(DateTime now) : base(true, true, true, true)
+        public TestEffectHandler(DateTime now) : base()
         {
             this.now = now;
             ExceptionLogs = new List<ExceptionLog>();
@@ -59,9 +59,39 @@ namespace Eff.Core
             return ValueTuple.Create();
         }
 
+        public override async ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
+        {
+            var eff = await base.Handle(awaitEff);
+            var effect = awaitEff.Effect;
+            if (effect.Exception != null)
+            {
+                await Log(new ExceptionLog
+                {
+                    CallerFilePath = effect.CallerFilePath,
+                    CallerLineNumber = effect.CallerLineNumber,
+                    CallerMemberName = effect.CallerMemberName,
+                    Exception = effect.Exception,
+                    Parameters = Utils.GetParametersValues(awaitEff.State),
+                    LocalVariables = Utils.GetLocalVariablesValues(awaitEff.State),
+                });
+            }
+            if (effect.HasResult)
+            {
+                await Log(new ResultLog
+                {
+                    CallerFilePath = effect.CallerFilePath,
+                    CallerLineNumber = effect.CallerLineNumber,
+                    CallerMemberName = effect.CallerMemberName,
+                    Result = effect.Result,
+                    Parameters = Utils.GetParametersValues(awaitEff.State),
+                    LocalVariables = Utils.GetLocalVariablesValues(awaitEff.State),
+                });
+            }
 
+            return eff;
+        }
 
-        public override async ValueTask<ValueTuple> Log(ExceptionLog log)
+        public async ValueTask<ValueTuple> Log(ExceptionLog log)
         {
             ExceptionLogs.Add(log);
 
@@ -80,7 +110,7 @@ namespace Eff.Core
             return ValueTuple.Create();
         }
 
-        public override async ValueTask<ValueTuple> Log(ResultLog log)
+        public async ValueTask<ValueTuple> Log(ResultLog log)
         {
             TraceLogs.Add(log);
             return ValueTuple.Create();

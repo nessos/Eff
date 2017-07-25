@@ -8,6 +8,16 @@ using System.Threading.Tasks;
 
 namespace Eff.Examples.TraceLog
 {
+
+    public class ResultLog
+    {
+        public string CallerMemberName { get; set; }
+        public string CallerFilePath { get; set; }
+        public int CallerLineNumber { get; set; }
+        public object Result { get; set; }
+        public (string name, object value)[] Parameters { get; set; }
+        public (string name, object value)[] LocalVariables { get; set; }
+    }
     static class Utils
     {
         public static string Dump(this IList<ResultLog> traceLogs)

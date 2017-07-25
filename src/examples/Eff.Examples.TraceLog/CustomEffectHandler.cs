@@ -12,9 +12,7 @@ namespace Eff.Examples.TraceLog
     {
 
         public CustomEffectHandler() 
-            : base(enableTraceLogging : true, 
-                   enableParametersLogging : true, 
-                   enableLocalVariablesLogging : true)
+            : base()
         {
             
         }
@@ -25,13 +23,28 @@ namespace Eff.Examples.TraceLog
             return ValueTuple.Create();
         }
 
-        public override async ValueTask<ValueTuple> Log(ExceptionLog log)
+        public override async ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
         {
-            return ValueTuple.Create();
+            var eff = await base.Handle(awaitEff);
+            var effect = awaitEff.Effect;
+            if (effect.HasResult)
+            {
+                await Log(new ResultLog
+                {
+                    CallerFilePath = effect.CallerFilePath,
+                    CallerLineNumber = effect.CallerLineNumber,
+                    CallerMemberName = effect.CallerMemberName,
+                    Result = effect.Result,
+                    Parameters = Eff.Core.Utils.GetParametersValues(awaitEff.State),
+                    LocalVariables = Eff.Core.Utils.GetLocalVariablesValues(awaitEff.State),
+                });
+            }
+
+            return eff;
         }
 
         public List<ResultLog> TraceLogs = new List<ResultLog>();
-        public override async ValueTask<ValueTuple> Log(ResultLog log)
+        public async ValueTask<ValueTuple> Log(ResultLog log)
         {
             TraceLogs.Add(log);
             return ValueTuple.Create();

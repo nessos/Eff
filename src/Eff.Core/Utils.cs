@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,7 +10,9 @@ namespace Eff.Core
 {
     public static class Utils
     {
-        public static (string name, object value)[] GetValues((string name, FieldInfo fieldInfo)[] fieldsInfo, object state)
+        private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> parametersInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
+        private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> localVariablesInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
+        private static (string name, object value)[] GetValues((string name, FieldInfo fieldInfo)[] fieldsInfo, object state)
         {
             var result = new(string name, object value)[fieldsInfo.Length];
             for (int j = 0; j < result.Length; j++)
@@ -19,7 +22,7 @@ namespace Eff.Core
             return result;
         }
 
-        public static (string name, FieldInfo fieldInfo)[] GetParametersInfo(object state)
+        private static (string name, FieldInfo fieldInfo)[] GetParametersInfo(object state)
         {
             var fieldInfos = state.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -29,8 +32,7 @@ namespace Eff.Core
                                        .ToArray();
             return parametersInfo;
         }
-
-        public static (string name, FieldInfo fieldInfo)[] GetLocalVariablesInfo(object state)
+        private static (string name, FieldInfo fieldInfo)[] GetLocalVariablesInfo(object state)
         {
             var fieldInfos = state.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -41,5 +43,21 @@ namespace Eff.Core
                                            .ToArray();
             return localVariablesInfo;
         }
+
+        public static (string name, object value)[] GetParametersValues(object state)
+        {
+            var parametersInfo = parametersInfoCache.GetOrAdd(state.GetType(), _ => Utils.GetParametersInfo(state));
+
+            return GetValues(parametersInfo, state);
+        }
+
+        public static (string name, object value)[] GetLocalVariablesValues(object state)
+        {
+            var localVariablesInfo = localVariablesInfoCache.GetOrAdd(state.GetType(), _ => Utils.GetLocalVariablesInfo(state));
+
+            return GetValues(localVariablesInfo, state); ;
+        }
+
+
     }
 }

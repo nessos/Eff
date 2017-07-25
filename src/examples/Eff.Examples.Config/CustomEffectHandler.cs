@@ -29,15 +29,6 @@ namespace Eff.Examples.Config
             return ValueTuple.Create();
         }
 
-        public override async ValueTask<ValueTuple> Log(ExceptionLog log)
-        {
-            return ValueTuple.Create();
-        }
 
-        public override async ValueTask<ValueTuple> Log(ResultLog log)
-        {
-            
-            return ValueTuple.Create();
-        }
     }
 }

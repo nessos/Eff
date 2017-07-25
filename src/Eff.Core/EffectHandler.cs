@@ -14,30 +14,15 @@ namespace Eff.Core
     public abstract class EffectHandler : IEffectHandler
     {
 
-        public bool EnableExceptionLogging { get; }
-        public bool EnableTraceLogging { get; }
-        bool EnableParametersLogging { get; }
-        bool EnableLocalVariablesLogging { get; }
-
-        public EffectHandler(bool enableExceptionLogging = false, 
-                             bool enableTraceLogging = false,
-                             bool enableParametersLogging = false,
-                             bool enableLocalVariablesLogging = false)
+        public EffectHandler()
         {
-            EnableExceptionLogging = enableExceptionLogging;
-            EnableTraceLogging = enableTraceLogging;
-            EnableParametersLogging = enableParametersLogging;
-            EnableLocalVariablesLogging = enableLocalVariablesLogging;
+            
         }
 
         public abstract ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
-        public abstract ValueTask<ValueTuple> Log(ExceptionLog log);
-        public abstract ValueTask<ValueTuple> Log(ResultLog log);
+        
 
-        private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> parametersInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
-        private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> localVariablesInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
-
-
+       
         public virtual async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
         {
             var result = await effect.Task;
@@ -54,52 +39,34 @@ namespace Eff.Core
             return ValueTuple.Create();
         }
 
-        public async ValueTask<TResult> Handle<TResult>(SetResult<TResult> setResult)
+        public virtual async ValueTask<TResult> Handle<TResult>(SetResult<TResult> setResult)
         {
             return setResult.Result;
         }
 
-        public async ValueTask<ValueTuple> Handle<TResult>(SetException<TResult> setException)
+        public virtual async ValueTask<ValueTuple> Handle<TResult>(SetException<TResult> setException)
         {
             System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(setException.Exception).Throw();
 
             return ValueTuple.Create();
         }
 
-        public async ValueTask<Eff<TResult>> Handle<TResult>(Delay<TResult> delay)
+        public virtual async ValueTask<Eff<TResult>> Handle<TResult>(Delay<TResult> delay)
         {
             return delay.Func();
         }
 
 
-        public async ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
+        public virtual async ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
         {
-            var eff = default(Eff<TResult>);
             var effect = awaitEff.Effect;
 
-            var parametersInfo = default((string name, FieldInfo fieldInfo)[]);
-            var localVariablesInfo = default((string name, FieldInfo fieldInfo)[]);
-            // Initialize State Info
-            if ((effect.CaptureState || EnableParametersLogging) && parametersInfo == null)
-                parametersInfo = parametersInfoCache.GetOrAdd(awaitEff.State.GetType(), _ => Utils.GetParametersInfo(awaitEff.State));
-            if ((effect.CaptureState || EnableLocalVariablesLogging) && localVariablesInfo == null)
-                localVariablesInfo = localVariablesInfoCache.GetOrAdd(awaitEff.State.GetType(), _ => Utils.GetLocalVariablesInfo(awaitEff.State));
-
             // Initialize State Values
-            var parameters = default((string name, object value)[]);
-            var localVariables = default((string name, object value)[]);
             if (effect.CaptureState)
             {
-                parameters = Utils.GetValues(parametersInfo, awaitEff.State);
-                localVariables = Utils.GetValues(localVariablesInfo, awaitEff.State);
+                var parameters = Utils.GetParametersValues(awaitEff.State);
+                var localVariables = Utils.GetLocalVariablesValues(awaitEff.State);
                 effect.SetState(parameters, localVariables);
-            }
-            else
-            {
-                if (EnableParametersLogging)
-                    parameters = Utils.GetValues(parametersInfo, awaitEff.State);
-                if (EnableLocalVariablesLogging)
-                    localVariables = Utils.GetValues(localVariablesInfo, awaitEff.State);
             }
 
             // Execute Effect
@@ -117,35 +84,8 @@ namespace Eff.Core
             {
                 effect.SetException(ex);
             }
-            finally
-            {
-                if (EnableExceptionLogging && effect.Exception != null)
-                {
-                    await Log(new ExceptionLog
-                    {
-                        CallerFilePath = effect.CallerFilePath,
-                        CallerLineNumber = effect.CallerLineNumber,
-                        CallerMemberName = effect.CallerMemberName,
-                        Exception = effect.Exception,
-                        Parameters = parameters,
-                        LocalVariables = localVariables,
-                    });
-                }
-                if (EnableTraceLogging && effect.HasResult)
-                {
-                    await Log(new ResultLog
-                    {
-                        CallerFilePath = effect.CallerFilePath,
-                        CallerLineNumber = effect.CallerLineNumber,
-                        CallerMemberName = effect.CallerMemberName,
-                        Result = effect.Result,
-                        Parameters = parameters,
-                        LocalVariables = localVariables,
-                    });
-                }
 
-                eff = awaitEff.Continuation();
-            }
+            var eff = awaitEff.Continuation();
             return eff;
         }
     }

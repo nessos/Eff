@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Core
+namespace Eff.Tests
 {
     public class ExceptionLog
     {

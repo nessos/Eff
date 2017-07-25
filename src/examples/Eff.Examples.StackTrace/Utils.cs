@@ -8,6 +8,17 @@ using System.Threading.Tasks;
 
 namespace Eff.Examples.StackTrace
 {
+
+    public class ExceptionLog
+    {
+        public string CallerMemberName { get; set; }
+        public string CallerFilePath { get; set; }
+        public int CallerLineNumber { get; set; }
+        public Exception Exception { get; set; }
+        public (string name, object value)[] Parameters { get; set; }
+        public (string name, object value)[] LocalVariables { get; set; }
+    }
+
     static class Utils
     {
         public static string StackTraceLog(this Exception ex)
