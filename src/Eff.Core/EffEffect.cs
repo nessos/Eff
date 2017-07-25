@@ -8,7 +8,7 @@ namespace Eff.Core
         private readonly Eff<TResult> eff;
 
         public EffEffect(Eff<TResult> eff, string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
-            : base(memberName, sourceFilePath, sourceLineNumber, captureState)
+            : base(memberName, sourceFilePath, sourceLineNumber)
         {
             this.eff = eff;
         }

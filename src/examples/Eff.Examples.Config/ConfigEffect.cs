@@ -14,7 +14,7 @@ namespace Eff.Examples.Config
         private readonly string key;
         public ConfigEffect(string key, 
                             string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
-            : base(memberName, sourceFilePath, sourceLineNumber, captureState)
+            : base(memberName, sourceFilePath, sourceLineNumber)
         {
             this.key = key;
         }

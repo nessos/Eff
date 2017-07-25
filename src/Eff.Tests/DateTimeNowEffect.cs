@@ -12,7 +12,7 @@ namespace Eff.Tests
     {
 
         public DateTimeNowEffect(string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
-            : base (memberName, sourceFilePath, sourceLineNumber, captureState)
+            : base (memberName, sourceFilePath, sourceLineNumber)
         {
         }
 

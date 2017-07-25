@@ -282,7 +282,7 @@ namespace Eff.Tests
             async Eff<int> Foo(int x)
             {
                 var y = await Task.FromResult(1).AsEffect();
-                await Task.Delay(10).AsEffect(captureState : true);
+                await Task.Delay(10).AsEffect();
                 return x + y;
             }
             var handler = new TestEffectHandler();

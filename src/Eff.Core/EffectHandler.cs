@@ -61,14 +61,9 @@ namespace Eff.Core
         {
             var effect = awaitEff.Effect;
 
-            // Initialize State Values
-            if (effect.CaptureState)
-            {
-                var parameters = Utils.GetParametersValues(awaitEff.State);
-                var localVariables = Utils.GetLocalVariablesValues(awaitEff.State);
-                effect.SetState(parameters, localVariables);
-            }
-
+            // Initialize State Value
+            effect.SetState(awaitEff.State);
+            
             // Execute Effect
             try
             {

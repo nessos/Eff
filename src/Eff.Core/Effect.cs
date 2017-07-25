@@ -16,16 +16,13 @@ namespace Eff.Core
         protected bool hasResult;
         protected TResult result;
         protected Exception exception;
-        private readonly bool captureState;
-        private (string name, object value)[] parameters;
-        private (string name, object value)[] localVariables;
+        protected object state;
 
-        public Effect(string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
+        public Effect(string memberName, string sourceFilePath, int sourceLineNumber)
         {
             this.memberName = memberName;
             this.sourceFilePath = sourceFilePath;
             this.sourceLineNumber = sourceLineNumber;
-            this.captureState = captureState;
         }
 
         public string CallerMemberName => memberName;
@@ -38,9 +35,6 @@ namespace Eff.Core
         public Exception Exception => exception;
         public object Result => result;
 
-        public bool CaptureState => captureState;
-        public (string name, object value)[] Parameters => parameters;
-        public (string name, object value)[] LocalVariables => localVariables;
 
         public TResult GetResult()
         {
@@ -64,10 +58,10 @@ namespace Eff.Core
             exception = ex;
         }
 
-        public void SetState((string name, object value)[] parameters, (string name, object value)[] localVariables)
+        public object State => state;
+        public void SetState(object state)
         {
-            this.parameters = parameters;
-            this.localVariables = localVariables;
+            this.state = state;
         }
 
         public virtual ValueTask<ValueTuple> Accept(IEffectHandler handler)
@@ -84,6 +78,8 @@ namespace Eff.Core
         {
             throw new NotSupportedException();
         }
+
+
     }
 
     

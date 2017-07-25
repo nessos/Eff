@@ -47,11 +47,8 @@ namespace Eff.Core
         public (string name, object value)[] CaptureStateLocalVariables { private set; get; }
         public override async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
         {
-            if (effect.CaptureState)
-            {
-                CaptureStateParameters = effect.Parameters;
-                CaptureStateLocalVariables = effect.LocalVariables;
-            }
+            CaptureStateParameters = Utils.GetParametersValues(effect.State);
+            CaptureStateLocalVariables = Utils.GetLocalVariablesValues(effect.State);
 
             var result = await effect.Task;
             effect.SetResult(result);
