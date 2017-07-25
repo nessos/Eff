@@ -34,38 +34,7 @@ namespace Eff.Core
         public abstract ValueTask<ValueTuple> Log(ExceptionLog log);
         public abstract ValueTask<ValueTuple> Log(ResultLog log);
 
-        protected (string name, object value)[] GetValues((string name, FieldInfo fieldInfo)[] fieldsInfo, object state)
-        {
-            var result = new(string name, object value)[fieldsInfo.Length];
-            for (int j = 0; j < result.Length; j++)
-            {
-                result[j] = (fieldsInfo[j].name, fieldsInfo[j].fieldInfo.GetValue(state));
-            }
-            return result;
-        }
-
-        protected (string name, FieldInfo fieldInfo)[] GetParametersInfo(object state)
-        {
-            var fieldInfos = state.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            var parametersInfo = fieldInfos
-                                       .Where(fieldInfo => !fieldInfo.Name.StartsWith("<"))
-                                       .Select(fieldInfo => (fieldInfo.Name, fieldInfo))
-                                       .ToArray();
-            return parametersInfo;
-        }
-
-        protected (string name, FieldInfo fieldInfo)[] GetLocalVariablesInfo(object state)
-        {
-            var fieldInfos = state.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-            var localVariablesInfo = fieldInfos
-                                           .Where(fieldInfo => !fieldInfo.Name.StartsWith("<>"))
-                                           .Where(fieldInfo => fieldInfo.Name.StartsWith("<"))
-                                           .Select(fieldInfo => (fieldInfo.Name.Substring(1, fieldInfo.Name.LastIndexOf(">") - 1), fieldInfo))
-                                           .ToArray();
-            return localVariablesInfo;
-        }
+        
 
         private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> parametersInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
         private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> localVariablesInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
@@ -122,25 +91,25 @@ namespace Eff.Core
             var localVariablesInfo = default((string name, FieldInfo fieldInfo)[]);
             // Initialize State Info
             if ((effect.CaptureState || EnableParametersLogging) && parametersInfo == null)
-                parametersInfo = parametersInfoCache.GetOrAdd(awaitEff.State.GetType(), _ => GetParametersInfo(awaitEff.State));
+                parametersInfo = parametersInfoCache.GetOrAdd(awaitEff.State.GetType(), _ => Utils.GetParametersInfo(awaitEff.State));
             if ((effect.CaptureState || EnableLocalVariablesLogging) && localVariablesInfo == null)
-                localVariablesInfo = localVariablesInfoCache.GetOrAdd(awaitEff.State.GetType(), _ => GetLocalVariablesInfo(awaitEff.State));
+                localVariablesInfo = localVariablesInfoCache.GetOrAdd(awaitEff.State.GetType(), _ => Utils.GetLocalVariablesInfo(awaitEff.State));
 
             // Initialize State Values
             var parameters = default((string name, object value)[]);
             var localVariables = default((string name, object value)[]);
             if (effect.CaptureState)
             {
-                parameters = GetValues(parametersInfo, awaitEff.State);
-                localVariables = GetValues(localVariablesInfo, awaitEff.State);
+                parameters = Utils.GetValues(parametersInfo, awaitEff.State);
+                localVariables = Utils.GetValues(localVariablesInfo, awaitEff.State);
                 effect.SetState(parameters, localVariables);
             }
             else
             {
                 if (EnableParametersLogging)
-                    parameters = GetValues(parametersInfo, awaitEff.State);
+                    parameters = Utils.GetValues(parametersInfo, awaitEff.State);
                 if (EnableLocalVariablesLogging)
-                    localVariables = GetValues(localVariablesInfo, awaitEff.State);
+                    localVariables = Utils.GetValues(localVariablesInfo, awaitEff.State);
             }
 
             // Execute Effect
