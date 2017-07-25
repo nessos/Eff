@@ -34,8 +34,6 @@ namespace Eff.Core
         public abstract ValueTask<ValueTuple> Log(ExceptionLog log);
         public abstract ValueTask<ValueTuple> Log(ResultLog log);
 
-        
-
         private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> parametersInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
         private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> localVariablesInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
 
@@ -45,14 +43,6 @@ namespace Eff.Core
             var result = await effect.Task;
             effect.SetResult(result);
             
-            return ValueTuple.Create();
-        }
-
-        public virtual async ValueTask<ValueTuple> Handle<TResult>(FuncEffect<TResult> effect)
-        {
-            var result = effect.Func();
-            effect.SetResult(result);
-
             return ValueTuple.Create();
         }
 

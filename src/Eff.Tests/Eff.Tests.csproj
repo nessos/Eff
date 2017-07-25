@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="DateTimeNowEffect.cs" />
     <Compile Include="Effects.cs" />
+    <Compile Include="FuncEffect.cs" />
     <Compile Include="TestEffectHandler.cs" />
     <Compile Include="EffectTests.cs" />
     <Compile Include="Program.cs" />

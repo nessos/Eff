@@ -38,22 +38,6 @@ namespace Eff.Core
             return new EffEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
-        public static FuncEffect<TResult> Func<TResult>(Func<TResult> func,
-                                            [CallerMemberName] string memberName = "",
-                                            [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0,
-                                            bool captureState = false)
-        {
-            return new FuncEffect<TResult>(func, memberName, sourceFilePath, sourceLineNumber, captureState);
-        }
-
-        public static FuncEffect<ValueTuple> Action(Action action,
-                                                    [CallerMemberName] string memberName = "",
-                                                    [CallerFilePath] string sourceFilePath = "",
-                                                    [CallerLineNumber] int sourceLineNumber = 0,
-                                                    bool captureState = false)
-        {
-            return new FuncEffect<ValueTuple>(() => { action(); return ValueTuple.Create(); }, memberName, sourceFilePath, sourceLineNumber, captureState);
-        }
+        
     }
 }

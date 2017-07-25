@@ -254,7 +254,7 @@ namespace Eff.Tests
         {
             async Eff<int> Foo(int x)
             {
-                var y = await Effect.Func(() => x + 1);
+                var y = await CustomEffect.Func(() => x + 1);
                 return y + 1;
             }
 
@@ -268,7 +268,7 @@ namespace Eff.Tests
             async Eff<int> Foo(int x)
             {
                 int y = 0;
-                await Effect.Action(() => y = x + 1);
+                await CustomEffect.Action(() => y = x + 1);
                 return y + 1;
             }
 

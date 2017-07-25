@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Eff.Core;
+using System;
 using System.Threading.Tasks;
 
-namespace Eff.Core
+namespace Eff.Tests
 {
     public class FuncEffect<TResult> : Effect<TResult>
     {
@@ -14,11 +15,6 @@ namespace Eff.Core
         }
 
         public Func<TResult> Func => func;
-
-        public override ValueTask<ValueTuple> Accept(IEffectHandler handler)
-        {
-            return handler.Handle(this);
-        }
     }
 
     

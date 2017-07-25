@@ -34,6 +34,10 @@ namespace Eff.Core
                 case DateTimeNowEffect dateTimeNowEffect:
                     dateTimeNowEffect.SetResult(now);
                     break;
+                case FuncEffect<TResult> funcEffect:
+                    var result = funcEffect.Func();
+                    effect.SetResult(result);
+                    break;
             }
 
             return ValueTuple.Create();
