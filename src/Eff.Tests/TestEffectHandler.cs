@@ -50,49 +50,52 @@ namespace Eff.Core
             CaptureStateParameters = Utils.GetParametersValues(effect.State);
             CaptureStateLocalVariables = Utils.GetLocalVariablesValues(effect.State);
 
-            var result = await effect.Task;
-            effect.SetResult(result);
+            try
+            {
+                var result = await effect.Task;
+                effect.SetResult(result);
+                await Log(result, effect);
+            }
+            catch (Exception ex)
+            {
+                await Log(ex, effect);
+                throw;
+            }
 
             return ValueTuple.Create();
         }
 
-        public override async ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
+        public override async ValueTask<ValueTuple> Handle<TResult>(EffEffect<TResult> effect)
         {
-            var eff = await base.Handle(awaitEff);
-            var effect = awaitEff.Effect;
-            if (effect.Exception != null)
+            try
             {
-                await Log(new ExceptionLog
-                {
-                    CallerFilePath = effect.CallerFilePath,
-                    CallerLineNumber = effect.CallerLineNumber,
-                    CallerMemberName = effect.CallerMemberName,
-                    Exception = effect.Exception,
-                    Parameters = Utils.GetParametersValues(awaitEff.State),
-                    LocalVariables = Utils.GetLocalVariablesValues(awaitEff.State),
-                });
+                var result = await effect.Eff.Run(this);
+                effect.SetResult(result);
+                await Log(result, effect);
             }
-            if (effect.HasResult)
+            catch (Exception ex)
             {
-                await Log(new ResultLog
-                {
-                    CallerFilePath = effect.CallerFilePath,
-                    CallerLineNumber = effect.CallerLineNumber,
-                    CallerMemberName = effect.CallerMemberName,
-                    Result = effect.Result,
-                    Parameters = Utils.GetParametersValues(awaitEff.State),
-                    LocalVariables = Utils.GetLocalVariablesValues(awaitEff.State),
-                });
+                await Log(ex, effect);
+                throw;
             }
 
-            return eff;
+            return ValueTuple.Create();
         }
 
-        public async ValueTask<ValueTuple> Log(ExceptionLog log)
+        public async ValueTask<ValueTuple> Log(Exception ex, IEffect effect)
         {
+            var log =
+                new ExceptionLog
+                {
+                    CallerFilePath = effect.CallerFilePath,
+                    CallerLineNumber = effect.CallerLineNumber,
+                    CallerMemberName = effect.CallerMemberName,
+                    Exception = ex,
+                    Parameters = Utils.GetParametersValues(effect.State),
+                    LocalVariables = Utils.GetLocalVariablesValues(effect.State),
+                };
             ExceptionLogs.Add(log);
 
-            var ex = log.Exception;
             if (!ex.Data.Contains("StackTraceLog"))
             {
                 var queue = new Queue<ExceptionLog>();
@@ -107,8 +110,18 @@ namespace Eff.Core
             return ValueTuple.Create();
         }
 
-        public async ValueTask<ValueTuple> Log(ResultLog log)
+        public async ValueTask<ValueTuple> Log(object result, IEffect effect)
         {
+            var log =
+                new ResultLog
+                {
+                    CallerFilePath = effect.CallerFilePath,
+                    CallerLineNumber = effect.CallerLineNumber,
+                    CallerMemberName = effect.CallerMemberName,
+                    Result = result,
+                    Parameters = Utils.GetParametersValues(effect.State),
+                    LocalVariables = Utils.GetLocalVariablesValues(effect.State),
+                };
             TraceLogs.Add(log);
             return ValueTuple.Create();
         }

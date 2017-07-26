@@ -23,30 +23,51 @@ namespace Eff.Examples.StackTrace
             return ValueTuple.Create();
         }
 
-        public override async ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
+        public override async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
         {
-            var eff = await base.Handle(awaitEff);
-            var effect = awaitEff.Effect;
-            if (effect.Exception != null)
+            try
             {
-                await Log(new ExceptionLog
+                var result = await effect.Task;
+                effect.SetResult(result);
+            }
+            catch (Exception ex)
+            {
+                await Log(ex, effect);
+                throw;
+            }
+
+            return ValueTuple.Create();
+        }
+
+        public override async ValueTask<ValueTuple> Handle<TResult>(EffEffect<TResult> effect)
+        {
+            try
+            {
+                var result = await effect.Eff.Run(this);
+                effect.SetResult(result);
+            }
+            catch (Exception ex)
+            {
+                await Log(ex, effect);
+                throw;
+            }
+
+            return ValueTuple.Create();
+        }
+
+
+        public async ValueTask<ValueTuple> Log(Exception ex, IEffect effect)
+        {
+            var log =
+                new ExceptionLog
                 {
                     CallerFilePath = effect.CallerFilePath,
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
-                    Exception = effect.Exception,
-                    Parameters = Eff.Core.Utils.GetParametersValues(awaitEff.State),
-                    LocalVariables = Eff.Core.Utils.GetLocalVariablesValues(awaitEff.State),
-                });
-            }
-            
-
-            return eff;
-        }
-
-        public async ValueTask<ValueTuple> Log(ExceptionLog log)
-        {
-            var ex = log.Exception;
+                    Exception = ex,
+                    Parameters = Eff.Core.Utils.GetParametersValues(effect.State),
+                    LocalVariables = Eff.Core.Utils.GetLocalVariablesValues(effect.State),
+                };
             if (!ex.Data.Contains("StackTraceLog"))
             {
                 var queue = new Queue<ExceptionLog>();

@@ -23,29 +23,39 @@ namespace Eff.Examples.TraceLog
             return ValueTuple.Create();
         }
 
-        public override async ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
+        public override async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
         {
-            var eff = await base.Handle(awaitEff);
-            var effect = awaitEff.Effect;
-            if (effect.HasResult)
-            {
-                await Log(new ResultLog
+            
+            var result = await effect.Task;
+            effect.SetResult(result);
+            await Log(result, effect);
+
+            return ValueTuple.Create();
+        }
+
+        public override async ValueTask<ValueTuple> Handle<TResult>(EffEffect<TResult> effect)
+        {
+
+            var result = await effect.Eff.Run(this);
+            effect.SetResult(result);
+            await Log(result, effect);
+
+            return ValueTuple.Create();
+        }
+
+        public List<ResultLog> TraceLogs = new List<ResultLog>();
+        public async ValueTask<ValueTuple> Log(object result, IEffect effect)
+        {
+            var log =
+                new ResultLog
                 {
                     CallerFilePath = effect.CallerFilePath,
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
-                    Result = effect.Result,
-                    Parameters = Eff.Core.Utils.GetParametersValues(awaitEff.State),
-                    LocalVariables = Eff.Core.Utils.GetLocalVariablesValues(awaitEff.State),
-                });
-            }
-
-            return eff;
-        }
-
-        public List<ResultLog> TraceLogs = new List<ResultLog>();
-        public async ValueTask<ValueTuple> Log(ResultLog log)
-        {
+                    Result = result,
+                    Parameters = Eff.Core.Utils.GetParametersValues(effect.State),
+                    LocalVariables = Eff.Core.Utils.GetLocalVariablesValues(effect.State),
+                };
             TraceLogs.Add(log);
             return ValueTuple.Create();
         }

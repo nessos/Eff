@@ -243,7 +243,7 @@ namespace Eff.Tests
             Assert.Equal(2, handler.TraceLogs.Count);
             Assert.Equal(1, handler.TraceLogs[0].LocalVariables.Length);
             Assert.Equal("y", handler.TraceLogs[0].LocalVariables[0].name);
-            Assert.Equal(1, (int)handler.TraceLogs[0].LocalVariables[0].value);
+            Assert.Equal(0, (int)handler.TraceLogs[0].LocalVariables[0].value);
             Assert.Equal(1, handler.TraceLogs[1].LocalVariables.Length);
             Assert.Equal("y", handler.TraceLogs[1].LocalVariables[0].name);
             Assert.Equal(1, (int)handler.TraceLogs[1].LocalVariables[0].value);
