@@ -58,6 +58,16 @@ namespace Eff.Core
             return GetValues(localVariablesInfo, state); ;
         }
 
+        public static string GetMethodName(object state)
+        {
+            if (state == null)
+                throw new ArgumentNullException(nameof(state));
 
+            var name = state.GetType().Name;
+            if (name.StartsWith("<"))
+                return name.Substring(1, name.LastIndexOf(">") - 1);
+            else
+                return name;
+        }
     }
 }
