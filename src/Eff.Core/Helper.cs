@@ -13,29 +13,26 @@ namespace Eff.Core
         public static TaskEffect<TResult> AsEffect<TResult>(this Task<TResult> task,
                                                     [CallerMemberName] string memberName = "",
                                                     [CallerFilePath] string sourceFilePath = "",
-                                                    [CallerLineNumber] int sourceLineNumber = 0,
-                                                    bool captureState = false)
+                                                    [CallerLineNumber] int sourceLineNumber = 0)
         {
-            return new TaskEffect<TResult>(task, memberName, sourceFilePath, sourceLineNumber, captureState);
+            return new TaskEffect<TResult>(task, memberName, sourceFilePath, sourceLineNumber);
         }
 
         public static TaskEffect<ValueTuple> AsEffect(this Task task,
                                                         [CallerMemberName] string memberName = "",
                                                         [CallerFilePath] string sourceFilePath = "",
-                                                        [CallerLineNumber] int sourceLineNumber = 0, 
-                                                        bool captureState = false)
+                                                        [CallerLineNumber] int sourceLineNumber = 0)
         {
             async Task<ValueTuple> Wrap() { await task; return ValueTuple.Create(); }
-            return new TaskEffect<ValueTuple>(Wrap(), memberName, sourceFilePath, sourceLineNumber, captureState);
+            return new TaskEffect<ValueTuple>(Wrap(), memberName, sourceFilePath, sourceLineNumber);
         }
 
         public static EffEffect<TResult> AsEffect<TResult>(this Eff<TResult> eff,
                                             [CallerMemberName] string memberName = "",
                                             [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0,
-                                            bool captureState = false)
+                                            [CallerLineNumber] int sourceLineNumber = 0)
         {
-            return new EffEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber, captureState);
+            return new EffEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber);
         }
 
         
