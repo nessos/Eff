@@ -12,7 +12,7 @@ namespace Eff.Core
     public class EffMethodBuilder<TResult>
     {
         private Eff<TResult> eff;
-        private IAsyncStateMachine stateMachine;
+        private object state;
         private Func<object, Eff<TResult>> continuation;
 
         public static EffMethodBuilder<TResult> Create()
@@ -22,13 +22,14 @@ namespace Eff.Core
 
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
-            this.stateMachine = stateMachine;
+            this.state = stateMachine;
             this.continuation = state =>
             {
+                this.state = state;
                 ((IAsyncStateMachine)state).MoveNext();
                 return this.eff;
             };
-            this.eff = new Delay<TResult>(continuation, this.stateMachine);
+            this.eff = new Delay<TResult>(continuation, state);
         }
 
         public void SetStateMachine(IAsyncStateMachine stateMachine)
@@ -38,12 +39,12 @@ namespace Eff.Core
 
         public void SetResult(TResult result)
         {
-            this.eff = new SetResult<TResult>(result, this.stateMachine);
+            this.eff = new SetResult<TResult>(result, state);
         }
 
         public void SetException(Exception exception)
         {
-            this.eff = new SetException<TResult>(exception, this.stateMachine);
+            this.eff = new SetException<TResult>(exception, state);
         }
 
         public Eff<TResult> Task => this.eff;
@@ -72,8 +73,8 @@ namespace Eff.Core
             switch (awaiter)
             {
                 case IEffect effect:
-
-                    this.eff = new Await<TResult>(effect, continuation, stateMachine);
+                    effect.SetState(state);
+                    this.eff = new Await<TResult>(effect, continuation, state);
 
                     break;
                 default:

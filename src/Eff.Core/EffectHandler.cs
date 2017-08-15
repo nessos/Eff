@@ -59,11 +59,7 @@ namespace Eff.Core
 
         public virtual async ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
         {
-            var effect = awaitEff.Effect;
-
-            // Initialize State Value
-            effect.SetState(awaitEff.State);
-            
+            var effect = awaitEff.Effect;            
             // Execute Effect
             try
             {
