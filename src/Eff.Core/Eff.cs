@@ -15,10 +15,10 @@ namespace Eff.Core
     public class Await<TResult> : Eff<TResult>
     {
         private readonly IEffect effect;
-        private readonly Func<Eff<TResult>> continuation;
+        private readonly Func<object, Eff<TResult>> continuation;
         private readonly object state;
 
-        public Await(IEffect effect, Func<Eff<TResult>> continuation, object state)
+        public Await(IEffect effect, Func<object, Eff<TResult>> continuation, object state)
         {
             this.effect = effect;
             this.continuation = continuation;
@@ -26,7 +26,7 @@ namespace Eff.Core
         }
 
         public IEffect Effect => effect;
-        public Func<Eff<TResult>> Continuation => continuation;
+        public Func<object, Eff<TResult>> Continuation => continuation;
         public object State => state;
 
     }
@@ -65,16 +65,16 @@ namespace Eff.Core
 
     public class Delay<TResult> : Eff<TResult>
     {
-        private readonly Func<Eff<TResult>> func;
+        private readonly Func<object, Eff<TResult>> func;
         private readonly object state;
 
-        public Delay(Func<Eff<TResult>> func, object state)
+        public Delay(Func<object, Eff<TResult>> func, object state)
         {
             this.func = func;
             this.state = state;
         }
 
-        public Func<Eff<TResult>> Func => func;
+        public Func<object, Eff<TResult>> Func => func;
         public object State => state;
     }
 

@@ -13,7 +13,7 @@ namespace Eff.Core
     {
         private Eff<TResult> eff;
         private IAsyncStateMachine stateMachine;
-        private Func<Eff<TResult>> continuation;
+        private Func<object, Eff<TResult>> continuation;
 
         public static EffMethodBuilder<TResult> Create()
         {
@@ -23,9 +23,9 @@ namespace Eff.Core
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
             this.stateMachine = stateMachine;
-            this.continuation = () =>
+            this.continuation = state =>
             {
-                this.stateMachine.MoveNext();
+                ((IAsyncStateMachine)state).MoveNext();
                 return this.eff;
             };
             this.eff = new Delay<TResult>(continuation, this.stateMachine);

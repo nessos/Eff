@@ -53,7 +53,7 @@ namespace Eff.Core
 
         public virtual async ValueTask<Eff<TResult>> Handle<TResult>(Delay<TResult> delay)
         {
-            return delay.Func();
+            return delay.Func(delay.State);
         }
 
 
@@ -80,7 +80,7 @@ namespace Eff.Core
                 effect.SetException(ex);
             }
 
-            var eff = awaitEff.Continuation();
+            var eff = awaitEff.Continuation(awaitEff.State);
             return eff;
         }
     }
