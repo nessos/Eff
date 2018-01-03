@@ -45,14 +45,15 @@ namespace Eff.Tests
         [Fact]
         public void AwaitCustomEffect()
         {
-            async Eff<DateTime> Foo()
+            async Eff<DateTime> Foo<T>()
+                where T : struct, IDateTimeNowEffect
             {
-                var y = await CustomEffect.DateTimeNow();
+                var y = await default(T).DateTimeNow();
                 return y;
             }
             var now = DateTime.Now;
             var handler = new TestEffectHandler(now);
-            Assert.Equal(now, Foo().Run(handler).Result);
+            Assert.Equal(now, Foo<CustomEffect>().Run(handler).Result);
         }
 
         [Fact]
@@ -252,28 +253,30 @@ namespace Eff.Tests
         [Fact]
         public void AwaitFuncEffect()
         {
-            async Eff<int> Foo(int x)
+            async Eff<int> Foo<T>(int x)
+                where T : struct, IFuncEffect
             {
-                var y = await CustomEffect.Func(() => x + 1);
+                var y = await default(T).Func(() => x + 1);
                 return y + 1;
             }
 
             var handler = new TestEffectHandler();
-            Assert.Equal(3, Foo(1).Run(handler).Result);
+            Assert.Equal(3, Foo<CustomEffect>(1).Run(handler).Result);
         }
 
         [Fact]
         public void AwaitActionEffect()
         {
-            async Eff<int> Foo(int x)
+            async Eff<int> Foo<T>(int x)
+                where T : struct, IFuncEffect
             {
                 int y = 0;
-                await CustomEffect.Action(() => y = x + 1);
+                await default(T).Action(() => y = x + 1);
                 return y + 1;
             }
 
             var handler = new TestEffectHandler();
-            Assert.Equal(3, Foo(1).Run(handler).Result);
+            Assert.Equal(3, Foo<CustomEffect>(1).Run(handler).Result);
         }
 
         [Fact]

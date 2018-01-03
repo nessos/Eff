@@ -7,10 +7,29 @@ using System.Threading.Tasks;
 
 namespace Eff.Tests
 {
-
-    public static class CustomEffect
+    public interface IDateTimeNowEffect
     {
-        public static DateTimeNowEffect DateTimeNow([CallerMemberName] string memberName = "",
+        DateTimeNowEffect DateTimeNow([CallerMemberName] string memberName = "",
+                                                    [CallerFilePath] string sourceFilePath = "",
+                                                    [CallerLineNumber] int sourceLineNumber = 0,
+                                                    bool captureState = false);
+    }
+    public interface IFuncEffect
+    {
+        FuncEffect<TResult> Func<TResult>(Func<TResult> func,
+                                            [CallerMemberName] string memberName = "",
+                                            [CallerFilePath] string sourceFilePath = "",
+                                            [CallerLineNumber] int sourceLineNumber = 0,
+                                            bool captureState = false);
+        FuncEffect<ValueTuple> Action(Action action,
+                                                    [CallerMemberName] string memberName = "",
+                                                    [CallerFilePath] string sourceFilePath = "",
+                                                    [CallerLineNumber] int sourceLineNumber = 0,
+                                                    bool captureState = false);
+    }
+    public struct CustomEffect : IDateTimeNowEffect, IFuncEffect
+    {
+        public DateTimeNowEffect DateTimeNow([CallerMemberName] string memberName = "",
                                                     [CallerFilePath] string sourceFilePath = "",
                                                     [CallerLineNumber] int sourceLineNumber = 0,
                                                     bool captureState = false)
@@ -18,7 +37,7 @@ namespace Eff.Tests
             return new DateTimeNowEffect(memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
-        public static FuncEffect<TResult> Func<TResult>(Func<TResult> func,
+        public FuncEffect<TResult> Func<TResult>(Func<TResult> func,
                                             [CallerMemberName] string memberName = "",
                                             [CallerFilePath] string sourceFilePath = "",
                                             [CallerLineNumber] int sourceLineNumber = 0,
@@ -27,7 +46,7 @@ namespace Eff.Tests
             return new FuncEffect<TResult>(func, memberName, sourceFilePath, sourceLineNumber, captureState);
         }
 
-        public static FuncEffect<ValueTuple> Action(Action action,
+        public FuncEffect<ValueTuple> Action(Action action,
                                                     [CallerMemberName] string memberName = "",
                                                     [CallerFilePath] string sourceFilePath = "",
                                                     [CallerLineNumber] int sourceLineNumber = 0,
