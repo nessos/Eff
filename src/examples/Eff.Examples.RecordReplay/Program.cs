@@ -23,6 +23,7 @@ namespace Eff.Examples.RecordReplay
         {
             var handler = new RecordEffectHandler();
             var _ = Foo<EffectExample>().Run(handler).Result;
+            string json = handler.GetJson();
         }
     }
 }
