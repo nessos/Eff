@@ -17,7 +17,7 @@ namespace Eff.Examples.RecordReplay
         }
     }
 
-    public class RandomEffect : Effect<int>
+    public class RandomEffect : Effect<long>
     {
 
         public RandomEffect(string memberName, string sourceFilePath, int sourceLineNumber)

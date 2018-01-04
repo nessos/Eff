@@ -1,4 +1,5 @@
-﻿using Eff.Core;
+﻿#pragma warning disable 1998
+using Eff.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,23 @@ namespace Eff.Examples.RecordReplay
 {
     public class ReplayEffectHandler : EffectHandler
     {
-        public override ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
+
+        private readonly List<Result> results;
+
+        public ReplayEffectHandler(List<Result> results)
         {
-            throw new NotImplementedException();
+            this.results = results;
+        }
+
+        public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
+        {
+            var result = 
+                results.Single(it => it.FilePath == effect.CallerFilePath && 
+                                     it.MemberName == effect.CallerMemberName && 
+                                     it.LineNumber == effect.CallerLineNumber);
+            effect.SetResult((TResult)result.Value);
+
+            return ValueTuple.Create();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Eff.Core;
+﻿#pragma warning disable 1998
+using Eff.Core;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace Eff.Examples.RecordReplay
 {
+    public class Result
+    {
+        public string FilePath { get; set; }
+        public string MemberName { get; set; }
+        public int LineNumber { get; set; }
+        public object Value { get; set; }
+    }
+
     public class RecordEffectHandler : EffectHandler
     {
-
-        public class Result
-        {
-            public string FilePath { get; set; }
-            public string MemberName { get; set; }
-            public int LineNumber { get; set; }
-            public object Value { get; set; }
-        }
 
         private List<Result> results = new List<Result>();
         private Random random = new Random();
