@@ -23,7 +23,7 @@ namespace Eff.Examples.RecordReplay
         private List<Result> results = new List<Result>();
         private Random random = new Random();
 
-        public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(IEffect<TResult> effect)
         {
             switch (effect)
             {
@@ -41,7 +41,6 @@ namespace Eff.Examples.RecordReplay
                 LineNumber = effect.CallerLineNumber,
                 Value = effect.Result
             });
-            return ValueTuple.Create();
         }
 
         public string GetJson() => JsonConvert.SerializeObject(results);

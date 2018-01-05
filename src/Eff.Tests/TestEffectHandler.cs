@@ -27,7 +27,7 @@ namespace Eff.Core
         public TestEffectHandler() : this(DateTime.Now)
         { }
 
-        public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(IEffect<TResult> effect)
         {
             switch (effect)
             {
@@ -39,13 +39,11 @@ namespace Eff.Core
                     effect.SetResult(result);
                     break;
             }
-
-            return ValueTuple.Create();
         }
 
         public (string name, object value)[] CaptureStateParameters { private set; get; }
         public (string name, object value)[] CaptureStateLocalVariables { private set; get; }
-        public override async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
+        public override async Task Handle<TResult>(TaskEffect<TResult> effect)
         {
             CaptureStateParameters = Utils.GetParametersValues(effect.State);
             CaptureStateLocalVariables = Utils.GetLocalVariablesValues(effect.State);
@@ -62,10 +60,9 @@ namespace Eff.Core
                 throw;
             }
 
-            return ValueTuple.Create();
         }
 
-        public override async ValueTask<ValueTuple> Handle<TResult>(EffEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffEffect<TResult> effect)
         {
             try
             {
@@ -78,8 +75,6 @@ namespace Eff.Core
                 await Log(ex, effect);
                 throw;
             }
-
-            return ValueTuple.Create();
         }
 
         public async ValueTask<ValueTuple> Log(Exception ex, IEffect effect)

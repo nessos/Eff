@@ -17,15 +17,13 @@ namespace Eff.Examples.CancellationToken
             this.token = token;
         }
 
-        public override async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
+        public override async Task Handle<TResult>(TaskEffect<TResult> effect)
         {
             token.ThrowIfCancellationRequested();
             await base.Handle(effect);
-
-            return ValueTuple.Create();
         }
 
-        public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(IEffect<TResult> effect)
         {
             switch (effect)
             {
@@ -33,7 +31,6 @@ namespace Eff.Examples.CancellationToken
                     _effect.SetResult(token);
                     break;
             };
-            return ValueTuple.Create();
         }
 
         

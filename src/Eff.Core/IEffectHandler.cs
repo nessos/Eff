@@ -10,14 +10,14 @@ namespace Eff.Core
     public interface IEffectHandler 
     {
 
-        ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
-        ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect);
-        ValueTask<ValueTuple> Handle<TResult>(EffEffect<TResult> effect);
+        Task Handle<TResult>(IEffect<TResult> effect);
+        Task Handle<TResult>(TaskEffect<TResult> effect);
+        Task Handle<TResult>(EffEffect<TResult> effect);
 
-        ValueTask<TResult> Handle<TResult>(SetResult<TResult> setResult);
-        ValueTask<ValueTuple> Handle<TResult>(SetException<TResult> setException);
-        ValueTask<Eff<TResult>> Handle<TResult>(Delay<TResult> delay);
-        ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff);
+        Task<TResult> Handle<TResult>(SetResult<TResult> setResult);
+        Task Handle<TResult>(SetException<TResult> setException);
+        Task<Eff<TResult>> Handle<TResult>(Delay<TResult> delay);
+        Task<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff);
 
     }
 

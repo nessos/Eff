@@ -16,7 +16,7 @@ namespace Eff.Examples.Config
         {
         }
 
-        public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(IEffect<TResult> effect)
         {
             switch (effect)
             {
@@ -26,7 +26,6 @@ namespace Eff.Examples.Config
                     _effect.SetResult(value);
                     break;
             };
-            return ValueTuple.Create();
         }
 
 

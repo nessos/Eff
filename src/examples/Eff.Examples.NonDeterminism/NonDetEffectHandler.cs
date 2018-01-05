@@ -31,7 +31,7 @@ namespace Eff.Examples.NonDeterminism
             
         }
 
-        public async override ValueTask<ValueTuple> Handle<TValue>(IEffect<TValue> effect)
+        public async override Task Handle<TValue>(IEffect<TValue> effect)
         {
             switch (effect)
             {
@@ -47,8 +47,6 @@ namespace Eff.Examples.NonDeterminism
                     }
                     break;
             }
-            
-            return ValueTuple.Create();
         }
     }
 }

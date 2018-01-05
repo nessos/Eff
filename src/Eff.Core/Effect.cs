@@ -64,7 +64,7 @@ namespace Eff.Core
             this.state = state;
         }
 
-        public virtual ValueTask<ValueTuple> Accept(IEffectHandler handler)
+        public virtual Task Accept(IEffectHandler handler)
         {
             return handler.Handle(this);
         }

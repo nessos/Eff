@@ -15,7 +15,7 @@ namespace Eff.Core
 
         public Eff<TResult> Eff => eff;
 
-        public override ValueTask<ValueTuple> Accept(IEffectHandler handler)
+        public override Task Accept(IEffectHandler handler)
         {
             return handler.Handle(this);
         }

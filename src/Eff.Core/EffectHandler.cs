@@ -19,45 +19,39 @@ namespace Eff.Core
             
         }
 
-        public abstract ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect);
+        public abstract Task Handle<TResult>(IEffect<TResult> effect);
         
 
        
-        public virtual async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
+        public virtual async Task Handle<TResult>(TaskEffect<TResult> effect)
         {
             var result = await effect.Task;
             effect.SetResult(result);
-            
-            return ValueTuple.Create();
         }
 
-        public virtual async ValueTask<ValueTuple> Handle<TResult>(EffEffect<TResult> effect)
+        public virtual async Task Handle<TResult>(EffEffect<TResult> effect)
         {
             var result = await effect.Eff.Run(this);
             effect.SetResult(result);
-
-            return ValueTuple.Create();
         }
 
-        public virtual async ValueTask<TResult> Handle<TResult>(SetResult<TResult> setResult)
+        public virtual async Task<TResult> Handle<TResult>(SetResult<TResult> setResult)
         {
             return setResult.Result;
         }
 
-        public virtual async ValueTask<ValueTuple> Handle<TResult>(SetException<TResult> setException)
+        public virtual async Task Handle<TResult>(SetException<TResult> setException)
         {
             System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(setException.Exception).Throw();
-
-            return ValueTuple.Create();
         }
 
-        public virtual async ValueTask<Eff<TResult>> Handle<TResult>(Delay<TResult> delay)
+        public virtual async Task<Eff<TResult>> Handle<TResult>(Delay<TResult> delay)
         {
             return delay.Func(delay.State);
         }
 
 
-        public virtual async ValueTask<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
+        public virtual async Task<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
         {
             var effect = awaitEff.Effect;            
             // Execute Effect

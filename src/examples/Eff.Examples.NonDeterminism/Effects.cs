@@ -33,7 +33,7 @@ namespace Eff.Examples.NonDeterminism
                 case Await<TResult> awaitEff:
                     var handler = new NonDetHandler<TResult>(awaitEff.Continuation);
                     var effect = awaitEff.Effect;
-                    var _ = effect.Accept(handler).Result;
+                    effect.Accept(handler);
                     return handler.Results;
                 default:
                     throw new NotSupportedException($"{eff.GetType().Name}");

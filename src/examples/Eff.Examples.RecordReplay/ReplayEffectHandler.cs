@@ -18,15 +18,13 @@ namespace Eff.Examples.RecordReplay
             this.results = results;
         }
 
-        public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(IEffect<TResult> effect)
         {
             var result = 
                 results.Single(it => it.FilePath == effect.CallerFilePath && 
                                      it.MemberName == effect.CallerMemberName && 
                                      it.LineNumber == effect.CallerLineNumber);
             effect.SetResult((TResult)result.Value);
-
-            return ValueTuple.Create();
         }
     }
 }

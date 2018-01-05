@@ -18,12 +18,11 @@ namespace Eff.Examples.StackTrace
         }
 
 
-        public override async ValueTask<ValueTuple> Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(IEffect<TResult> effect)
         {
-            return ValueTuple.Create();
         }
 
-        public override async ValueTask<ValueTuple> Handle<TResult>(TaskEffect<TResult> effect)
+        public override async Task Handle<TResult>(TaskEffect<TResult> effect)
         {
             try
             {
@@ -35,11 +34,9 @@ namespace Eff.Examples.StackTrace
                 await Log(ex, effect);
                 throw;
             }
-
-            return ValueTuple.Create();
         }
 
-        public override async ValueTask<ValueTuple> Handle<TResult>(EffEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffEffect<TResult> effect)
         {
             try
             {
@@ -51,12 +48,10 @@ namespace Eff.Examples.StackTrace
                 await Log(ex, effect);
                 throw;
             }
-
-            return ValueTuple.Create();
         }
 
 
-        public async ValueTask<ValueTuple> Log(Exception ex, IEffect effect)
+        public async Task Log(Exception ex, IEffect effect)
         {
             var log =
                 new ExceptionLog
@@ -73,13 +68,10 @@ namespace Eff.Examples.StackTrace
                 var queue = new Queue<ExceptionLog>();
                 queue.Enqueue(log);
                 ex.Data["StackTraceLog"] = queue;
-
-                return ValueTuple.Create();
+                return;
             }
 
             ((Queue<ExceptionLog>)ex.Data["StackTraceLog"]).Enqueue(log);
-
-            return ValueTuple.Create();
         }
     }
 }
