@@ -5,8 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.4.0" />
-    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Eff.Core\Eff.Core.csproj" />
   </ItemGroup>
 
 </Project>

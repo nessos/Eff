@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{46565542-BC44-4E03-8EC2-4D820F4FEBB1}</ProjectGuid>
+    <ProjectGuid>{C76CB139-2202-4B9D-B7D5-A27B451104DD}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Eff.Examples.NonDeterminism</RootNamespace>
-    <AssemblyName>Eff.Examples.NonDeterminism</AssemblyName>
+    <RootNamespace>Eff.Examples.Console</RootNamespace>
+    <AssemblyName>Eff.Examples.Console</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Eff.Examples.Console.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,9 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NonDetEffectHandler.cs" />
-    <Compile Include="NonDetEffect.cs" />
-    <Compile Include="Effects.cs" />
+    <Compile Include="ConsoleEffect.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -60,9 +60,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Eff.Core\Eff.Core.csproj">
+    <ProjectReference Include="..\..\Eff.CoreDNF\Eff.CoreDNF.csproj">
       <Project>{5aa6cb90-b978-4f62-87ef-6165cf9471e7}</Project>
-      <Name>Eff.Core</Name>
+      <Name>Eff.CoreDNF</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
