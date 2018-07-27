@@ -50,7 +50,7 @@ namespace Eff.Core
         public Eff<TResult> Task => this.eff;
         
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : INotifyCompletion
+            where TAwaiter : IEffect
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompleted(ref awaiter, ref stateMachine, true);
@@ -59,14 +59,14 @@ namespace Eff.Core
 
         [SecuritySafeCritical]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : ICriticalNotifyCompletion
+            where TAwaiter : IEffect
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompleted(ref awaiter, ref stateMachine, false);
         }
 
         private void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine, bool safe)
-            where TAwaiter : INotifyCompletion
+            where TAwaiter : IEffect
             where TStateMachine : IAsyncStateMachine
         {
 
