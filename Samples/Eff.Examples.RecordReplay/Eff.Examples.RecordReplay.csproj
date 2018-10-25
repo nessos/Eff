@@ -3,12 +3,16 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <ProjectGuid>{46565542-BC44-4E03-8EC2-4D820F4FEBB1}</ProjectGuid>
+    <ProjectGuid>{BD80269F-B3C9-4FFA-86C5-C306E813FC4E}</ProjectGuid>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Eff.Core\Eff.Core.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Eff.Core\Eff.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Eff.Core\Eff.Core.csproj" />
+    <ProjectReference Include="..\..\src\Eff.Core\Eff.Core.csproj" />
   </ItemGroup>
 
 </Project>

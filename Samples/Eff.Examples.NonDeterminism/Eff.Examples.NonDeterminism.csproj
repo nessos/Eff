@@ -3,12 +3,12 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <ProjectGuid>{9954D857-2E41-442D-B7F9-1471FA82D96C}</ProjectGuid>
+    <ProjectGuid>{46565542-BC44-4E03-8EC2-4D820F4FEBB1}</ProjectGuid>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Eff.Core\Eff.Core.csproj" />
+    <ProjectReference Include="..\..\src\Eff.Core\Eff.Core.csproj" />
   </ItemGroup>
 
 </Project>
