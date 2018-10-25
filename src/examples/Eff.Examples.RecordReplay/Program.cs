@@ -1,4 +1,4 @@
-﻿using Eff.Core;
+using Eff.Core;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
