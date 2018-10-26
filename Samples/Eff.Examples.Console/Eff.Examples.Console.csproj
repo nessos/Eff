@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <ProjectGuid>{C76CB139-2202-4B9D-B7D5-A27B451104DD}</ProjectGuid>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Eff.Core\Eff.Core.csproj" />
+  </ItemGroup>
+
+</Project>
