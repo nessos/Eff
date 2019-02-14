@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Nuspec">
+    <Title>Eff</Title>
     <Company>Nessos Information Technologies</Company>
     <authors>Nessos Information Technologies</authors>
     <owners>Nessos Information Technologies</owners>
@@ -21,6 +22,9 @@
     <PackageReleaseNotes>Migrate to NetStandard</PackageReleaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>C# effects handlers</tags>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <IncludeSymbols>true</IncludeSymbols>
+    <PackageId>Eff</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
