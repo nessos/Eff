@@ -11,22 +11,21 @@ namespace Eff.Examples.RecordReplay
     class Program
     {
 
-        static async Eff<string> Foo<T>()
-            where T : struct, IDateTimeNowEffect, IRandomEffect
+        static async Eff<string> Foo()
         {
-            var now = await default(T).DateTimeNow();
-            var rnd = await default(T).Random();
+            var now = await IO.Do(_ => DateTime.UtcNow);
+            var rnd = await IO.Do(ctx => ctx.Random.Next(0, 10));
 
             return $"{now} - {rnd}";
         }
 
         static void Main(string[] args)
         {
-            var handler = new RecordEffectHandler();
-            var _ = Foo<EffectExample>().Run(handler).Result;
+            var handler = new RecordEffectHandler(new EffCtx { Random = new Random() });
+            var _ = Foo().Run(handler).Result;
             string json = handler.GetJson();
             var _handler = new ReplayEffectHandler(JsonConvert.DeserializeObject<List<Result>>(json));
-            var __ = Foo<EffectExample>().Run(_handler).Result;
+            var __ = Foo().Run(_handler).Result;
         }
     }
 }

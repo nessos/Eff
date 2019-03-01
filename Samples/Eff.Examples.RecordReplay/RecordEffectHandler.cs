@@ -14,24 +14,26 @@ namespace Eff.Examples.RecordReplay
         public string FilePath { get; set; }
         public string MemberName { get; set; }
         public int LineNumber { get; set; }
+        public Type Type { get; set; }
         public object Value { get; set; }
     }
 
     public class RecordEffectHandler : EffectHandler
     {
+        private readonly EffCtx ctx;
+        public RecordEffectHandler(EffCtx ctx)
+        {
+            this.ctx = ctx;
+        }
 
         private List<Result> results = new List<Result>();
-        private Random random = new Random();
 
         public override async Task Handle<TResult>(IEffect<TResult> effect)
         {
             switch (effect)
             {
-                case DateTimeNowEffect _effect:
-                    _effect.SetResult(DateTime.Now);
-                    break;
-                case RandomEffect _effect:
-                    _effect.SetResult(random.Next());
+                case DoEffect<TResult> _effect:
+                    _effect.SetResult(_effect.Func(ctx));
                     break;
             }
             results.Add(new Result
@@ -39,7 +41,8 @@ namespace Eff.Examples.RecordReplay
                 FilePath = effect.CallerFilePath,
                 MemberName = effect.CallerMemberName,
                 LineNumber = effect.CallerLineNumber,
-                Value = effect.Result
+                Value = effect.Result,
+                Type = typeof(TResult),
             });
         }
 

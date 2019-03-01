@@ -8,24 +8,33 @@ using System.Threading.Tasks;
 
 namespace Eff.Examples.RecordReplay
 {
-    public class DateTimeNowEffect : Effect<DateTime>
+
+    public class EffCtx
+    {
+        public Random Random { get; set; }
+    }
+
+    public class DoEffect<T> : Effect<T>
     {
 
-        public DateTimeNowEffect(string memberName, string sourceFilePath, int sourceLineNumber)
-            : base (memberName, sourceFilePath, sourceLineNumber)
+        public Func<EffCtx, T> Func { get; private set; }
+        public DoEffect(Func<EffCtx, T> func, string memberName, string sourceFilePath, int sourceLineNumber) : base(memberName, sourceFilePath, sourceLineNumber)
         {
+            this.Func = func;
         }
     }
 
-    public class RandomEffect : Effect<long>
+
+    public static class IO
     {
 
-        public RandomEffect(string memberName, string sourceFilePath, int sourceLineNumber)
-            : base(memberName, sourceFilePath, sourceLineNumber)
+        public static DoEffect<T> Do<T>(Func<EffCtx, T> func,
+                                        [CallerMemberName] string memberName = "",
+                                        [CallerFilePath] string sourceFilePath = "",
+                                        [CallerLineNumber] int sourceLineNumber = 0)
         {
+            return new DoEffect<T>(ctx => func(ctx), memberName, sourceFilePath, sourceLineNumber);
         }
+
     }
-
-    
-
 }

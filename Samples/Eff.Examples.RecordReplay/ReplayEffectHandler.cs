@@ -24,7 +24,7 @@ namespace Eff.Examples.RecordReplay
                 results.Single(it => it.FilePath == effect.CallerFilePath && 
                                      it.MemberName == effect.CallerMemberName && 
                                      it.LineNumber == effect.CallerLineNumber);
-            effect.SetResult((TResult)result.Value);
+            effect.SetResult((TResult)Convert.ChangeType(result.Value, result.Type));
         }
     }
 }
