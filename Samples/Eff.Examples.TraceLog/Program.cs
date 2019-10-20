@@ -26,10 +26,10 @@ namespace Eff.Examples.TraceLog
             return sum;
         }
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var handler = new CustomEffectHandler();
-            var _ = Foo(10).Run(handler).Result;
+            await Foo(10).Run(handler);
             Console.WriteLine(handler.TraceLogs.Dump());
         }
     }

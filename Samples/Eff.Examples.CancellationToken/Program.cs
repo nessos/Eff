@@ -16,23 +16,23 @@ namespace Eff.Examples.CancellationToken
         {
             while (true)
             {
-                Console.WriteLine("Step!");
-                await Task.Delay(1000, await Effect.CancellationToken()).AsEffect();
+                var token = await Effect.CancellationToken();
+                Console.WriteLine($"IsCancellationRequested:{token.IsCancellationRequested}");
+                await Task.Delay(1000).AsEffect();
             }
-            return 42;
         }
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
             var handler = new CustomEffectHandler(cts.Token);
             try
             {
-                var _ = Foo().Run(handler).Result;
+                await Foo().Run(handler);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.InnerException.Message);
+                Console.WriteLine(ex);
             }
         }
     }

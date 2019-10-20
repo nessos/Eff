@@ -11,21 +11,26 @@ namespace Eff.Examples.RecordReplay
     class Program
     {
 
-        static async Eff<string> Foo()
+        static async Eff<(DateTime date, int random)> Foo()
         {
             var now = await IO.Do(_ => DateTime.UtcNow);
             var rnd = await IO.Do(ctx => ctx.Random.Next(0, 10));
 
-            return $"{now} - {rnd}";
+            return (now, rnd);
         }
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var handler = new RecordEffectHandler(new EffCtx { Random = new Random() });
-            var _ = Foo().Run(handler).Result;
-            string json = handler.GetJson();
-            var _handler = new ReplayEffectHandler(JsonConvert.DeserializeObject<List<Result>>(json));
-            var __ = Foo().Run(_handler).Result;
+            var result = await Foo().Run(handler);
+            string replayLog = handler.GetJson();
+            Console.WriteLine($"Recorded: {result}");
+
+            await Task.Delay(1000);
+
+            var _handler = new ReplayEffectHandler(JsonConvert.DeserializeObject<List<Result>>(replayLog));
+            result = await Foo().Run(_handler);
+            Console.WriteLine($"Replayed: {result}");
         }
     }
 }

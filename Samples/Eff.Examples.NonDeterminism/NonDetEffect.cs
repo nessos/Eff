@@ -11,15 +11,14 @@ namespace Eff.Examples.NonDeterminism
     public class NonDetEffect<T> : Effect<T>
     {
 
-        private readonly T[] choices;
         public NonDetEffect(T[] choices, 
                             string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
             : base(memberName, sourceFilePath, sourceLineNumber)
         {
-            this.choices = choices;
+            Choices = choices;
         }
 
-        public T[] Choices => choices;
+        public T[] Choices { get; }
 
     }
 

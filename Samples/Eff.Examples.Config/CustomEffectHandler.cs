@@ -1,21 +1,12 @@
 ﻿#pragma warning disable 1998
 using Eff.Core;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Eff.Examples.Config
 {
     public class CustomEffectHandler : EffectHandler
     {
-        
-        public CustomEffectHandler() 
-        {
-        }
-
         public override async Task Handle<TResult>(IEffect<TResult> effect)
         {
             switch (effect)

@@ -27,16 +27,16 @@ namespace Eff.Examples.StackTrace
             return y + z;
         }
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             try
             {
                 var handler = new CustomEffectHandler();
-                var _ = Foo(0).Run(handler).Result;
+                await Foo(0).Run(handler);
             }
-            catch (AggregateException ex)
+            catch (Exception ex)
             {
-                Console.WriteLine(ex.InnerException.StackTraceLog());
+                Console.WriteLine(ex.StackTraceLog());
             }
         }
     }

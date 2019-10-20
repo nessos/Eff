@@ -11,13 +11,6 @@ namespace Eff.Examples.TraceLog
     public class CustomEffectHandler : EffectHandler
     {
 
-        public CustomEffectHandler() 
-            : base()
-        {
-            
-        }
-
-
         public override async Task Handle<TResult>(IEffect<TResult> effect)
         {
         }

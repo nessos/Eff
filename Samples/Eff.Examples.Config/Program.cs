@@ -18,10 +18,10 @@ namespace Eff.Examples.Config
             return $"{google} - {microsoft}";
         }
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var handler = new CustomEffectHandler();
-            var result = Foo().Run(handler).Result;
+            var result = await Foo().Run(handler);
             Console.WriteLine(result);
         }
     }
