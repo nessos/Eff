@@ -11,16 +11,7 @@ namespace Eff.Examples.StackTrace
     public class CustomEffectHandler : EffectHandler
     {
 
-        public CustomEffectHandler() 
-            : base()
-        {
-            
-        }
-
-
-        public override async Task Handle<TResult>(IEffect<TResult> effect)
-        {
-        }
+        public override async Task Handle<TResult>(IEffect<TResult> effect) { }
 
         public override async Task Handle<TResult>(TaskEffect<TResult> effect)
         {

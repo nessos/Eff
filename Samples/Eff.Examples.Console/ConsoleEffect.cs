@@ -11,17 +11,14 @@ namespace Eff.Examples.Console
 {
     public class ConsolePrintEffect : Effect<ValueTuple>
     {
-
-        private readonly string message;
         public ConsolePrintEffect(string message, 
                             string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
             : base(memberName, sourceFilePath, sourceLineNumber)
         {
-            this.message = message;
+            Message = message;
         }
 
-        public string Message => message;
-
+        public string Message { get; }
     }
 
     public class ConsoleReadEffect : Effect<string>
