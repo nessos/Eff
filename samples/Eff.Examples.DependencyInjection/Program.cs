@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable 1998
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Eff.Core;
@@ -17,9 +18,8 @@ namespace Eff.Examples.DependencyInjection
         {
             private HashSet<string> _users = new HashSet<string>();
 
-            public Task<bool> CreateUser(string username, string password) => Task.FromResult(_users.Add(username));
-
-            public Task<bool> Exists(string username) => Task.FromResult(_users.Contains(username));
+            public async Task<bool> CreateUser(string username, string password) => _users.Add(username);
+            public async Task<bool> Exists(string username) => _users.Contains(username);
         }
 
         static async Task Main()
