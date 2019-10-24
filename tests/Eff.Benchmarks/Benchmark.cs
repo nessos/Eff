@@ -7,6 +7,7 @@ using Eff.Core;
 
 namespace Eff.Benchmarks
 {
+    [MemoryDiagnoser]
     public class Benchmark
     {
         private int[] _data;
