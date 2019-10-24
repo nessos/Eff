@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29421.154
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A2A7479C-772D-4E7D-A32C-7C84D6DF500C}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{42267E9E-0BA9-4713-822F-19482AE1FF60}"
 EndProject
@@ -27,7 +30,20 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.StackTrace", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.TraceLog", "samples\Eff.Examples.TraceLog\Eff.Examples.TraceLog.csproj", "{1684FBF6-A493-436D-A974-BDA80CD7F4F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Examples.DependencyInjection", "samples\Eff.Examples.DependencyInjection\Eff.Examples.DependencyInjection.csproj", "{060E7251-22B8-4151-86AB-8BEFC316F257}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.DependencyInjection", "samples\Eff.Examples.DependencyInjection\Eff.Examples.DependencyInjection.csproj", "{060E7251-22B8-4151-86AB-8BEFC316F257}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Benchmarks", "tests\Eff.Benchmarks\Eff.Benchmarks.csproj", "{D13876A1-FAA0-4462-97CD-6B3A5C9999A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7CCD707D-9CDB-4059-8B0F-48C30ED2D16C}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		Dockerfile = Dockerfile
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +91,10 @@ Global
 		{060E7251-22B8-4151-86AB-8BEFC316F257}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{060E7251-22B8-4151-86AB-8BEFC316F257}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{060E7251-22B8-4151-86AB-8BEFC316F257}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D13876A1-FAA0-4462-97CD-6B3A5C9999A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D13876A1-FAA0-4462-97CD-6B3A5C9999A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D13876A1-FAA0-4462-97CD-6B3A5C9999A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D13876A1-FAA0-4462-97CD-6B3A5C9999A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +110,7 @@ Global
 		{9954D857-2E41-442D-B7F9-1471FA82D96C} = {44695613-30F8-4FB7-9586-B0BD127D337B}
 		{1684FBF6-A493-436D-A974-BDA80CD7F4F1} = {44695613-30F8-4FB7-9586-B0BD127D337B}
 		{060E7251-22B8-4151-86AB-8BEFC316F257} = {44695613-30F8-4FB7-9586-B0BD127D337B}
+		{D13876A1-FAA0-4462-97CD-6B3A5C9999A7} = {42267E9E-0BA9-4713-822F-19482AE1FF60}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9592188A-5C47-498C-B4A9-28A6AAE887ED}

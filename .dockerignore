@@ -250,3 +250,6 @@
 # JetBrains Rider
 **/.idea/
 **/*.sln.iml
+
+# BenchmarkDotNet
+**/BenchmarkDotNet.Artifacts/
