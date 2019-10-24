@@ -253,3 +253,6 @@ paket-files/
 
 # BenchmarkDotNet
 BenchmarkDotNet.Artifacts/
+
+# ionide
+.ionide/
