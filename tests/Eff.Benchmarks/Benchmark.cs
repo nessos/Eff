@@ -19,8 +19,8 @@ namespace Eff.Benchmarks
             _handler = new DefaultEffectHandler();
         }
 
-        [Benchmark(Description = "Native Methods", Baseline = true)]
-        public void NativeMethods() => NativeFlow.SumOfOddSquares(_data);
+        [Benchmark(Description = "Managed Methods", Baseline = true)]
+        public void ManagedMethods() => ManagedFlow.SumOfOddSquares(_data);
 
         [Benchmark(Description = "Task Builder")]
         public Task TaskBuilder() => TaskFlow.SumOfOddSquares(_data);
@@ -28,7 +28,7 @@ namespace Eff.Benchmarks
         [Benchmark(Description = "Eff Builder")]
         public Task EffBuilder() => EffFlow.SumOfOddSquares(_data).Run(_handler);
 
-        private static class NativeFlow
+        private static class ManagedFlow
         {
             public static int SumOfOddSquares(int[] inputs)
             {
