@@ -14,7 +14,7 @@ namespace Eff.Tests
     public class EffectTests
     {
         [Fact]
-        public void SimpleReturn()
+        public async Task SimpleReturn()
         {
             async Eff<int> Foo(int x)
             {
@@ -22,11 +22,11 @@ namespace Eff.Tests
             }
 
             var handler = new TestEffectHandler();
-            Assert.Equal(2, Foo(1).Run(handler).Result);
+            Assert.Equal(2, await Foo(1).Run(handler));
         }
 
         [Fact]
-        public void AwaitEffEffect()
+        public async Task AwaitEffEffect()
         {
             async Eff<int> Bar(int x)
             {
@@ -39,11 +39,11 @@ namespace Eff.Tests
             }
 
             var handler = new TestEffectHandler();
-            Assert.Equal(3, Foo(1).Run(handler).Result);
+            Assert.Equal(3, await Foo(1).Run(handler));
         }
 
         [Fact]
-        public void AwaitCustomEffect()
+        public async Task AwaitCustomEffect()
         {
             async Eff<DateTime> Foo<T>()
                 where T : struct, IDateTimeNowEffect
@@ -53,11 +53,11 @@ namespace Eff.Tests
             }
             var now = DateTime.Now;
             var handler = new TestEffectHandler(now);
-            Assert.Equal(now, Foo<CustomEffect>().Run(handler).Result);
+            Assert.Equal(now, await Foo<CustomEffect>().Run(handler));
         }
 
         [Fact]
-        public void AwaitTaskEffect()
+        public async Task AwaitTaskEffect()
         {
             async Eff<int> Foo(int x)
             {
@@ -66,11 +66,11 @@ namespace Eff.Tests
             }
 
             var handler = new TestEffectHandler();
-            Assert.Equal(3, Foo(1).Run(handler).Result);
+            Assert.Equal(3, await Foo(1).Run(handler));
         }
 
         [Fact]
-        public void AwaitTaskDelay()
+        public async Task AwaitTaskDelay()
         {
             async Task<int> Bar(int x)
             {
@@ -84,11 +84,11 @@ namespace Eff.Tests
             }
 
             var handler = new TestEffectHandler();
-            Assert.Equal(3, Foo(1).Run(handler).Result);
+            Assert.Equal(3, await Foo(1).Run(handler));
         }
 
         [Fact]
-        public void AwaitSequenceOfTaskEffects()
+        public async Task AwaitSequenceOfTaskEffects()
         {
             async Eff<int> Bar(int x)
             {
@@ -104,11 +104,11 @@ namespace Eff.Tests
 
             var handler = new TestEffectHandler();
             var foo = Foo(1).Run(handler);
-            Assert.Equal(3, foo.Result);
+            Assert.Equal(3, await foo);
         }
 
         [Fact]
-        public void AwaitCombinationOfEffandTaskEffects()
+        public async Task AwaitCombinationOfEffandTaskEffects()
         {
             async Eff<int> Bar(int x)
             {
@@ -124,12 +124,12 @@ namespace Eff.Tests
 
             var handler = new TestEffectHandler();
             var foo = Foo(1).Run(handler);
-            Assert.Equal(3, foo.Result);
+            Assert.Equal(3, await foo);
         }
 
 
         [Fact]
-        public void TestExceptionPropagation()
+        public async Task TestExceptionPropagation()
         {
             async Eff<int> Foo(int x)
             {
@@ -137,37 +137,11 @@ namespace Eff.Tests
             }
 
             var handler = new TestEffectHandler();
-            var ex = Foo(0).Run(handler).Exception;
-            Assert.IsType<DivideByZeroException>(ex.InnerException);
+            await Assert.ThrowsAsync<DivideByZeroException>(() => Foo(0).Run(handler));
         }
 
         [Fact]
-        public void TestExceptionPropagationWithAwait()
-        {
-            async Eff<int> Bar(int x)
-            {
-                return 1 / x;
-            }
-
-            async Eff<int> Foo(int x)
-            {
-                var y = await Bar(x).AsEffect();
-                return y;
-            }
-
-            var handler = new TestEffectHandler();
-            try
-            {
-                var _ = Foo(0).Run(handler).Result;
-            }
-            catch (AggregateException ex)
-            {
-                Assert.IsType<DivideByZeroException>(ex.InnerException);
-            }
-        }
-
-        [Fact]
-        public void TestExceptionLog()
+        public async Task TestExceptionPropagationWithAwait()
         {
             async Eff<int> Bar(int x)
             {
@@ -179,21 +153,32 @@ namespace Eff.Tests
                 var y = await Bar(x).AsEffect();
                 return y;
             }
+
             var handler = new TestEffectHandler();
-            try
-            {
-                var _ = Foo(0).Run(handler).Result;
-            }
-            catch (AggregateException ex)
-            {
-                Assert.IsType<DivideByZeroException>(ex.InnerException);
-                Assert.Equal(1, handler.ExceptionLogs.Count);
-                Assert.Equal(ex.InnerException, handler.ExceptionLogs[0].Exception);
-            }
+            await Assert.ThrowsAsync<DivideByZeroException>(() => Foo(0).Run(handler));
         }
 
         [Fact]
-        public void TestTraceLog()
+        public async Task TestExceptionLog()
+        {
+            async Eff<int> Bar(int x)
+            {
+                return 1 / x;
+            }
+
+            async Eff<int> Foo(int x)
+            {
+                var y = await Bar(x).AsEffect();
+                return y;
+            }
+            var handler = new TestEffectHandler();
+            var ex = await Assert.ThrowsAsync<DivideByZeroException>(() => Foo(0).Run(handler));
+            Assert.Single(handler.ExceptionLogs);
+            Assert.Equal(ex, handler.ExceptionLogs[0].Exception);
+        }
+
+        [Fact]
+        public async Task TestTraceLog()
         {
             async Eff<int> Bar(int x)
             {
@@ -205,15 +190,16 @@ namespace Eff.Tests
                 var y = await Bar(x).AsEffect();
                 return y;
             }
+
             var handler = new TestEffectHandler();            
-            var result = Foo(1).Run(handler).Result;
+            var result = await Foo(1).Run(handler);
             Assert.Equal(2, result);
-            Assert.Equal(1, handler.TraceLogs.Count);
+            Assert.Single(handler.TraceLogs);
             Assert.Equal(result, (int)handler.TraceLogs[0].Result);
         }
 
         [Fact]
-        public void TestParametersLogging()
+        public async Task TestParametersLogging()
         {
             async Eff<int> Foo(int x)
             {
@@ -221,16 +207,16 @@ namespace Eff.Tests
                 return x + y;
             }
             var handler = new TestEffectHandler();
-            var result = Foo(1).Run(handler).Result;
+            var result = await Foo(1).Run(handler);
             Assert.Equal(2, result);
-            Assert.Equal(1, handler.TraceLogs.Count);
-            Assert.Equal(1, handler.TraceLogs[0].Parameters.Length);
+            Assert.Single(handler.TraceLogs);
+            Assert.Single(handler.TraceLogs[0].Parameters);
             Assert.Equal("x", handler.TraceLogs[0].Parameters[0].name);
             Assert.Equal(1, (int)handler.TraceLogs[0].Parameters[0].value);
         }
 
         [Fact]
-        public void TestLocalVariablesLogging()
+        public async Task TestLocalVariablesLogging()
         {
             async Eff<int> Foo(int x)
             {
@@ -239,19 +225,19 @@ namespace Eff.Tests
                 return x + y;
             }
             var handler = new TestEffectHandler();
-            var result = Foo(1).Run(handler).Result;
+            var result = await Foo(1).Run(handler);
             Assert.Equal(2, result);
             Assert.Equal(2, handler.TraceLogs.Count);
-            Assert.Equal(1, handler.TraceLogs[0].LocalVariables.Length);
+            Assert.Single(handler.TraceLogs[0].LocalVariables);
             Assert.Equal("y", handler.TraceLogs[0].LocalVariables[0].name);
             Assert.Equal(0, (int)handler.TraceLogs[0].LocalVariables[0].value);
-            Assert.Equal(1, handler.TraceLogs[1].LocalVariables.Length);
+            Assert.Single(handler.TraceLogs[1].LocalVariables);
             Assert.Equal("y", handler.TraceLogs[1].LocalVariables[0].name);
             Assert.Equal(1, (int)handler.TraceLogs[1].LocalVariables[0].value);
         }
 
         [Fact]
-        public void AwaitFuncEffect()
+        public async Task AwaitFuncEffect()
         {
             async Eff<int> Foo<T>(int x)
                 where T : struct, IFuncEffect
@@ -261,11 +247,11 @@ namespace Eff.Tests
             }
 
             var handler = new TestEffectHandler();
-            Assert.Equal(3, Foo<CustomEffect>(1).Run(handler).Result);
+            Assert.Equal(3, await Foo<CustomEffect>(1).Run(handler));
         }
 
         [Fact]
-        public void AwaitActionEffect()
+        public async Task AwaitActionEffect()
         {
             async Eff<int> Foo<T>(int x)
                 where T : struct, IFuncEffect
@@ -276,11 +262,11 @@ namespace Eff.Tests
             }
 
             var handler = new TestEffectHandler();
-            Assert.Equal(3, Foo<CustomEffect>(1).Run(handler).Result);
+            Assert.Equal(3, await Foo<CustomEffect>(1).Run(handler));
         }
 
         [Fact]
-        public void AwaitCaptureStateEffect()
+        public async Task AwaitCaptureStateEffect()
         {
             async Eff<int> Foo(int x)
             {
@@ -289,18 +275,18 @@ namespace Eff.Tests
                 return x + y;
             }
             var handler = new TestEffectHandler();
-            var result = Foo(1).Run(handler).Result;
+            var result = await Foo(1).Run(handler);
             Assert.Equal(2, result);
-            Assert.Equal(1, handler.CaptureStateParameters.Length);
+            Assert.Single(handler.CaptureStateParameters);
             Assert.Equal("x", handler.CaptureStateParameters[0].name);
             Assert.Equal(1, (int)handler.CaptureStateParameters[0].value);
-            Assert.Equal(1, handler.CaptureStateLocalVariables.Length);
+            Assert.Single(handler.CaptureStateLocalVariables);
             Assert.Equal("y", handler.CaptureStateLocalVariables[0].name);
             Assert.Equal(1, (int)handler.CaptureStateLocalVariables[0].value);
         }
 
         [Fact]
-        public void TestEffectsinLoops()
+        public async Task TestEffectsinLoops()
         {
             async Eff<int> Foo(int x)
             {
@@ -313,7 +299,7 @@ namespace Eff.Tests
                 return sum;
             }
             var handler = new TestEffectHandler();
-            var result = Foo(0).Run(handler).Result;
+            var result = await Foo(0).Run(handler);
             Assert.Equal(10000, result);
         }
     }

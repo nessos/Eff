@@ -13,19 +13,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Core", "src\Eff.Core\Ef
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Tests", "tests\Eff.Tests\Eff.Tests.csproj", "{E6858454-56BA-46D2-85B5-220B1248D6FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.CancellationToken", "Samples\Eff.Examples.CancellationToken\Eff.Examples.CancellationToken.csproj", "{AFC2490D-411B-4180-A106-06A065E9C598}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.CancellationToken", "samples\Eff.Examples.CancellationToken\Eff.Examples.CancellationToken.csproj", "{AFC2490D-411B-4180-A106-06A065E9C598}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Config", "Samples\Eff.Examples.Config\Eff.Examples.Config.csproj", "{94290788-BAD2-4116-A6E3-A7948FFE4CAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Config", "samples\Eff.Examples.Config\Eff.Examples.Config.csproj", "{94290788-BAD2-4116-A6E3-A7948FFE4CAF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Console", "Samples\Eff.Examples.Console\Eff.Examples.Console.csproj", "{C76CB139-2202-4B9D-B7D5-A27B451104DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Console", "samples\Eff.Examples.Console\Eff.Examples.Console.csproj", "{C76CB139-2202-4B9D-B7D5-A27B451104DD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.NonDeterminism", "Samples\Eff.Examples.NonDeterminism\Eff.Examples.NonDeterminism.csproj", "{46565542-BC44-4E03-8EC2-4D820F4FEBB1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.NonDeterminism", "samples\Eff.Examples.NonDeterminism\Eff.Examples.NonDeterminism.csproj", "{46565542-BC44-4E03-8EC2-4D820F4FEBB1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.RecordReplay", "Samples\Eff.Examples.RecordReplay\Eff.Examples.RecordReplay.csproj", "{BD80269F-B3C9-4FFA-86C5-C306E813FC4E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.RecordReplay", "samples\Eff.Examples.RecordReplay\Eff.Examples.RecordReplay.csproj", "{BD80269F-B3C9-4FFA-86C5-C306E813FC4E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.StackTrace", "Samples\Eff.Examples.StackTrace\Eff.Examples.StackTrace.csproj", "{9954D857-2E41-442D-B7F9-1471FA82D96C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.StackTrace", "samples\Eff.Examples.StackTrace\Eff.Examples.StackTrace.csproj", "{9954D857-2E41-442D-B7F9-1471FA82D96C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.TraceLog", "Samples\Eff.Examples.TraceLog\Eff.Examples.TraceLog.csproj", "{1684FBF6-A493-436D-A974-BDA80CD7F4F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.TraceLog", "samples\Eff.Examples.TraceLog\Eff.Examples.TraceLog.csproj", "{1684FBF6-A493-436D-A974-BDA80CD7F4F1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Examples.DependencyInjection", "samples\Eff.Examples.DependencyInjection\Eff.Examples.DependencyInjection.csproj", "{060E7251-22B8-4151-86AB-8BEFC316F257}"
 EndProject
