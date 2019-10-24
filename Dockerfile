@@ -5,4 +5,4 @@ COPY . .
 
 CMD dotnet build -c Release && \
     dotnet test --no-build -c Release && \
-    dotnet pack -c Release
+    dotnet pack -c Release -o artifacts/
