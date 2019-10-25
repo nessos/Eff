@@ -1,0 +1,72 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "shell",
+      "args": [
+        "build",
+        "--configuration",
+        "Release",
+        "--no-restore",
+        "/nologo",
+        // Ask dotnet build to generate full paths for file names.
+        "/property:GenerateFullPaths=true",
+        // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+        "/consoleloggerparameters:NoSummary",
+      ],
+      "dependsOn": [
+        "restore"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "restore",
+      "command": "dotnet",
+      "type": "shell",
+      "args": [
+        "restore"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "pack",
+      "command": "dotnet",
+      "type": "shell",
+      "args": [
+        "pack",
+        "--configuration",
+        "Release",
+        "--output",
+        "packages",
+        "/nologo",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary",
+      ],
+      "dependsOn": [
+        "build"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}
