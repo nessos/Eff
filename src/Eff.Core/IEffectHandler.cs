@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Eff.Core
 {
     public interface IEffectHandler 
     {
-
         Task Handle<TResult>(IEffect<TResult> effect);
         Task Handle<TResult>(TaskEffect<TResult> effect);
         Task Handle<TResult>(EffEffect<TResult> effect);
@@ -18,8 +12,5 @@ namespace Eff.Core
         Task Handle<TResult>(SetException<TResult> setException);
         Task<Eff<TResult>> Handle<TResult>(Delay<TResult> delay);
         Task<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff);
-
     }
-
-    
 }

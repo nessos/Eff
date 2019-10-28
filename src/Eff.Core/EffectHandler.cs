@@ -1,12 +1,6 @@
 ﻿#pragma warning disable 1998
 
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Eff.Core
@@ -20,8 +14,6 @@ namespace Eff.Core
         }
 
         public abstract Task Handle<TResult>(IEffect<TResult> effect);
-        
-
        
         public virtual async Task Handle<TResult>(TaskEffect<TResult> effect)
         {
@@ -50,7 +42,6 @@ namespace Eff.Core
             return delay.Func(delay.State);
         }
 
-
         public virtual async Task<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
         {
             var effect = awaitEff.Effect;            
@@ -74,6 +65,4 @@ namespace Eff.Core
             return eff;
         }
     }
-
-
 }

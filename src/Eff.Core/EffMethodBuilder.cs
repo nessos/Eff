@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eff.Core
 {
     public class EffMethodBuilder<TResult>
     {
-        private Eff<TResult> eff;
-        private object state;
-        private Func<object, Eff<TResult>> continuation;
+        private object? _state;
+        private Func<object, Eff<TResult>>? _continuation;
+
+        public Eff<TResult>? Task { get; private set; }
 
         public static EffMethodBuilder<TResult> Create()
         {
@@ -22,14 +18,14 @@ namespace Eff.Core
 
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
-            this.state = stateMachine;
-            this.continuation = state =>
+            _state = stateMachine;
+            _continuation = state =>
             {
-                this.state = state;
+                _state = state;
                 ((IAsyncStateMachine)state).MoveNext();
-                return this.eff;
+                return Task!;
             };
-            this.eff = new Delay<TResult>(continuation, state);
+            Task = new Delay<TResult>(_continuation, _state);
         }
 
         public void SetStateMachine(IAsyncStateMachine stateMachine)
@@ -39,16 +35,14 @@ namespace Eff.Core
 
         public void SetResult(TResult result)
         {
-            this.eff = new SetResult<TResult>(result, state);
+            Task = new SetResult<TResult>(result, _state!);
         }
 
         public void SetException(Exception exception)
         {
-            this.eff = new SetException<TResult>(exception, state);
+            Task = new SetException<TResult>(exception, _state!);
         }
 
-        public Eff<TResult> Task => this.eff;
-        
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
             where TAwaiter : IEffect
             where TStateMachine : IAsyncStateMachine
@@ -73,16 +67,13 @@ namespace Eff.Core
             switch (awaiter)
             {
                 case IEffect effect:
-                    effect.SetState(state);
-                    this.eff = new Await<TResult>(effect, continuation, state);
+                    effect.SetState(_state!);
+                    this.Task = new Await<TResult>(effect, _continuation!, _state!);
 
                     break;
                 default:
                     throw new EffException($"Awaiter {awaiter.GetType().Name} is not an effect. Try to use obj.AsEffect().");
             }
         }
-
-
     }
-
 }

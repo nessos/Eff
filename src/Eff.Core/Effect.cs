@@ -1,67 +1,63 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Eff.Core
 {
     public abstract class Effect<TResult> : IEffect<TResult>
     {
-        private readonly string memberName;
-        private readonly string sourceFilePath;
-        private readonly int sourceLineNumber;
-
-        protected bool hasResult;
-        protected TResult result;
-        protected Exception exception;
-        protected object state;
+        protected bool _hasResult;
+        protected TResult _result;
+        protected Exception? _exception;
+        protected object? _state;
 
         public Effect(string memberName, string sourceFilePath, int sourceLineNumber)
         {
-            this.memberName = memberName;
-            this.sourceFilePath = sourceFilePath;
-            this.sourceLineNumber = sourceLineNumber;
+            CallerMemberName = memberName;
+            CallerFilePath = sourceFilePath;
+            CallerLineNumber = sourceLineNumber;
+            _result = default!;
         }
 
-        public string CallerMemberName => memberName;
-        public string CallerFilePath => sourceFilePath;
-        public int CallerLineNumber => sourceLineNumber;
+        public string CallerMemberName { get; }
+        public string CallerFilePath { get; }
+        public int CallerLineNumber { get; }
 
-        public bool IsCompleted => hasResult || exception != null;
+        public bool IsCompleted => _hasResult || _exception != null;
 
-        public bool HasResult => hasResult;
-        public Exception Exception => exception;
-        public object Result => result;
+        public bool HasResult => _hasResult;
+        public Exception? Exception => _exception;
+        public object Result => _result!;
+        public object? State => _state;
 
-
+        [return: MaybeNull]
         public TResult GetResult()
         {
-            if (exception != null)
+            if (_exception != null)
             {
-                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(exception).Throw();
-                throw exception;
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(_exception).Throw();
+                throw _exception;
             }
-            else return result;
+            
+            return _result;
         }
+
         public IEffect<TResult> GetAwaiter() => this;
 
         public void SetResult(TResult result)
         {
-            hasResult = true;
-            this.result = result;
+            _hasResult = true;
+            _result = result;
         }
 
         public void SetException(Exception ex)
         {
-            exception = ex;
+            _exception = ex;
         }
 
-        public object State => state;
         public void SetState(object state)
         {
-            this.state = state;
+            _state = state;
         }
 
         public virtual Task Accept(IEffectHandler handler)
@@ -78,10 +74,5 @@ namespace Eff.Core
         {
             throw new NotSupportedException();
         }
-
-
     }
-
-    
-    
 }

@@ -5,15 +5,13 @@ namespace Eff.Core
 {
     public class EffEffect<TResult> : Effect<TResult>
     {
-        private readonly Eff<TResult> eff;
-
         public EffEffect(Eff<TResult> eff, string memberName, string sourceFilePath, int sourceLineNumber)
             : base(memberName, sourceFilePath, sourceLineNumber)
         {
-            this.eff = eff;
+            Eff = eff;
         }
 
-        public Eff<TResult> Eff => eff;
+        public Eff<TResult> Eff { get; }
 
         public override Task Accept(IEffectHandler handler)
         {
