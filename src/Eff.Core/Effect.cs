@@ -26,7 +26,7 @@ namespace Eff.Core
 
         public bool HasResult => _hasResult;
         public Exception? Exception => _exception;
-        public object Result => _result!;
+        public object? Result => _result;
         public object? State => _state;
 
         public TResult GetResult()
