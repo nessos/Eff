@@ -68,7 +68,7 @@ namespace Eff.Core
             {
                 case IEffect effect:
                     effect.SetState(_state!);
-                    this.Task = new Await<TResult>(effect, _continuation!, _state!);
+                    Task = new Await<TResult>(effect, _continuation!, _state!);
 
                     break;
                 default:

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Eff.Core
@@ -30,9 +29,10 @@ namespace Eff.Core
         public object Result => _result!;
         public object? State => _state;
 
-        [return: MaybeNull]
         public TResult GetResult()
         {
+            // TODO: make compatible with Task.Result semantics
+
             if (_exception != null)
             {
                 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(_exception).Throw();
