@@ -1,10 +1,5 @@
 ﻿#pragma warning disable 1998
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Eff.Core
@@ -15,9 +10,5 @@ namespace Eff.Core
         {
             
         }
-
-
     }
-
-
 }

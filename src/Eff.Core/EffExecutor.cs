@@ -1,13 +1,6 @@
 ﻿#pragma warning disable 1998
 
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Eff.Core
@@ -21,9 +14,8 @@ namespace Eff.Core
                 throw new ArgumentNullException(nameof(eff));
             if (handler == null)
                 throw new ArgumentNullException(nameof(handler));
-
             
-            var result = default(TResult);
+            var result = default(TResult)!;
             var done = false;
             while (!done)
             {
@@ -50,6 +42,4 @@ namespace Eff.Core
             return result;
         }
     }
-
-
 }

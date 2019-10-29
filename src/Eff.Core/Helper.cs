@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Eff.Core
 {
     public static class Effect
     {
-
         public static TaskEffect<TResult> AsEffect<TResult>(this Task<TResult> task,
                                                     [CallerMemberName] string memberName = "",
                                                     [CallerFilePath] string sourceFilePath = "",
@@ -34,7 +30,5 @@ namespace Eff.Core
         {
             return new EffEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber);
         }
-
-        
     }
 }

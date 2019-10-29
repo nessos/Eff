@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Eff.Core
@@ -15,21 +12,18 @@ namespace Eff.Core
         string CallerFilePath { get; }
         int CallerLineNumber { get; }
 
-        object State { get; }
+        object? State { get; }
         void SetState(object state);
 
         
         void SetException(Exception ex);
 
         bool HasResult { get; }
-        Exception Exception { get; }
-        object Result { get; }
+        Exception? Exception { get; }
+        object? Result { get; }
 
         Task Accept(IEffectHandler handler);
-
     }
-
-    
 
     public interface IEffect<TResult> : IEffect
     {
