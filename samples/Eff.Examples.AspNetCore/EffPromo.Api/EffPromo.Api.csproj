@@ -4,6 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <StartupObject>Nessos.EffPromo.Api.Program</StartupObject>
+    <Nullable>annotations</Nullable>
+    <NoWarn>CS1998;$(NoWarn)</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
