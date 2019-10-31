@@ -1,4 +1,4 @@
-# Eff ![Linux build & tests master](https://travis-ci.org/nessos/Eff.svg?branch=master) [![NuGet Badge](https://buildstats.info/nuget/Eff)](https://www.nuget.org/packages/Eff/)
+# Eff [![Build Status](https://travis-ci.org/nessos/Eff.svg?branch=master)](https://travis-ci.org/nessos/Eff) [![NuGet Badge](https://buildstats.info/nuget/Eff)](https://www.nuget.org/packages/Eff/)
 A library design for programming with effects and handlers in C# 7, inspired by the [Eff] programming language and the implementation of Algebraic Effects in [OCaml], [Eff Directly in OCaml]. Eff can handle effect interpretation, detailed exception tracing and trace logging.
 
 ```csharp
