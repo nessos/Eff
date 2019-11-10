@@ -23,6 +23,9 @@ namespace Eff.Benchmarks
         [Benchmark(Description = "Managed Methods", Baseline = true)]
         public void ManagedMethods() => ManagedFlow.SumOfOddSquares(_data);
 
+        [Benchmark(Description = "ValueTask Builder")]
+        public async ValueTask ValueTaskBuilder() => await ValueTaskFlow.SumOfOddSquares(_data);
+
         [Benchmark(Description = "Task Builder")]
         public Task TaskBuilder() => TaskFlow.SumOfOddSquares(_data);
 
@@ -42,6 +45,22 @@ namespace Eff.Benchmarks
                 static int Square(int x) => Echo(x) * Echo(x);
                 static T Echo<T>(T x) => x;
             }
+        }
+
+        private static class ValueTaskFlow
+        {
+            public static async ValueTask<int> SumOfOddSquares(int[] inputs)
+            {
+                int sum = 0;
+                foreach (var i in inputs)
+                    if (i % 2 == 1) sum += await Square(i);
+
+                return sum;
+
+                static async ValueTask<int> Square(int x) => await Echo(x) * await Echo(x);
+                static async ValueTask<T> Echo<T>(T x) => x;
+            }
+
         }
 
         private static class TaskFlow
