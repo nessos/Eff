@@ -11,13 +11,9 @@ namespace Eff.Examples.NonDeterminism
 
     public static class Effect
     {
-        public static NonDetEffect<T> Choose<T>(T[] choices,
-                                            [CallerMemberName] string memberName = "",
-                                            [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0,
-                                            bool captureState = false)
+        public static NonDetEffect<T> Choose<T>(params T[] choices)
         {
-            return new NonDetEffect<T>(choices, memberName, sourceFilePath, sourceLineNumber, captureState);
+            return new NonDetEffect<T>(choices);
         }
 
         public static List<TResult> Run<TResult>(this Eff<TResult> eff)
@@ -29,7 +25,7 @@ namespace Eff.Examples.NonDeterminism
                 case SetResult<TResult> setResult:
                     return new List<TResult> { setResult.Result };
                 case Delay<TResult> delay:
-                    return Run(delay.Func(delay.State));
+                    return Run(delay.Continuation.Trigger());
                 case Await<TResult> awaitEff:
                     var handler = new NonDetHandler<TResult>(awaitEff.Continuation);
                     var effect = awaitEff.Effect;

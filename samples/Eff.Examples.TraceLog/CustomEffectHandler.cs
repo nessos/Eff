@@ -39,8 +39,8 @@ namespace Eff.Examples.TraceLog
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
                     Result = result,
-                    Parameters = Eff.Core.Utils.GetParametersValues(effect.State),
-                    LocalVariables = Eff.Core.Utils.GetLocalVariablesValues(effect.State),
+                    Parameters = Eff.Core.TraceHelpers.GetParametersValues(effect.State),
+                    LocalVariables = Eff.Core.TraceHelpers.GetLocalVariablesValues(effect.State),
                 };
             TraceLogs.Add(log);
         }

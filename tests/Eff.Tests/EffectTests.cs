@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -301,6 +302,42 @@ namespace Eff.Tests
             var handler = new TestEffectHandler();
             var result = await Foo(0).Run(handler);
             Assert.Equal(10000, result);
+        }
+
+        [Fact]
+        public async Task DefaultEffectHandler_OnEffect_ShouldThrow()
+        {
+            async Eff<DateTime> Foo()
+            {
+                return await (new CustomEffect()).DateTimeNow();
+            }
+
+            var exn = await Assert.ThrowsAsync<EffException>(() => Foo().Run(new DefaultEffectHandler()));
+            Assert.Contains("Effect DateTimeNowEffect is not completed", exn.Message);
+        }
+
+        [Fact]
+        public async Task Eff_Methods_Should_Be_ThreadSafe()
+        {
+            int counter = 0;
+
+            async Eff<int> Foo()
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    await Task.Delay(1).AsEffect();
+                    Interlocked.Increment(ref counter);
+                }
+
+                return 1;
+            }
+
+            var eff = Foo();
+            var handler = new DefaultEffectHandler();
+
+            Assert.Equal(0, counter);
+            await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => Task.Run(() => eff.Run(handler))));
+            Assert.Equal(1000, counter);
         }
     }
 }

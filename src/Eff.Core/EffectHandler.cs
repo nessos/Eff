@@ -7,7 +7,6 @@ namespace Eff.Core
 {
     public abstract class EffectHandler : IEffectHandler
     {
-
         public EffectHandler()
         {
             
@@ -39,7 +38,7 @@ namespace Eff.Core
 
         public virtual async Task<Eff<TResult>> Handle<TResult>(Delay<TResult> delay)
         {
-            return delay.Func(delay.State);
+            return delay.Continuation.Trigger();
         }
 
         public virtual async Task<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
@@ -61,7 +60,7 @@ namespace Eff.Core
                 effect.SetException(ex);
             }
 
-            var eff = awaitEff.Continuation(awaitEff.State);
+            var eff = awaitEff.Continuation.Trigger();
             return eff;
         }
     }
