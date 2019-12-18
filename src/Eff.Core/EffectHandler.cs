@@ -12,6 +12,8 @@ namespace Eff.Core
             
         }
 
+        public virtual bool CloneDelayedStateMachines { get; set; } = false;
+
         public abstract Task Handle<TResult>(IEffect<TResult> effect);
        
         public virtual async Task Handle<TResult>(TaskEffect<TResult> effect)
@@ -38,7 +40,7 @@ namespace Eff.Core
 
         public virtual async Task<Eff<TResult>> Handle<TResult>(Delay<TResult> delay)
         {
-            return delay.Continuation.Trigger();
+            return delay.Continuation.Trigger(useClonedStateMachine: CloneDelayedStateMachines);
         }
 
         public virtual async Task<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)

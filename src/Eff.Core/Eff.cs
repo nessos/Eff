@@ -59,7 +59,6 @@ namespace Eff.Core
     public interface IContinuation<TResult>
     {
         object State { get; set; }
-        Eff<TResult> Trigger();
-        IContinuation<TResult> Clone();
+        Eff<TResult> Trigger(bool useClonedStateMachine = false);
     }
 }

@@ -11,7 +11,6 @@ namespace Eff.Core
     public class EffMethodBuilder<TResult> : IContinuation<TResult>
     {
         private IAsyncStateMachine? _state;
-        private bool _isClonedInstance = false;
         private Func<EffMethodBuilder<TResult>, EffMethodBuilder<TResult>>? _cloner;
 
         public Eff<TResult>? Task { get; private set; }
@@ -27,11 +26,9 @@ namespace Eff.Core
             return new EffMethodBuilder<TResult>();
         }
 
-        Eff<TResult> IContinuation<TResult>.Trigger()
+        Eff<TResult> IContinuation<TResult>.Trigger(bool useClonedStateMachine)
         {
-            // ensure original state machine is never run
-            // to guarantee thread safety of delayed Eff instances
-            var builder = _isClonedInstance ? this : _cloner!(this);
+            var builder = useClonedStateMachine ? _cloner!(this) : this;
             builder._state!.MoveNext();
             return builder.Task!;
         }
@@ -41,8 +38,6 @@ namespace Eff.Core
             get => _state!;
             set => _state = (IAsyncStateMachine)value;
         }
-
-        IContinuation<TResult> IContinuation<TResult>.Clone() => _cloner!(this);
 
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
@@ -86,7 +81,6 @@ namespace Eff.Core
             where TAwaiter : IEffect
             where TStateMachine : IAsyncStateMachine
         {
-
             switch (awaiter)
             {
                 case IEffect effect:
@@ -120,10 +114,11 @@ namespace Eff.Core
                 }
 
                 var clonedBuilder = new EffMethodBuilder<TResult>();
+                // clone the state machine and point the `<>t__builder` field to the new builder instance.
                 var clonedStateMachine = (IAsyncStateMachine)s_memberwiseCloner.Invoke(builder._state, null);
                 s_smBuilder?.SetValue(clonedStateMachine, clonedBuilder);
                 clonedBuilder._state = clonedStateMachine;
-                clonedBuilder._isClonedInstance = true;
+                clonedBuilder._cloner = builder._cloner;
                 return clonedBuilder;
             }
         }

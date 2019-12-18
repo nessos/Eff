@@ -28,8 +28,7 @@ namespace Eff.Examples.NonDeterminism
                     return Run(delay.Continuation.Trigger());
                 case Await<TResult> awaitEff:
                     var handler = new NonDetHandler<TResult>(awaitEff.Continuation);
-                    var effect = awaitEff.Effect;
-                    effect.Accept(handler);
+                    awaitEff.Effect.Accept(handler);
                     return handler.Results;
                 default:
                     throw new NotSupportedException($"{eff.GetType().Name}");

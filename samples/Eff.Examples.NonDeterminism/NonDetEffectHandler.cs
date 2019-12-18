@@ -30,7 +30,7 @@ namespace Eff.Examples.NonDeterminism
                     foreach (var choice in nde.Choices)
                     {
                         effect.SetResult(choice);
-                        var results = Effect.Run(_continuation.Clone().Trigger());
+                        var results = Effect.Run(_continuation.Trigger(useClonedStateMachine: true));
                         Results.AddRange(results);
                     }
                     break;
