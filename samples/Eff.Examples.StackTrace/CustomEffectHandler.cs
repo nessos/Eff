@@ -1,5 +1,5 @@
 ﻿#pragma warning disable 1998
-using Eff.Core;
+using Nessos.Eff;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,8 +51,8 @@ namespace Eff.Examples.StackTrace
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
                     Exception = ex,
-                    Parameters = Eff.Core.TraceHelpers.GetParametersValues(effect.State),
-                    LocalVariables = Eff.Core.TraceHelpers.GetLocalVariablesValues(effect.State),
+                    Parameters = Nessos.Eff.TraceHelpers.GetParametersValues(effect.State),
+                    LocalVariables = Nessos.Eff.TraceHelpers.GetLocalVariablesValues(effect.State),
                 };
             if (!ex.Data.Contains("StackTraceLog"))
             {

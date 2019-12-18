@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace Eff.Core
+namespace Nessos.Eff
 {
-
     [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
     public abstract class Eff<TResult>
     {

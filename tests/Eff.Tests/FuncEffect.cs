@@ -1,8 +1,7 @@
-﻿using Eff.Core;
+﻿using Nessos.Eff;
 using System;
-using System.Threading.Tasks;
 
-namespace Eff.Tests
+namespace Nessos.Eff.Tests
 {
     public class FuncEffect<TResult> : Effect<TResult>
     {
@@ -16,6 +15,4 @@ namespace Eff.Tests
 
         public Func<TResult> Func => func;
     }
-
-    
 }

@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Eff.Core
+namespace Nessos.Eff
 {
     public static class EffectExtensions
     {
@@ -33,7 +33,7 @@ namespace Eff.Core
     }
 }
 
-namespace Eff.Core.ImplicitAwaitables
+namespace Nessos.Eff.ImplicitAwaitables
 {
     public static class ImplicitAwaitableExtensions
     {

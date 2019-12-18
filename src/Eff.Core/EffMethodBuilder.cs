@@ -6,7 +6,7 @@ using System.Security;
 using System.Reflection;
 using System.ComponentModel;
 
-namespace Eff.Core
+namespace Nessos.Eff
 {
     public class EffMethodBuilder<TResult> : IContinuation<TResult>
     {

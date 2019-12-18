@@ -1,5 +1,5 @@
 ﻿#pragma warning disable 1998
-using Eff.Core;
+using Nessos.Eff;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,8 +39,8 @@ namespace Eff.Examples.TraceLog
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
                     Result = result,
-                    Parameters = Eff.Core.TraceHelpers.GetParametersValues(effect.State),
-                    LocalVariables = Eff.Core.TraceHelpers.GetLocalVariablesValues(effect.State),
+                    Parameters = Nessos.Eff.TraceHelpers.GetParametersValues(effect.State),
+                    LocalVariables = Nessos.Eff.TraceHelpers.GetLocalVariablesValues(effect.State),
                 };
             TraceLogs.Add(log);
         }

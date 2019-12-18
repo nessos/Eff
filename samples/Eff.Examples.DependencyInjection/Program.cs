@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Eff.Core;
+using Nessos.Eff;
 
 namespace Eff.Examples.DependencyInjection
 {

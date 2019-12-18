@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Eff.Core
+namespace Nessos.Eff
 {
     public interface IEffectHandler 
     {

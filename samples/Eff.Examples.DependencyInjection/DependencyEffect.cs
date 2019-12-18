@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Eff.Core;
+using Nessos.Eff;
 
 namespace Eff.Examples.DependencyInjection
 {

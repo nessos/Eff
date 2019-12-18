@@ -5,8 +5,7 @@ namespace Nessos.EffPromo.Api.Controllers
 	using System.Linq;
 	using System.Threading.Tasks;
 
-	using Eff.Core;
-	using Eff.Effects;
+	using Nessos.Eff;
 
 	using EffImplementation;
 

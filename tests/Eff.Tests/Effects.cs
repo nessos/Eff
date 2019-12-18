@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Tests
+namespace Nessos.Eff.Tests
 {
     public interface IDateTimeNowEffect
     {

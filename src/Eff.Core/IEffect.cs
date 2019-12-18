@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Eff.Core
+namespace Nessos.Eff
 {
     public interface IEffect : ICriticalNotifyCompletion
     {

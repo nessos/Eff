@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 using System.Threading.Tasks;
 
-using Eff.Core;
-
-namespace Eff.Effects
+namespace Nessos.Eff
 {
 	public class CtxEffectHandler : EffectHandler
 	{

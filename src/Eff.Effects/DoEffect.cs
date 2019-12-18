@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
-using Eff.Core;
-
-namespace Eff.Effects
+namespace Nessos.Eff
 {
 	public interface IEffCtx
 	{

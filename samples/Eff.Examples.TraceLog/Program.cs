@@ -1,6 +1,6 @@
 ﻿#pragma warning disable 1998
-using Eff.Core;
-using Eff.Core.ImplicitAwaitables;
+using Nessos.Eff;
+using Nessos.Eff.ImplicitAwaitables;
 using System;
 using System.Threading.Tasks;
 

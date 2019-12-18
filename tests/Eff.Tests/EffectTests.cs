@@ -1,16 +1,13 @@
 ﻿#pragma warning disable 1998
 
-using Eff.Core;
+using Nessos.Eff;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Eff.Tests
+namespace Nessos.Eff.Tests
 {
     public class EffectTests
     {

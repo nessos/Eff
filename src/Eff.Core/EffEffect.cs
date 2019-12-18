@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Eff.Core
+namespace Nessos.Eff
 {
     public class EffEffect<TResult> : Effect<TResult>
     {

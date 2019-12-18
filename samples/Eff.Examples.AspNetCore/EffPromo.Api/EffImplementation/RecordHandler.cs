@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-using Eff.Effects;
+using Nessos.Eff;
 
 namespace Nessos.EffPromo.Api.EffImplementation
 {
 	using System;
 
-	using Eff.Core;
+	using Nessos.Eff;
 
 	using Microsoft.Extensions.Logging;
 

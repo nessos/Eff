@@ -3,7 +3,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Eff.Core
+namespace Nessos.Eff
 {
     public static class EffExecutor
     {

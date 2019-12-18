@@ -1,4 +1,4 @@
-using Eff.Core;
+using Nessos.Eff;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,5 @@
 ﻿#pragma warning disable 1998
-using Eff.Core;
+using Nessos.Eff;
 using System;
 using System.Collections.Generic;
 using System.Linq;

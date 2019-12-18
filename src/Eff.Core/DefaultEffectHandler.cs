@@ -2,7 +2,7 @@
 
 using System.Threading.Tasks;
 
-namespace Eff.Core
+namespace Nessos.Eff
 {
     public class DefaultEffectHandler : EffectHandler
     {

@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 
-namespace Eff.Core
+namespace Nessos.Eff
 {
     public static class TraceHelpers
     {

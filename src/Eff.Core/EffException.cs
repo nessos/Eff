@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Eff.Core
+namespace Nessos.Eff
 {
     [Serializable]
     public class EffException : Exception

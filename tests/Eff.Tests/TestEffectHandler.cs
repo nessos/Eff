@@ -1,14 +1,10 @@
 ﻿#pragma warning disable 1998
 
-using Eff.Tests;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Core
+namespace Nessos.Eff.Tests
 {
     public class TestEffectHandler : EffectHandler
     {

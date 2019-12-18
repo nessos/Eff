@@ -1,14 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Nessos.Eff;
 
 namespace Nessos.EffPromo.Api.EffImplementation
 {
-	using Eff.Effects;
-
-	using Microsoft.Extensions.DependencyInjection;
-
 	public class EffectContext : IEffCtx
 	{
 		public EffectContext(IServiceProvider provider)
