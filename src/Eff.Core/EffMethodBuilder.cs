@@ -12,6 +12,7 @@ namespace Eff.Core
     {
         private IAsyncStateMachine? _state;
         private bool _isClonedInstance = false;
+        private Func<EffMethodBuilder<TResult>, EffMethodBuilder<TResult>>? _cloner;
 
         public Eff<TResult>? Task { get; private set; }
 
@@ -26,26 +27,27 @@ namespace Eff.Core
             return new EffMethodBuilder<TResult>();
         }
 
-        public Eff<TResult> Trigger()
+        Eff<TResult> IContinuation<TResult>.Trigger()
         {
             // ensure original state machine is never run
-            // this is to guarantee thread safety of delayed Eff instances
-            var builder = _isClonedInstance ? this : CloneBuilder();
+            // to guarantee thread safety of delayed Eff instances
+            var builder = _isClonedInstance ? this : _cloner!(this);
             builder._state!.MoveNext();
             return builder.Task!;
         }
 
-        public object State
+        object IContinuation<TResult>.State
         {
             get => _state!;
             set => _state = (IAsyncStateMachine)value;
         }
 
-        public IContinuation<TResult> Clone() => CloneBuilder();
+        IContinuation<TResult> IContinuation<TResult>.Clone() => _cloner!(this);
 
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
             _state = stateMachine;
+            _cloner = StateMachineCloner<TStateMachine>.Cloner;
             Task = new Delay<TResult>(this);
         }
 
@@ -97,29 +99,33 @@ namespace Eff.Core
             }
         }
 
-        private EffMethodBuilder<TResult> CloneBuilder()
+        private static class StateMachineCloner<TStateMachine> where TStateMachine : IAsyncStateMachine
         {
-            if (_state is null)
-            {
-                throw new InvalidOperationException("Cannot clone uninitialized state machine builder");
-            }
+            private static readonly MethodInfo s_memberwiseCloner = 
+                typeof(TStateMachine).GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            var clonedBuilder = new EffMethodBuilder<TResult>();
-            var stateMachineRefl = s_cloneRefl.GetOrAdd(_state.GetType(), GetMembers);
-            var clonedStateMachine = (IAsyncStateMachine)stateMachineRefl.memberwiseClone.Invoke(_state, null);
-            stateMachineRefl.builder?.SetValue(clonedStateMachine, clonedBuilder);
-            clonedBuilder._state = clonedStateMachine;
-            clonedBuilder._isClonedInstance = true;
-            return clonedBuilder;
+            private static readonly FieldInfo? s_smBuilder =
+                typeof(TStateMachine)
+                    .GetFields(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(f => f.FieldType == typeof(EffMethodBuilder<TResult>))
+                    .FirstOrDefault();
 
-            static (MethodInfo, FieldInfo?) GetMembers(Type type)
+            public static readonly Func<EffMethodBuilder<TResult>, EffMethodBuilder<TResult>> Cloner = Clone;
+
+            private static EffMethodBuilder<TResult> Clone(EffMethodBuilder<TResult> builder)
             {
-                var memberwiseClone = type.GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic);
-                var field = type.GetFields(BindingFlags.Instance | BindingFlags.Public).Where(f => f.FieldType == typeof(EffMethodBuilder<TResult>)).FirstOrDefault();
-                return (memberwiseClone, field);
+                if (builder._state is null)
+                {
+                    throw new InvalidOperationException("Cannot clone uninitialized state machine builder");
+                }
+
+                var clonedBuilder = new EffMethodBuilder<TResult>();
+                var clonedStateMachine = (IAsyncStateMachine)s_memberwiseCloner.Invoke(builder._state, null);
+                s_smBuilder?.SetValue(clonedStateMachine, clonedBuilder);
+                clonedBuilder._state = clonedStateMachine;
+                clonedBuilder._isClonedInstance = true;
+                return clonedBuilder;
             }
         }
-
-        private static readonly ConcurrentDictionary<Type, (MethodInfo memberwiseClone, FieldInfo? builder)> s_cloneRefl = new ConcurrentDictionary<Type, (MethodInfo, FieldInfo?)>();
     }
 }
