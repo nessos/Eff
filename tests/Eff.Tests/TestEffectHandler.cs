@@ -45,8 +45,8 @@ namespace Eff.Core
         public (string name, object value)[] CaptureStateLocalVariables { private set; get; }
         public override async Task Handle<TResult>(TaskEffect<TResult> effect)
         {
-            CaptureStateParameters = Utils.GetParametersValues(effect.State);
-            CaptureStateLocalVariables = Utils.GetLocalVariablesValues(effect.State);
+            CaptureStateParameters = TraceHelpers.GetParametersValues(effect.State);
+            CaptureStateLocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State);
 
             try
             {
@@ -86,8 +86,8 @@ namespace Eff.Core
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
                     Exception = ex,
-                    Parameters = Utils.GetParametersValues(effect.State),
-                    LocalVariables = Utils.GetLocalVariablesValues(effect.State),
+                    Parameters = TraceHelpers.GetParametersValues(effect.State),
+                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State),
                 };
             ExceptionLogs.Add(log);
 
@@ -114,8 +114,8 @@ namespace Eff.Core
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
                     Result = result,
-                    Parameters = Utils.GetParametersValues(effect.State),
-                    LocalVariables = Utils.GetLocalVariablesValues(effect.State),
+                    Parameters = TraceHelpers.GetParametersValues(effect.State),
+                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State),
                 };
             TraceLogs.Add(log);
             return ValueTuple.Create();

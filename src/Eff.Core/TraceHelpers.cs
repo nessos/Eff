@@ -5,10 +5,10 @@ using System.Reflection;
 
 namespace Eff.Core
 {
-    public static class Utils
+    public static class TraceHelpers
     {
-        private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> parametersInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
-        private static ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> localVariablesInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
+        private static readonly ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> s_parametersInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
+        private static readonly ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> s_localVariablesInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
         private static (string name, object value)[] GetValues((string name, FieldInfo fieldInfo)[] fieldsInfo, object state)
         {
             var result = new(string name, object value)[fieldsInfo.Length];
@@ -43,14 +43,14 @@ namespace Eff.Core
 
         public static (string name, object value)[] GetParametersValues(object state)
         {
-            var parametersInfo = parametersInfoCache.GetOrAdd(state.GetType(), _ => Utils.GetParametersInfo(state));
+            var parametersInfo = s_parametersInfoCache.GetOrAdd(state.GetType(), _ => TraceHelpers.GetParametersInfo(state));
 
             return GetValues(parametersInfo, state);
         }
 
         public static (string name, object value)[] GetLocalVariablesValues(object state)
         {
-            var localVariablesInfo = localVariablesInfoCache.GetOrAdd(state.GetType(), _ => Utils.GetLocalVariablesInfo(state));
+            var localVariablesInfo = s_localVariablesInfoCache.GetOrAdd(state.GetType(), _ => TraceHelpers.GetLocalVariablesInfo(state));
 
             return GetValues(localVariablesInfo, state); ;
         }

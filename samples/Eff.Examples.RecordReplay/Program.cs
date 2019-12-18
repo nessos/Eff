@@ -19,7 +19,7 @@ namespace Eff.Examples.RecordReplay
             return (now, rnd);
         }
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             var handler = new RecordEffectHandler(new EffCtx { Random = new Random() });
             var result = await Foo().Run(handler);

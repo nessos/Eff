@@ -1,9 +1,7 @@
 ﻿#pragma warning disable 1998
 using Eff.Core;
+using Eff.Core.ImplicitAwaitables;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Eff.Examples.TraceLog
@@ -21,12 +19,12 @@ namespace Eff.Examples.TraceLog
             int sum = 0;
             for (int i = 0; i < n; i++)
             {
-                sum += await Bar(i).AsEffect();
+                sum += await Bar(i);
             }
             return sum;
         }
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             var handler = new CustomEffectHandler();
             await Foo(10).Run(handler);

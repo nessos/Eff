@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Eff.Core
 {
+
     [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
     public abstract class Eff<TResult>
     {
@@ -11,16 +12,14 @@ namespace Eff.Core
 
     public class Await<TResult> : Eff<TResult>
     {
-        public Await(IEffect effect, Func<object, Eff<TResult>> continuation, object state)
+        public Await(IEffect effect, IContinuation<TResult> continuation)
         {
             Effect = effect;
             Continuation = continuation;
-            State = state;
         }
 
         public IEffect Effect { get; }
-        public Func<object, Eff<TResult>> Continuation { get; }
-        public object State { get; }
+        public IContinuation<TResult> Continuation { get; }
     }
 
     public class SetResult<TResult> : Eff<TResult>
@@ -49,13 +48,17 @@ namespace Eff.Core
 
     public class Delay<TResult> : Eff<TResult>
     {
-        public Delay(Func<object, Eff<TResult>> func, object state)
+        public Delay(IContinuation<TResult> continuation)
         {
-            Func = func;
-            State = state;
+            Continuation = continuation;
         }
 
-        public Func<object, Eff<TResult>> Func { get; }
-        public object State { get; }
+        public IContinuation<TResult> Continuation { get; }
+    }
+
+    public interface IContinuation<TResult>
+    {
+        object State { get; set; }
+        Eff<TResult> Trigger(bool useClonedStateMachine = false);
     }
 }

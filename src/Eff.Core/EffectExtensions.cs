@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Eff.Core
 {
-    public static class Effect
+    public static class EffectExtensions
     {
         public static TaskEffect<TResult> AsEffect<TResult>(this Task<TResult> task,
                                                     [CallerMemberName] string memberName = "",
@@ -30,5 +30,15 @@ namespace Eff.Core
         {
             return new EffEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber);
         }
+    }
+}
+
+namespace Eff.Core.ImplicitAwaitables
+{
+    public static class ImplicitAwaitableExtensions
+    {
+        public static TaskEffect<TResult> GetAwaiter<TResult>(this Task<TResult> task) => task.AsEffect();
+        public static TaskEffect<ValueTuple> GetAwaiter<TResult>(this Task task) => task.AsEffect();
+        public static EffEffect<TResult> GetAwaiter<TResult>(this Eff<TResult> eff) => eff.AsEffect();
     }
 }

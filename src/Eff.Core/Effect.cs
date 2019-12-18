@@ -10,7 +10,7 @@ namespace Eff.Core
         protected Exception? _exception;
         protected object? _state;
 
-        public Effect(string memberName, string sourceFilePath, int sourceLineNumber)
+        public Effect(string memberName = "", string sourceFilePath = "", int sourceLineNumber = 0)
         {
             CallerMemberName = memberName;
             CallerFilePath = sourceFilePath;
@@ -33,7 +33,7 @@ namespace Eff.Core
         {
             // TODO: make compatible with Task.Result semantics
 
-            if (_exception != null)
+            if (!(_exception is null))
             {
                 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(_exception).Throw();
                 throw _exception;

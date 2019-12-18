@@ -35,7 +35,7 @@ namespace Eff.Examples.Console
                         done = true;
                         break;
                     case Delay<T> delay:
-                        eff = delay.Func(delay.State);
+                        eff = delay.Continuation.Trigger();
                         break;
                     case Await<T> awaitEff:
                         switch (awaitEff.Effect)
@@ -50,7 +50,7 @@ namespace Eff.Examples.Console
                             default:
                                 throw new NotSupportedException($"{awaitEff.Effect.GetType().Name}");
                         }
-                        eff = awaitEff.Continuation(awaitEff.State);
+                        eff = awaitEff.Continuation.Trigger();
                         break;
                     default:
                         throw new NotSupportedException($"{eff.GetType().Name}");
@@ -60,7 +60,7 @@ namespace Eff.Examples.Console
             return result;
         }
 
-        static void Main(string[] args)
+        static void Main()
         {
             Run(Foo());
         }

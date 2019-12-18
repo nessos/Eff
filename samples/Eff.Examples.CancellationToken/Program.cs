@@ -22,7 +22,7 @@ namespace Eff.Examples.CancellationToken
             }
         }
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
             var handler = new CustomEffectHandler(cts.Token);

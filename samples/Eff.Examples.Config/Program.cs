@@ -9,7 +9,6 @@ namespace Eff.Examples.Config
 {
     class Program
     {
-
         public static async Eff<string> Foo()
         {
             var google = await Effect.Config("google");
@@ -18,7 +17,7 @@ namespace Eff.Examples.Config
             return $"{google} - {microsoft}";
         }
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             var handler = new CustomEffectHandler();
             var result = await Foo().Run(handler);

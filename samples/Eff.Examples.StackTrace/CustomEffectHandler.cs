@@ -51,8 +51,8 @@ namespace Eff.Examples.StackTrace
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
                     Exception = ex,
-                    Parameters = Eff.Core.Utils.GetParametersValues(effect.State),
-                    LocalVariables = Eff.Core.Utils.GetLocalVariablesValues(effect.State),
+                    Parameters = Eff.Core.TraceHelpers.GetParametersValues(effect.State),
+                    LocalVariables = Eff.Core.TraceHelpers.GetLocalVariablesValues(effect.State),
                 };
             if (!ex.Data.Contains("StackTraceLog"))
             {

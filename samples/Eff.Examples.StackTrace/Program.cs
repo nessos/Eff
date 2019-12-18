@@ -27,7 +27,7 @@ namespace Eff.Examples.StackTrace
             return y + z;
         }
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             try
             {
