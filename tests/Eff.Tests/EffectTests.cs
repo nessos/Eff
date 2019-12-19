@@ -24,6 +24,33 @@ namespace Nessos.Eff.Tests
         }
 
         [Fact]
+        public async Task UntypedEffExpression()
+        {
+            int counter = 0;
+
+            async Eff Test()
+            {
+                for (int i = 1; i <= 10; i++)
+                {
+                    await IncrementBy(i).AsEffect();
+
+                    async Eff IncrementBy(int x)
+                    {
+                        if (x < 0) return;
+
+                        counter += await Echo(x).AsEffect();
+                        static async Eff<int> Echo(int x) => x;
+                    }
+                }
+            }
+
+            var test = Test();
+            Assert.Equal(0, counter);
+            await test.Run(new DefaultEffectHandler());
+            Assert.Equal(55, counter);
+        }
+
+        [Fact]
         public async Task AwaitEffEffect()
         {
             async Eff<int> Bar(int x)
@@ -326,7 +353,29 @@ namespace Nessos.Eff.Tests
                     Interlocked.Increment(ref counter);
                 }
 
-                return 1;
+                return 42;
+            }
+
+            var eff = Foo();
+            var handler = new DefaultEffectHandler() { CloneDelayedStateMachines = true };
+
+            Assert.Equal(0, counter);
+            await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => Task.Run(() => eff.Run(handler))));
+            Assert.Equal(1000, counter);
+        }
+
+        [Fact]
+        public async Task Eff_Methods_Should_Be_ThreadSafe_Untyped()
+        {
+            int counter = 0;
+
+            async Eff Foo()
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    await Task.Delay(1).AsEffect();
+                    Interlocked.Increment(ref counter);
+                }
             }
 
             var eff = Foo();

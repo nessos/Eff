@@ -1,12 +1,24 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 
 namespace Nessos.Eff
 {
-    [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
-    public abstract class Eff<TResult>
-    {
 
+    [AsyncMethodBuilder(typeof(EffMethodBuilder))]
+    public abstract class Eff
+    {
+        internal Eff() { }
+
+        internal abstract Eff<Unit> Ignore();
+    }
+
+    [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
+    public abstract class Eff<TResult> : Eff
+    {
+        internal Eff() { }
+
+        internal async override Eff<Unit> Ignore() { await this.AsEffect(); return Unit.Value; }
     }
 
     public class Await<TResult> : Eff<TResult>

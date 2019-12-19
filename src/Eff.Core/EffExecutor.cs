@@ -41,5 +41,7 @@ namespace Nessos.Eff
 
             return result;
         }
+
+        public static Task Run(this Eff eff, IEffectHandler handler) => eff.Ignore().Run(handler);
     }
 }
