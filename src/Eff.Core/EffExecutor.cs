@@ -1,6 +1,4 @@
-﻿#pragma warning disable 1998
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace Nessos.Eff
@@ -9,12 +7,7 @@ namespace Nessos.Eff
     {
 
         public static async Task<TResult> Run<TResult>(this Eff<TResult> eff, IEffectHandler handler)
-        {
-            if (eff == null)
-                throw new ArgumentNullException(nameof(eff));
-            if (handler == null)
-                throw new ArgumentNullException(nameof(handler));
-            
+        {   
             var result = default(TResult)!;
             var done = false;
             while (!done)
