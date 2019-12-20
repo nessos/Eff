@@ -1,6 +1,4 @@
-﻿#pragma warning disable 1998
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace Nessos.Eff
@@ -28,19 +26,17 @@ namespace Nessos.Eff
             effect.SetResult(result);
         }
 
-        public virtual async Task<TResult> Handle<TResult>(SetResult<TResult> setResult)
-        {
-            return setResult.Result;
-        }
+        public virtual Task<TResult> Handle<TResult>(SetResult<TResult> setResult) => Task.FromResult(setResult.Result);
 
-        public virtual async Task Handle<TResult>(SetException<TResult> setException)
+        public virtual Task Handle<TResult>(SetException<TResult> setException)
         {
             System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(setException.Exception).Throw();
+            return default!;
         }
 
-        public virtual async Task<Eff<TResult>> Handle<TResult>(Delay<TResult> delay)
+        public virtual Task<Eff<TResult>> Handle<TResult>(Delay<TResult> delay)
         {
-            return delay.Continuation.Trigger(useClonedStateMachine: CloneDelayedStateMachines);
+            return Task.FromResult(delay.Continuation.Trigger(useClonedStateMachine: CloneDelayedStateMachines));
         }
 
         public virtual async Task<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)

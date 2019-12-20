@@ -1,14 +1,9 @@
-﻿#pragma warning disable 1998
-
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Nessos.Eff
 {
     public class DefaultEffectHandler : EffectHandler
     {
-        public override async Task Handle<TResult>(IEffect<TResult> effect)
-        {
-            
-        }
+        public override Task Handle<TResult>(IEffect<TResult> effect) => Task.CompletedTask;
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Reflection;
@@ -8,17 +7,9 @@ using System.ComponentModel;
 
 namespace Nessos.Eff
 {
-    public class EffMethodBuilder<TResult> : IContinuation<TResult>
+    public class EffMethodBuilder<TResult> : EffMethodBuilderBase<TResult>
     {
-        private IAsyncStateMachine? _state;
-        private Func<EffMethodBuilder<TResult>, EffMethodBuilder<TResult>>? _cloner;
-
-        public Eff<TResult>? Task { get; private set; }
-
-        private EffMethodBuilder() 
-        {
-
-        }
+        public Eff<TResult>? Task => _eff;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static EffMethodBuilder<TResult> Create()
@@ -26,46 +17,33 @@ namespace Nessos.Eff
             return new EffMethodBuilder<TResult>();
         }
 
-        Eff<TResult> IContinuation<TResult>.Trigger(bool useClonedStateMachine)
-        {
-            var builder = useClonedStateMachine ? _cloner!(this) : this;
-            builder._state!.MoveNext();
-            return builder.Task!;
-        }
-
-        object IContinuation<TResult>.State
-        {
-            get => _state!;
-            set => _state = (IAsyncStateMachine)value;
-        }
-
-        public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
-        {
-            _state = stateMachine;
-            _cloner = StateMachineCloner<TStateMachine>.Cloner;
-            Task = new Delay<TResult>(this);
-        }
-
         public void SetStateMachine(IAsyncStateMachine _)
         {
 
         }
 
+        public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
+        {
+            _state = stateMachine;
+            _cloner = StateMachineCloner<EffMethodBuilder<TResult>,TStateMachine>.Cloner;
+            _eff = new Delay<TResult>(this);
+        }
+
         public void SetResult(TResult result)
         {
-            Task = new SetResult<TResult>(result, _state!);
+            _eff = new SetResult<TResult>(result, _state!);
         }
 
         public void SetException(Exception exception)
         {
-            Task = new SetException<TResult>(exception, _state!);
+            _eff = new SetException<TResult>(exception, _state!);
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
             where TAwaiter : IEffect
             where TStateMachine : IAsyncStateMachine
         {
-            AwaitOnCompleted(ref awaiter, ref stateMachine, true);
+            AwaitOnCompletedCore(ref awaiter, ref stateMachine);
         }
 
 
@@ -74,10 +52,83 @@ namespace Nessos.Eff
             where TAwaiter : IEffect
             where TStateMachine : IAsyncStateMachine
         {
-            AwaitOnCompleted(ref awaiter, ref stateMachine, false);
+            AwaitOnCompletedCore(ref awaiter, ref stateMachine);
+        }
+    }
+
+    public class EffMethodBuilder : EffMethodBuilderBase<Unit>
+    {
+        public Eff? Task => _eff;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static EffMethodBuilder Create()
+        {
+            return new EffMethodBuilder();
         }
 
-        private void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _, bool safe)
+        public void SetStateMachine(IAsyncStateMachine _)
+        {
+
+        }
+        public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
+        {
+            _state = stateMachine;
+            _cloner = StateMachineCloner<EffMethodBuilder, TStateMachine>.Cloner;
+            _eff = new Delay<Unit>(this);
+        }
+
+        public void SetResult()
+        {
+            _eff = new SetResult<Unit>(Unit.Value, _state!);
+        }
+
+        public void SetException(Exception exception)
+        {
+            _eff = new SetException<Unit>(exception, _state!);
+        }
+
+        public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+            where TAwaiter : IEffect
+            where TStateMachine : IAsyncStateMachine
+        {
+            AwaitOnCompletedCore(ref awaiter, ref stateMachine);
+        }
+
+
+        [SecuritySafeCritical]
+        public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
+            where TAwaiter : IEffect
+            where TStateMachine : IAsyncStateMachine
+        {
+            AwaitOnCompletedCore(ref awaiter, ref stateMachine);
+        }
+    }
+
+    public abstract class EffMethodBuilderBase<TResult> : IContinuation<TResult>
+    {
+        protected IAsyncStateMachine? _state;
+        protected Func<EffMethodBuilderBase<TResult>, EffMethodBuilderBase<TResult>>? _cloner;
+        protected Eff<TResult>? _eff;
+
+        internal EffMethodBuilderBase()
+        {
+
+        }
+
+        Eff<TResult> IContinuation<TResult>.Trigger(bool useClonedStateMachine)
+        {
+            var builder = useClonedStateMachine ? _cloner!(this) : this;
+            builder._state!.MoveNext();
+            return builder._eff!;
+        }
+
+        object IContinuation<TResult>.State
+        {
+            get => _state!;
+            set => _state = (IAsyncStateMachine)value;
+        }
+
+        protected void AwaitOnCompletedCore<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
             where TAwaiter : IEffect
             where TStateMachine : IAsyncStateMachine
         {
@@ -85,7 +136,7 @@ namespace Nessos.Eff
             {
                 case IEffect effect:
                     effect.SetState(_state!);
-                    Task = new Await<TResult>(effect, this);
+                    _eff = new Await<TResult>(effect, this);
 
                     break;
                 default:
@@ -93,27 +144,28 @@ namespace Nessos.Eff
             }
         }
 
-        private static class StateMachineCloner<TStateMachine> where TStateMachine : IAsyncStateMachine
+        protected static class StateMachineCloner<TBuilder, TStateMachine> where TStateMachine : IAsyncStateMachine
+                                                                           where TBuilder : EffMethodBuilderBase<TResult>, new()
         {
-            private static readonly MethodInfo s_memberwiseCloner = 
+            private static readonly MethodInfo s_memberwiseCloner =
                 typeof(TStateMachine).GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic);
 
             private static readonly FieldInfo? s_smBuilder =
                 typeof(TStateMachine)
                     .GetFields(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(f => f.FieldType == typeof(EffMethodBuilder<TResult>))
+                    .Where(f => f.FieldType == typeof(TBuilder))
                     .FirstOrDefault();
 
-            public static readonly Func<EffMethodBuilder<TResult>, EffMethodBuilder<TResult>> Cloner = Clone;
+            public static readonly Func<EffMethodBuilderBase<TResult>, TBuilder> Cloner = Clone;
 
-            private static EffMethodBuilder<TResult> Clone(EffMethodBuilder<TResult> builder)
+            private static TBuilder Clone(EffMethodBuilderBase<TResult> builder)
             {
                 if (builder._state is null)
                 {
                     throw new InvalidOperationException("Cannot clone uninitialized state machine builder");
                 }
 
-                var clonedBuilder = new EffMethodBuilder<TResult>();
+                var clonedBuilder = new TBuilder();
                 // clone the state machine and point the `<>t__builder` field to the new builder instance.
                 var clonedStateMachine = (IAsyncStateMachine)s_memberwiseCloner.Invoke(builder._state, null);
                 s_smBuilder?.SetValue(clonedStateMachine, clonedBuilder);
