@@ -40,16 +40,16 @@ namespace Nessos.Eff
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : IEffect
+            where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
         }
 
 
-        [SecuritySafeCritical]
+        //[SecuritySafeCritical]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : IEffect
+            where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
@@ -88,16 +88,16 @@ namespace Nessos.Eff
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : IEffect
+            where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
         }
 
 
-        [SecuritySafeCritical]
+        //[SecuritySafeCritical]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : IEffect
+            where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
@@ -129,19 +129,11 @@ namespace Nessos.Eff
         }
 
         protected void AwaitOnCompletedCore<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
-            where TAwaiter : IEffect
+            where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
-            switch (awaiter)
-            {
-                case IEffect effect:
-                    effect.SetState(_state!);
-                    _eff = new Await<TResult>(effect, this);
-
-                    break;
-                default:
-                    throw new EffException($"Awaiter {awaiter.GetType().Name} is not an effect. Try to use obj.AsEffect().");
-            }
+            awaiter.SetState(_state!);
+            _eff = new Await<TResult>(awaiter, this);
         }
 
         protected static class StateMachineCloner<TBuilder, TStateMachine> where TStateMachine : IAsyncStateMachine

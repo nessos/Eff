@@ -12,15 +12,15 @@ namespace Nessos.Eff
 
         public virtual bool CloneDelayedStateMachines { get; set; } = false;
 
-        public abstract Task Handle<TResult>(IEffect<TResult> effect);
+        public abstract Task Handle<TResult>(EffectAwaiter<TResult> effect);
        
-        public virtual async Task Handle<TResult>(TaskEffect<TResult> effect)
+        public virtual async Task Handle<TResult>(TaskAwaiter<TResult> effect)
         {
             var result = await effect.Task;
             effect.SetResult(result);
         }
 
-        public virtual async Task Handle<TResult>(EffEffect<TResult> effect)
+        public virtual async Task Handle<TResult>(EffAwaiter<TResult> effect)
         {
             var result = await effect.Eff.Run(this);
             effect.SetResult(result);
@@ -41,21 +41,17 @@ namespace Nessos.Eff
 
         public virtual async Task<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)
         {
-            var effect = awaitEff.Effect;            
+            var awaiter = awaitEff.Awaiter;            
             // Execute Effect
             try
             {
-                await effect.Accept(this);
-                if (!effect.IsCompleted)
-                    throw new EffException($"Effect {effect.GetType().Name} is not completed.");
-            }
-            catch (AggregateException ex)
-            {
-                effect.SetException(ex.InnerException);
+                await awaiter.Accept(this);
+                if (!awaiter.IsCompleted)
+                    throw new EffException($"Effect {awaiter.Id} is not completed.");
             }
             catch (Exception ex)
             {
-                effect.SetException(ex);
+                awaiter.SetException(ex);
             }
 
             var eff = awaitEff.Continuation.Trigger();

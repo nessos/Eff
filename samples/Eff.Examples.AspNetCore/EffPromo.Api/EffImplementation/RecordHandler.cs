@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
 using Nessos.Eff;
 
 namespace Nessos.EffPromo.Api.EffImplementation
@@ -31,7 +30,7 @@ namespace Nessos.EffPromo.Api.EffImplementation
 
 		private ILogger<RecordHandler> Logger { get; }
 
-		public override async Task Handle<TResult>(IEffect<TResult> effect)
+		public override async Task Handle<TResult>(EffectAwaiter<TResult> effect)
 		{
 			await base.Handle(effect);
 			results.Add(new EffectResult {Value = effect.Result, Type = typeof(TResult)});

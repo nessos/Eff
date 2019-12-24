@@ -11,12 +11,12 @@ namespace Nessos.Eff
 			this.ctx = ctx;
 		}
 
-		public override async Task Handle<TResult>(IEffect<TResult> effect)
+		public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
 		{
-			switch (effect)
+			switch (awaiter.Effect)
 			{
-				case DoEffect<TResult> _effect:
-					_effect.SetResult(await _effect.Func(ctx));
+				case DoEffect<TResult> doEffect:
+					awaiter.SetResult(await doEffect.Func(ctx));
 					break;
 			}
 		}

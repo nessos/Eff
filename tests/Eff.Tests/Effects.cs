@@ -1,58 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nessos.Eff.Tests
 {
     public interface IDateTimeNowEffect
     {
-        DateTimeNowEffect DateTimeNow([CallerMemberName] string memberName = "",
-                                                    [CallerFilePath] string sourceFilePath = "",
-                                                    [CallerLineNumber] int sourceLineNumber = 0,
-                                                    bool captureState = false);
+        DateTimeNowEffect DateTimeNow();
     }
+
     public interface IFuncEffect
     {
-        FuncEffect<TResult> Func<TResult>(Func<TResult> func,
-                                            [CallerMemberName] string memberName = "",
-                                            [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0,
-                                            bool captureState = false);
-        FuncEffect<ValueTuple> Action(Action action,
-                                                    [CallerMemberName] string memberName = "",
-                                                    [CallerFilePath] string sourceFilePath = "",
-                                                    [CallerLineNumber] int sourceLineNumber = 0,
-                                                    bool captureState = false);
+        FuncEffect<TResult> Func<TResult>(Func<TResult> func);
+
+        FuncEffect<Unit> Action(Action action);
     }
     public struct CustomEffect : IDateTimeNowEffect, IFuncEffect
     {
-        public DateTimeNowEffect DateTimeNow([CallerMemberName] string memberName = "",
-                                                    [CallerFilePath] string sourceFilePath = "",
-                                                    [CallerLineNumber] int sourceLineNumber = 0,
-                                                    bool captureState = false)
-        {
-            return new DateTimeNowEffect(memberName, sourceFilePath, sourceLineNumber, captureState);
-        }
+        public DateTimeNowEffect DateTimeNow() => new DateTimeNowEffect();
 
-        public FuncEffect<TResult> Func<TResult>(Func<TResult> func,
-                                            [CallerMemberName] string memberName = "",
-                                            [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0,
-                                            bool captureState = false)
-        {
-            return new FuncEffect<TResult>(func, memberName, sourceFilePath, sourceLineNumber, captureState);
-        }
+        public FuncEffect<TResult> Func<TResult>(Func<TResult> func) => new FuncEffect<TResult>(func);
 
-        public FuncEffect<ValueTuple> Action(Action action,
-                                                    [CallerMemberName] string memberName = "",
-                                                    [CallerFilePath] string sourceFilePath = "",
-                                                    [CallerLineNumber] int sourceLineNumber = 0,
-                                                    bool captureState = false)
-        {
-            return new FuncEffect<ValueTuple>(() => { action(); return ValueTuple.Create(); }, memberName, sourceFilePath, sourceLineNumber, captureState);
-        }
+        public FuncEffect<Unit> Action(Action action) => new FuncEffect<Unit>(() => { action(); return Unit.Value; });
     }
 }

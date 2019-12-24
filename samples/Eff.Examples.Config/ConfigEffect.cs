@@ -10,17 +10,11 @@ namespace Eff.Examples.Config
 {
     public class ConfigEffect : Effect<string>
     {
-
-        private readonly string key;
-        public ConfigEffect(string key, 
-                            string memberName, string sourceFilePath, int sourceLineNumber, bool captureState)
-            : base(memberName, sourceFilePath, sourceLineNumber)
+        public ConfigEffect(string key)
         {
-            this.key = key;
+            this.Key = key;
         }
 
-        public string Key => key;
-
+        public string Key { get; }
     }
-
 }

@@ -10,13 +10,6 @@ namespace Eff.Examples.CancellationToken
 
     public static class Effect
     {
-        public static CancellationTokenEffect CancellationToken(
-                                                    [CallerMemberName] string memberName = "",
-                                                    [CallerFilePath] string sourceFilePath = "",
-                                                    [CallerLineNumber] int sourceLineNumber = 0,
-                                                    bool captureState = false)
-        {
-            return new CancellationTokenEffect(memberName, sourceFilePath, sourceLineNumber, captureState);
-        }
+        public static CancellationTokenEffect CancellationToken() => new CancellationTokenEffect();
     }
 }

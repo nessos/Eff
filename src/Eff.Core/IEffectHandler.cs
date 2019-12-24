@@ -4,9 +4,9 @@ namespace Nessos.Eff
 {
     public interface IEffectHandler 
     {
-        Task Handle<TResult>(IEffect<TResult> effect);
-        Task Handle<TResult>(TaskEffect<TResult> effect);
-        Task Handle<TResult>(EffEffect<TResult> effect);
+        Task Handle<TResult>(EffectAwaiter<TResult> effect);
+        Task Handle<TResult>(TaskAwaiter<TResult> effect);
+        Task Handle<TResult>(EffAwaiter<TResult> effect);
 
         Task<TResult> Handle<TResult>(SetResult<TResult> setResult);
         Task Handle<TResult>(SetException<TResult> setException);

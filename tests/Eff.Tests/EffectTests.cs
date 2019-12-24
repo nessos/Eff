@@ -1,6 +1,5 @@
 ﻿#pragma warning disable 1998
 
-using Nessos.Eff;
 using System;
 using System.Linq;
 using System.Threading;
@@ -73,7 +72,7 @@ namespace Nessos.Eff.Tests
             async Eff<DateTime> Foo<T>()
                 where T : struct, IDateTimeNowEffect
             {
-                var y = await default(T).DateTimeNow();
+                var y = await default(T).DateTimeNow().AsEffect();
                 return y;
             }
             var now = DateTime.Now;
@@ -267,7 +266,7 @@ namespace Nessos.Eff.Tests
             async Eff<int> Foo<T>(int x)
                 where T : struct, IFuncEffect
             {
-                var y = await default(T).Func(() => x + 1);
+                var y = await default(T).Func(() => x + 1).AsEffect();
                 return y + 1;
             }
 
@@ -282,7 +281,7 @@ namespace Nessos.Eff.Tests
                 where T : struct, IFuncEffect
             {
                 int y = 0;
-                await default(T).Action(() => y = x + 1);
+                await default(T).Action(() => y = x + 1).AsEffect();
                 return y + 1;
             }
 
@@ -333,7 +332,7 @@ namespace Nessos.Eff.Tests
         {
             async Eff<DateTime> Foo()
             {
-                return await (new CustomEffect()).DateTimeNow();
+                return await (new CustomEffect()).DateTimeNow().AsEffect();
             }
 
             var exn = await Assert.ThrowsAsync<EffException>(() => Foo().Run(new DefaultEffectHandler()));

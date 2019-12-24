@@ -18,7 +18,7 @@ namespace Eff.Examples.RecordReplay
             this.results = results;
         }
 
-        public override async Task Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> effect)
         {
             var result = 
                 results.Single(it => it.FilePath == effect.CallerFilePath && 

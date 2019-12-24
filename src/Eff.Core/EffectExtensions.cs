@@ -6,37 +6,45 @@ namespace Nessos.Eff
 {
     public static class EffectExtensions
     {
-        public static TaskEffect<TResult> AsEffect<TResult>(this Task<TResult> task,
+        public static EffAwaiter<TResult> AsEffect<TResult>(this Eff<TResult> eff,
+                                            [CallerMemberName] string memberName = "",
+                                            [CallerFilePath] string sourceFilePath = "",
+                                            [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            return new EffAwaiter<TResult>(eff, memberName, sourceFilePath, sourceLineNumber);
+        }
+
+        public static EffAwaiter<Unit> AsEffect(this Eff eff,
+                                            [CallerMemberName] string memberName = "",
+                                            [CallerFilePath] string sourceFilePath = "",
+                                            [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            return new EffAwaiter<Unit>(eff.Ignore(), memberName, sourceFilePath, sourceLineNumber);
+        }
+
+        public static EffectAwaiter<TResult> AsEffect<TResult>(this Effect<TResult> effect,
                                                     [CallerMemberName] string memberName = "",
                                                     [CallerFilePath] string sourceFilePath = "",
                                                     [CallerLineNumber] int sourceLineNumber = 0)
         {
-            return new TaskEffect<TResult>(task, memberName, sourceFilePath, sourceLineNumber);
+            return new EffectAwaiter<TResult>(effect, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        public static TaskEffect<Unit> AsEffect(this Task task,
+        public static TaskAwaiter<TResult> AsEffect<TResult>(this Task<TResult> task,
+                                            [CallerMemberName] string memberName = "",
+                                            [CallerFilePath] string sourceFilePath = "",
+                                            [CallerLineNumber] int sourceLineNumber = 0)
+        {
+            return new TaskAwaiter<TResult>(task, memberName, sourceFilePath, sourceLineNumber);
+        }
+
+        public static TaskAwaiter<Unit> AsEffect(this Task task,
                                                         [CallerMemberName] string memberName = "",
                                                         [CallerFilePath] string sourceFilePath = "",
                                                         [CallerLineNumber] int sourceLineNumber = 0)
         {
             async Task<Unit> Wrap() { await task; return Unit.Value; }
-            return new TaskEffect<Unit>(Wrap(), memberName, sourceFilePath, sourceLineNumber);
-        }
-
-        public static EffEffect<TResult> AsEffect<TResult>(this Eff<TResult> eff,
-                                            [CallerMemberName] string memberName = "",
-                                            [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            return new EffEffect<TResult>(eff, memberName, sourceFilePath, sourceLineNumber);
-        }
-
-        public static EffEffect<Unit> AsEffect(this Eff eff,
-                                            [CallerMemberName] string memberName = "",
-                                            [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            return new EffEffect<Unit>(eff.Ignore(), memberName, sourceFilePath, sourceLineNumber);
+            return new TaskAwaiter<Unit>(Wrap(), memberName, sourceFilePath, sourceLineNumber);
         }
     }
 }
@@ -45,9 +53,8 @@ namespace Nessos.Eff.ImplicitAwaitables
 {
     public static class ImplicitAwaitableExtensions
     {
-        public static TaskEffect<TResult> GetAwaiter<TResult>(this Task<TResult> task) => task.AsEffect();
-        public static TaskEffect<Unit> GetAwaiter<TResult>(this Task task) => task.AsEffect();
-        public static EffEffect<TResult> GetAwaiter<TResult>(this Eff<TResult> eff) => eff.AsEffect();
-        public static EffEffect<Unit> GetAwaiter(this Eff eff) => eff.AsEffect();
+        public static EffAwaiter<TResult> GetAwaiter<TResult>(this Eff<TResult> eff) => eff.AsEffect();
+        public static EffAwaiter<Unit> GetAwaiter(this Eff eff) => eff.AsEffect();
+        public static EffectAwaiter<TResult> GetAwaiter<TResult>(this Effect<TResult> effect) => effect.AsEffect();
     }
 }

@@ -13,9 +13,9 @@ namespace Nessos.Eff
 	{
 
 		public Func<IEffCtx, Task<T>> Func { get; }
-		public DoEffect(Func<IEffCtx, Task<T>> func, string memberName, string sourceFilePath, int sourceLineNumber) : base(memberName, sourceFilePath, sourceLineNumber)
+		public DoEffect(Func<IEffCtx, Task<T>> func)
 		{
-			this.Func = func;
+			Func = func;
 		}
 	}
 
@@ -28,7 +28,7 @@ namespace Nessos.Eff
 			[CallerFilePath] string sourceFilePath = "",
 			[CallerLineNumber] int sourceLineNumber = 0)
 		{
-			return new DoEffect<T>(ctx => func(ctx), memberName, sourceFilePath, sourceLineNumber);
+			return new DoEffect<T>(func);
 		}
 
 	}

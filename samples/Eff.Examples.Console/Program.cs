@@ -1,10 +1,7 @@
 ﻿#pragma warning disable 1998
-using Nessos.Eff;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Nessos.Eff;
+using Nessos.Eff.ImplicitAwaitables;
 
 namespace Eff.Examples.Console
 {
@@ -37,20 +34,20 @@ namespace Eff.Examples.Console
                     case Delay<T> delay:
                         eff = delay.Continuation.Trigger();
                         break;
-                    case Await<T> awaitEff:
-                        switch (awaitEff.Effect)
+                    case Await<T> { Awaiter : Awaiter awaiter, Continuation: var kont }:
+                        switch (awaiter)
                         {
-                            case ConsolePrintEffect printEffect:
+                            case EffectAwaiter<Unit> { Effect: ConsolePrintEffect printEffect }:
                                 System.Console.WriteLine(printEffect.Message);
                                 break;
-                            case ConsoleReadEffect readEffect:
+                            case EffectAwaiter<string> { Effect: ConsoleReadEffect _ } awtr :
                                 string message = System.Console.ReadLine();
-                                readEffect.SetResult(message);
+                                awtr.SetResult(message);
                                 break;
                             default:
-                                throw new NotSupportedException($"{awaitEff.Effect.GetType().Name}");
+                                throw new NotSupportedException(awaiter.Id);
                         }
-                        eff = awaitEff.Continuation.Trigger();
+                        eff = kont.Trigger();
                         break;
                     default:
                         throw new NotSupportedException($"{eff.GetType().Name}");

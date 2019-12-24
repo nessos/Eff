@@ -21,15 +21,15 @@ namespace Eff.Examples.NonDeterminism
 
         public List<TResult> Results { get; } = new List<TResult>();
 
-        public async override Task Handle<TValue>(IEffect<TValue> effect)
+        public async override Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
         {
-            switch (effect)
+            switch (awaiter.Effect)
             {
                 case NonDetEffect<TValue> nde:
                     
                     foreach (var choice in nde.Choices)
                     {
-                        effect.SetResult(choice);
+                        awaiter.SetResult(choice);
                         var results = Effect.Run(_continuation.Trigger(useClonedStateMachine: true));
                         Results.AddRange(results);
                     }

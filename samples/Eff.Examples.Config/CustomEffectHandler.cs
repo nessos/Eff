@@ -7,18 +7,15 @@ namespace Eff.Examples.Config
 {
     public class CustomEffectHandler : EffectHandler
     {
-        public override async Task Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
-            switch (effect)
+            switch (awaiter)
             {
-                case ConfigEffect _effect:
-                    var key = _effect.Key;
+                case EffectAwaiter<string> { Effect: ConfigEffect { Key: string key } } awtr:
                     var value = ConfigurationManager.AppSettings[key];
-                    _effect.SetResult(value);
+                    awtr.SetResult(value);
                     break;
             };
         }
-
-
     }
 }

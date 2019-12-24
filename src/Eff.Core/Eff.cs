@@ -23,13 +23,13 @@ namespace Nessos.Eff
 
     public class Await<TResult> : Eff<TResult>
     {
-        public Await(IEffect effect, IContinuation<TResult> continuation)
+        public Await(Awaiter awaiter, IContinuation<TResult> continuation)
         {
-            Effect = effect;
+            Awaiter = awaiter;
             Continuation = continuation;
         }
 
-        public IEffect Effect { get; }
+        public Awaiter Awaiter { get; }
         public IContinuation<TResult> Continuation { get; }
     }
 

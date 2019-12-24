@@ -1,9 +1,7 @@
-﻿using Nessos.Eff;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using Nessos.Eff;
+using Nessos.Eff.ImplicitAwaitables;
 
 namespace Eff.Examples.Config
 {

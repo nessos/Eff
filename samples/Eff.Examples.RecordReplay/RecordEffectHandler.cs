@@ -28,20 +28,20 @@ namespace Eff.Examples.RecordReplay
 
         private List<Result> results = new List<Result>();
 
-        public override async Task Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
-            switch (effect)
+            switch (awaiter.Effect)
             {
-                case DoEffect<TResult> _effect:
-                    _effect.SetResult(_effect.Func(ctx));
+                case DoEffect<TResult> doEffect:
+                    awaiter.SetResult(doEffect.Func(ctx));
                     break;
             }
             results.Add(new Result
             {
-                FilePath = effect.CallerFilePath,
-                MemberName = effect.CallerMemberName,
-                LineNumber = effect.CallerLineNumber,
-                Value = effect.Result,
+                FilePath = awaiter.CallerFilePath,
+                MemberName = awaiter.CallerMemberName,
+                LineNumber = awaiter.CallerLineNumber,
+                Value = awaiter.Result,
                 Type = typeof(TResult),
             });
         }

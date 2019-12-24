@@ -24,7 +24,7 @@ namespace Nessos.EffPromo.Api.EffImplementation
 
 		private int i = 0;
 
-		public override async Task Handle<TResult>(IEffect<TResult> effect)
+		public override async Task Handle<TResult>(EffectAwaiter<TResult> effect)
 		{
 			var result = Results[i++];
 			effect.SetResult((TResult)Convert.ChangeType(result.Value, result.Type));

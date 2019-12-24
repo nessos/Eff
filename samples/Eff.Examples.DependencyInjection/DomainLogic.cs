@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Nessos.Eff;
+using Nessos.Eff.ImplicitAwaitables;
 
 namespace Eff.Examples.DependencyInjection
 {
@@ -45,7 +43,7 @@ namespace Eff.Examples.DependencyInjection
             var userService = await Effect.GetDependency<IUserService>();
             var logger = await Effect.GetDependency<ILogger>();
 
-            var newUserName = await CheckUsername(userName).AsEffect();
+            var newUserName = await CheckUsername(userName);
 
             if (await userService.CreateUser(newUserName, password).AsEffect())
             {
@@ -63,7 +61,7 @@ namespace Eff.Examples.DependencyInjection
         {
             foreach (var cred in credentials)
             {
-                await DomainLogic.CreateNewUser(cred.userName, cred.password).AsEffect();
+                await DomainLogic.CreateNewUser(cred.userName, cred.password);
             }
 
             return credentials.Length;

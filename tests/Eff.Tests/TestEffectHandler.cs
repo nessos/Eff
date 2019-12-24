@@ -8,14 +8,14 @@ namespace Nessos.Eff.Tests
 {
     public class TestEffectHandler : EffectHandler
     {
-        private readonly DateTime now;
+        private readonly DateTime _now;
 
         public List<ExceptionLog> ExceptionLogs { get; }
         public List<ResultLog> TraceLogs { get; }
 
         public TestEffectHandler(DateTime now) : base()
         {
-            this.now = now;
+            _now = now;
             ExceptionLogs = new List<ExceptionLog>();
             TraceLogs = new List<ResultLog>();
         }
@@ -23,23 +23,23 @@ namespace Nessos.Eff.Tests
         public TestEffectHandler() : this(DateTime.Now)
         { }
 
-        public override async Task Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
-            switch (effect)
+            switch (awaiter)
             {
-                case DateTimeNowEffect dateTimeNowEffect:
-                    dateTimeNowEffect.SetResult(now);
+                case EffectAwaiter<DateTime> { Effect: DateTimeNowEffect _ } _awaiter:
+                    _awaiter.SetResult(_now);
                     break;
-                case FuncEffect<TResult> funcEffect:
+                case { Effect: FuncEffect<TResult> funcEffect }:
                     var result = funcEffect.Func();
-                    effect.SetResult(result);
+                    awaiter.SetResult(result);
                     break;
             }
         }
 
         public (string name, object value)[] CaptureStateParameters { private set; get; }
         public (string name, object value)[] CaptureStateLocalVariables { private set; get; }
-        public override async Task Handle<TResult>(TaskEffect<TResult> effect)
+        public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
         {
             CaptureStateParameters = TraceHelpers.GetParametersValues(effect.State);
             CaptureStateLocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State);
@@ -58,7 +58,7 @@ namespace Nessos.Eff.Tests
 
         }
 
-        public override async Task Handle<TResult>(EffEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffAwaiter<TResult> effect)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace Nessos.Eff.Tests
             }
         }
 
-        public async ValueTask<ValueTuple> Log(Exception ex, IEffect effect)
+        public async ValueTask<ValueTuple> Log(Exception ex, Awaiter effect)
         {
             var log =
                 new ExceptionLog
@@ -101,7 +101,7 @@ namespace Nessos.Eff.Tests
             return ValueTuple.Create();
         }
 
-        public async ValueTask<ValueTuple> Log(object result, IEffect effect)
+        public async ValueTask<ValueTuple> Log(object result, Awaiter effect)
         {
             var log =
                 new ResultLog

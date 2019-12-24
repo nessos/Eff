@@ -11,9 +11,9 @@ namespace Eff.Examples.StackTrace
     public class CustomEffectHandler : EffectHandler
     {
 
-        public override async Task Handle<TResult>(IEffect<TResult> effect) { }
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> effect) { }
 
-        public override async Task Handle<TResult>(TaskEffect<TResult> effect)
+        public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace Eff.Examples.StackTrace
             }
         }
 
-        public override async Task Handle<TResult>(EffEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffAwaiter<TResult> effect)
         {
             try
             {
@@ -42,17 +42,17 @@ namespace Eff.Examples.StackTrace
         }
 
 
-        public async Task Log(Exception ex, IEffect effect)
+        public async Task Log(Exception ex, Awaiter awaiter)
         {
             var log =
                 new ExceptionLog
                 {
-                    CallerFilePath = effect.CallerFilePath,
-                    CallerLineNumber = effect.CallerLineNumber,
-                    CallerMemberName = effect.CallerMemberName,
+                    CallerFilePath = awaiter.CallerFilePath,
+                    CallerLineNumber = awaiter.CallerLineNumber,
+                    CallerMemberName = awaiter.CallerMemberName,
                     Exception = ex,
-                    Parameters = Nessos.Eff.TraceHelpers.GetParametersValues(effect.State),
-                    LocalVariables = Nessos.Eff.TraceHelpers.GetLocalVariablesValues(effect.State),
+                    Parameters = TraceHelpers.GetParametersValues(awaiter.State),
+                    LocalVariables = TraceHelpers.GetLocalVariablesValues(awaiter.State),
                 };
             if (!ex.Data.Contains("StackTraceLog"))
             {

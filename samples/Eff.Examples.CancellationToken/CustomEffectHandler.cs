@@ -13,18 +13,18 @@ namespace Eff.Examples.CancellationToken
             this.token = token;
         }
 
-        public override async Task Handle<TResult>(TaskEffect<TResult> effect)
+        public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
         {
             token.ThrowIfCancellationRequested();
             await base.Handle(effect);
         }
 
-        public override async Task Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
-            switch (effect)
+            switch (awaiter)
             {
-                case CancellationTokenEffect _effect:
-                    _effect.SetResult(token);
+                case EffectAwaiter<System.Threading.CancellationToken> { Effect: CancellationTokenEffect _ } awter :
+                    awter.SetResult(token);
                     break;
             };
         }
