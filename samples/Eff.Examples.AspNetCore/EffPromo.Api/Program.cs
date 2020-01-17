@@ -2,19 +2,23 @@ namespace Nessos.EffPromo.Api
 {
 	using System;
 	using System.IO;
-
+	using System.Linq;
+	using System.Threading.Tasks;
 	using Microsoft.AspNetCore.Hosting;
+	using Microsoft.EntityFrameworkCore;
+	using Microsoft.EntityFrameworkCore.Internal;
 	using Microsoft.Extensions.Configuration;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.Hosting;
-
+	using Microsoft.Extensions.Logging;
+	using Persistence;
 	using Serilog;
 	using Serilog.Context;
 	using Serilog.Exceptions;
 	using Serilog.Exceptions.Core;
 	using Serilog.Exceptions.SqlServer.Destructurers;
 
-	public static class Program
+	public sealed class Program
 	{
 		private static IConfiguration? configuration;
 
@@ -27,7 +31,7 @@ namespace Nessos.EffPromo.Api
 				.AddEnvironmentVariables()
 				.Build();
 
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
 			Log.Logger = new LoggerConfiguration()
 				.ReadFrom.Configuration(Configuration)
@@ -42,6 +46,19 @@ namespace Nessos.EffPromo.Api
 			{
 				var host = CreateHostBuilder(args).Build();
 				var env = host.Services.GetRequiredService<IWebHostEnvironment>();
+				using (var scope = host.Services.CreateScope())
+				{
+					var ctx = scope.ServiceProvider.GetRequiredService<EffDbContext>();
+					var migrations = await ctx.Database.GetPendingMigrationsAsync();
+					if (migrations.Any())
+					{
+						var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+						logger.LogInformation("Applying migrations {@Migrations}", migrations);
+						await ctx.Database.MigrateAsync();
+						logger.LogInformation("Migrations applied successfully");
+					}
+				}
+
 				LogContext.PushProperty("Environment", env.EnvironmentName);
 				host.Run();
 			}
