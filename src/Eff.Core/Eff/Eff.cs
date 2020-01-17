@@ -4,8 +4,6 @@ using System.Runtime.CompilerServices;
 
 namespace Nessos.Eff
 {
-    public delegate Eff<TResult> StateMachine<TResult>(bool useClonedState = false);
-
     /// <summary>
     /// Represents an effectful computation built using the Eff library.
     /// Execution of the computation is delayed (a.k.a. "cold semantics").
