@@ -256,3 +256,6 @@ BenchmarkDotNet.Artifacts/
 
 # ionide
 .ionide/
+
+# xunit
+TestResults/

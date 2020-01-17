@@ -1,24 +1,21 @@
-﻿#pragma warning disable 1998
-using Nessos.Eff;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.Config
+namespace Nessos.Eff.Examples.Config
 {
     public class CustomEffectHandler : EffectHandler
     {
-        public override async Task Handle<TResult>(IEffect<TResult> effect)
+        public override Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
         {
-            switch (effect)
+            switch (awaiter)
             {
-                case ConfigEffect _effect:
-                    var key = _effect.Key;
+                case EffectEffAwaiter<string> { Effect: ConfigEffect { Key: string key } } awtr:
                     var value = ConfigurationManager.AppSettings[key];
-                    _effect.SetResult(value);
+                    awtr.SetResult(value);
                     break;
             };
+
+            return Task.CompletedTask;
         }
-
-
     }
 }

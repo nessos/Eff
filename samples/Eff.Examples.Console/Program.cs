@@ -1,68 +1,40 @@
-﻿#pragma warning disable 1998
-using Nessos.Eff;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.Console
+namespace Nessos.Eff.Examples.Console
 {
     class Program
     {
-
-        static async Eff<string> Foo()
+        static async Eff Foo()
         {
-            string message = "Hello " + await Effect.Read();
-
-            await Effect.Print(message);
-
-            return message;
+            await Effects.Print("Enter your name: ");
+            await Effects.Print($"Hello, { await Effects.Read()}!\n");
         }
 
-        static T Run<T>(Eff<T> eff)
+        class ConsoleEffectHandler : EffectHandler
         {
-            var result = default(T);
-            var done = false;
-            while (!done)
+            public override Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
             {
-                switch (eff)
+                switch (awaiter)
                 {
-                    case SetException<T> setException:
-                        throw setException.Exception;
-                    case SetResult<T> setResult:
-                        result = setResult.Result;
-                        done = true;
+                    case EffectEffAwaiter<Unit> { Effect: ConsolePrintEffect printEffect } awtr:
+                        System.Console.Write(printEffect.Message);
+                        awtr.SetResult(Unit.Value);
                         break;
-                    case Delay<T> delay:
-                        eff = delay.Continuation.Trigger();
-                        break;
-                    case Await<T> awaitEff:
-                        switch (awaitEff.Effect)
-                        {
-                            case ConsolePrintEffect printEffect:
-                                System.Console.WriteLine(printEffect.Message);
-                                break;
-                            case ConsoleReadEffect readEffect:
-                                string message = System.Console.ReadLine();
-                                readEffect.SetResult(message);
-                                break;
-                            default:
-                                throw new NotSupportedException($"{awaitEff.Effect.GetType().Name}");
-                        }
-                        eff = awaitEff.Continuation.Trigger();
+                    case EffectEffAwaiter<string> { Effect: ConsoleReadEffect _ } awtr:
+                        string message = System.Console.ReadLine();
+                        awtr.SetResult(message);
                         break;
                     default:
-                        throw new NotSupportedException($"{eff.GetType().Name}");
+                        throw new NotSupportedException(awaiter.Id);
                 }
+
+                return Task.CompletedTask;
             }
-
-            return result;
         }
-
-        static void Main()
+        static async Task Main()
         {
-            Run(Foo());
+            await Foo().Run(new ConsoleEffectHandler());
         }
     }
 }

@@ -2,7 +2,7 @@
 using Nessos.Eff;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.DependencyInjection
+namespace Nessos.Eff.Examples.DependencyInjection
 {
     public class CustomEffectHandler : EffectHandler
     {
@@ -13,12 +13,12 @@ namespace Eff.Examples.DependencyInjection
             _container = container;
         }
 
-        public override async Task Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
         {
-            switch (effect)
+            switch (awaiter.Effect)
             {
-                case DependencyEffect<TResult> _effect:
-                    _effect.SetResult(_container.Get<TResult>());
+                case DependencyEffect<TResult> _:
+                    awaiter.SetResult(_container.Get<TResult>());
                     break;
             };
         }

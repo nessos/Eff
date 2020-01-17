@@ -1,28 +1,24 @@
 ﻿#pragma warning disable 1998
-using Nessos.Eff;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.TraceLog
+namespace Nessos.Eff.Examples.TraceLog
 {
     public class CustomEffectHandler : EffectHandler
     {
-
-        public override async Task Handle<TResult>(IEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffectEffAwaiter<TResult> effect)
         {
+
         }
 
-        public override async Task Handle<TResult>(TaskEffect<TResult> effect)
+        public override async Task Handle<TResult>(TaskEffAwaiter<TResult> effect)
         {            
             var result = await effect.Task;
             effect.SetResult(result);
             await Log(result, effect);
         }
 
-        public override async Task Handle<TResult>(EffEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffEffAwaiter<TResult> effect)
         {
             var result = await effect.Eff.Run(this);
             effect.SetResult(result);
@@ -30,7 +26,7 @@ namespace Eff.Examples.TraceLog
         }
 
         public List<ResultLog> TraceLogs = new List<ResultLog>();
-        public async Task Log(object result, IEffect effect)
+        public async Task Log(object result, EffAwaiter effect)
         {
             var log =
                 new ResultLog
@@ -39,9 +35,10 @@ namespace Eff.Examples.TraceLog
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
                     Result = result,
-                    Parameters = Nessos.Eff.TraceHelpers.GetParametersValues(effect.State),
-                    LocalVariables = Nessos.Eff.TraceHelpers.GetLocalVariablesValues(effect.State),
+                    Parameters = TraceHelpers.GetParametersValues(effect.State),
+                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State),
                 };
+
             TraceLogs.Add(log);
         }
     }

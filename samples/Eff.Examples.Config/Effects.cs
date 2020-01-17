@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Eff.Examples.Config
+﻿namespace Nessos.Eff.Examples.Config
 {
-
-    public static class Effect
+    public class ConfigEffect : Effect<string>
     {
-        public static ConfigEffect Config(string key,
-                                            [CallerMemberName] string memberName = "",
-                                            [CallerFilePath] string sourceFilePath = "",
-                                            [CallerLineNumber] int sourceLineNumber = 0,
-                                            bool captureState = false)
+        public ConfigEffect(string key)
         {
-            return new ConfigEffect(key, memberName, sourceFilePath, sourceLineNumber, captureState);
+            Key = key;
         }
+
+        public string Key { get; }
+    }
+
+    public static class Effects
+    {
+        public static ConfigEffect Config(string key) => new ConfigEffect(key);
     }
 }

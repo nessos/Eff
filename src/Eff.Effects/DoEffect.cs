@@ -11,25 +11,19 @@ namespace Nessos.Eff
 	
 	public class DoEffect<T> : Effect<T>
 	{
-
 		public Func<IEffCtx, Task<T>> Func { get; }
-		public DoEffect(Func<IEffCtx, Task<T>> func, string memberName, string sourceFilePath, int sourceLineNumber) : base(memberName, sourceFilePath, sourceLineNumber)
+		public DoEffect(Func<IEffCtx, Task<T>> func)
 		{
-			this.Func = func;
+			Func = func;
 		}
 	}
 
 
 	public static class IO
 	{
-
-		public static DoEffect<T> Do<T>(Func<IEffCtx, Task<T>> func,
-			[CallerMemberName] string memberName = "",
-			[CallerFilePath] string sourceFilePath = "",
-			[CallerLineNumber] int sourceLineNumber = 0)
+		public static DoEffect<T> Do<T>(Func<IEffCtx, Task<T>> func)
 		{
-			return new DoEffect<T>(ctx => func(ctx), memberName, sourceFilePath, sourceLineNumber);
+			return new DoEffect<T>(func);
 		}
-
 	}
 }

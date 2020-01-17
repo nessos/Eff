@@ -1,27 +1,31 @@
 ﻿#pragma warning disable 1998
-using Nessos.Eff;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.RecordReplay
+namespace Nessos.Eff.Examples.RecordReplay
 {
     public class ReplayEffectHandler : EffectHandler
     {
 
-        private readonly List<Result> results;
+        private readonly List<Result> _results;
 
         public ReplayEffectHandler(List<Result> results)
         {
-            this.results = results;
+            _results = results;
         }
 
-        public override async Task Handle<TResult>(IEffect<TResult> effect)
+        public static ReplayEffectHandler FromJson(string json)
+        {
+            return new ReplayEffectHandler(JsonConvert.DeserializeObject<List<Result>>(json));
+        }
+
+        public override async Task Handle<TResult>(EffectEffAwaiter<TResult> effect)
         {
             var result = 
-                results.Single(it => it.FilePath == effect.CallerFilePath && 
+                _results.Single(it => it.FilePath == effect.CallerFilePath && 
                                      it.MemberName == effect.CallerMemberName && 
                                      it.LineNumber == effect.CallerLineNumber);
             effect.SetResult((TResult)Convert.ChangeType(result.Value, result.Type));

@@ -1,25 +1,20 @@
-﻿using Nessos.Eff;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace Eff.Examples.NonDeterminism
+namespace Nessos.Eff.Examples.NonDeterminism
 {
     class Program
     {
 
         static async Eff<(int, string)> Foo()
         {
-            var x = await Effect.Choose(1, 2, 3);
-            var y = await Effect.Choose("one", "two", "three");
+            var x = await Effects.Choose(1, 2, 3);
+            var y = await Effects.Choose("one", "two", "three");
             return (x, y);
         }
 
         static void Main()
         {
-            var results = Foo().Run();
+            var results = NonDetEffectHandler.Run(Foo());
             foreach (var result in results)
             {
                 Console.WriteLine(result);

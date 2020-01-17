@@ -1,19 +1,16 @@
 ﻿#pragma warning disable 1998
-using Nessos.Eff;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.StackTrace
+namespace Nessos.Eff.Examples.StackTrace
 {
     public class CustomEffectHandler : EffectHandler
     {
 
-        public override async Task Handle<TResult>(IEffect<TResult> effect) { }
+        public override async Task Handle<TResult>(EffectEffAwaiter<TResult> effect) { }
 
-        public override async Task Handle<TResult>(TaskEffect<TResult> effect)
+        public override async Task Handle<TResult>(TaskEffAwaiter<TResult> effect)
         {
             try
             {
@@ -27,7 +24,7 @@ namespace Eff.Examples.StackTrace
             }
         }
 
-        public override async Task Handle<TResult>(EffEffect<TResult> effect)
+        public override async Task Handle<TResult>(EffEffAwaiter<TResult> effect)
         {
             try
             {
@@ -42,17 +39,17 @@ namespace Eff.Examples.StackTrace
         }
 
 
-        public async Task Log(Exception ex, IEffect effect)
+        public async Task Log(Exception ex, EffAwaiter awaiter)
         {
             var log =
                 new ExceptionLog
                 {
-                    CallerFilePath = effect.CallerFilePath,
-                    CallerLineNumber = effect.CallerLineNumber,
-                    CallerMemberName = effect.CallerMemberName,
+                    CallerFilePath = awaiter.CallerFilePath,
+                    CallerLineNumber = awaiter.CallerLineNumber,
+                    CallerMemberName = awaiter.CallerMemberName,
                     Exception = ex,
-                    Parameters = Nessos.Eff.TraceHelpers.GetParametersValues(effect.State),
-                    LocalVariables = Nessos.Eff.TraceHelpers.GetLocalVariablesValues(effect.State),
+                    Parameters = TraceHelpers.GetParametersValues(awaiter.State),
+                    LocalVariables = TraceHelpers.GetLocalVariablesValues(awaiter.State),
                 };
             if (!ex.Data.Contains("StackTraceLog"))
             {
