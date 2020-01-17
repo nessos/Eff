@@ -13,17 +13,17 @@ namespace Nessos.Eff
             {
                 switch (eff)
                 {
-                    case SetException<TResult> setException:
+                    case ExceptionEff<TResult> setException:
                         await handler.Handle(setException);
                         break;
-                    case SetResult<TResult> setResult:
+                    case ResultEff<TResult> setResult:
                         result = await handler.Handle(setResult);
                         done = true;
                         break;
-                    case Delay<TResult> delay:
+                    case DelayEff<TResult> delay:
                         eff = await handler.Handle(delay);
                         break;
-                    case Await<TResult> awaitEff:
+                    case AwaitEff<TResult> awaitEff:
                         eff = await handler.Handle(awaitEff);
                         break;
                     default:
@@ -34,6 +34,6 @@ namespace Nessos.Eff
             return result;
         }
 
-        public static Task Run(this Eff eff, IEffectHandler handler) => eff.Accept(handler);
+        public static Task Run(this Eff eff, IEffectHandler handler) => eff.RunCore(handler);
     }
 }

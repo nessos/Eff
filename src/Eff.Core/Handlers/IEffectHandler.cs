@@ -8,9 +8,9 @@ namespace Nessos.Eff
         Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter);
         Task Handle<TResult>(TaskEffAwaiter<TResult> awaiter);
 
-        Task<TResult> Handle<TResult>(SetResult<TResult> setResultEff);
-        Task Handle<TResult>(SetException<TResult> setExceptionEff);
-        Task<Eff<TResult>> Handle<TResult>(Delay<TResult> delayEff);
-        Task<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff);
+        Task<TResult> Handle<TResult>(ResultEff<TResult> setResultEff);
+        Task Handle<TResult>(ExceptionEff<TResult> setExceptionEff);
+        Task<Eff<TResult>> Handle<TResult>(DelayEff<TResult> delayEff);
+        Task<Eff<TResult>> Handle<TResult>(AwaitEff<TResult> awaitEff);
     }
 }
