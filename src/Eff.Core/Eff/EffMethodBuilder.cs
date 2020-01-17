@@ -135,6 +135,9 @@ namespace Nessos.Eff
             _eff = new AwaitEff<TResult>(awaiter, this);
         }
 
+        /// <summary>
+        /// Reflection-driven state machine cloner
+        /// </summary>
         protected static class StateMachineCloner<TBuilder, TStateMachine> where TStateMachine : IAsyncStateMachine
                                                                            where TBuilder : EffMethodBuilderBase<TResult>, new()
         {
