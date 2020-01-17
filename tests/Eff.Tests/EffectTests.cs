@@ -31,13 +31,13 @@ namespace Nessos.Eff.Tests
             {
                 for (int i = 1; i <= 10; i++)
                 {
-                    await IncrementBy(i).AsEffect();
+                    await IncrementBy(i);
 
                     async Eff IncrementBy(int x)
                     {
                         if (x < 0) return;
 
-                        counter += await Echo(x).AsEffect();
+                        counter += await Echo(x);
                         static async Eff<int> Echo(int x) => x;
                     }
                 }
@@ -58,7 +58,7 @@ namespace Nessos.Eff.Tests
             }
             async Eff<int> Foo(int x)
             {
-                var y = await Bar(x).AsEffect();
+                var y = await Bar(x);
                 return y + 1;
             }
 
@@ -72,7 +72,7 @@ namespace Nessos.Eff.Tests
             async Eff<DateTime> Foo<T>()
                 where T : struct, IDateTimeNowEffect
             {
-                var y = await default(T).DateTimeNow().AsEffect();
+                var y = await default(T).DateTimeNow().ConfigureAwait();
                 return y;
             }
             var now = DateTime.Now;
@@ -122,7 +122,7 @@ namespace Nessos.Eff.Tests
             }
             async Eff<int> Foo(int x)
             {
-                var y = await Bar(x).AsEffect();
+                var y = await Bar(x).ConfigureAwait();
                 return y + 1;
             }
 
@@ -132,7 +132,7 @@ namespace Nessos.Eff.Tests
         }
 
         [Fact]
-        public async Task AwaitCombinationOfEffandTaskEffects()
+        public async Task AwaitCombinationOfEffAndTaskEffects()
         {
             async Eff<int> Bar(int x)
             {
@@ -142,7 +142,7 @@ namespace Nessos.Eff.Tests
             async Eff<int> Foo(int x)
             {
                 await Task.Delay(1000).AsEffect();
-                var y = await Bar(x).AsEffect();
+                var y = await Bar(x);
                 return y + 1;
             }
 
@@ -174,7 +174,7 @@ namespace Nessos.Eff.Tests
 
             async Eff<int> Foo(int x)
             {
-                var y = await Bar(x).AsEffect();
+                var y = await Bar(x);
                 return y;
             }
 
@@ -192,7 +192,7 @@ namespace Nessos.Eff.Tests
 
             async Eff<int> Foo(int x)
             {
-                var y = await Bar(x).AsEffect();
+                var y = await Bar(x);
                 return y;
             }
             var handler = new TestEffectHandler();
@@ -211,7 +211,7 @@ namespace Nessos.Eff.Tests
 
             async Eff<int> Foo(int x)
             {
-                var y = await Bar(x).AsEffect();
+                var y = await Bar(x);
                 return y;
             }
 
@@ -266,7 +266,7 @@ namespace Nessos.Eff.Tests
             async Eff<int> Foo<T>(int x)
                 where T : struct, IFuncEffect
             {
-                var y = await default(T).Func(() => x + 1).AsEffect();
+                var y = await default(T).Func(() => x + 1);
                 return y + 1;
             }
 
@@ -281,7 +281,7 @@ namespace Nessos.Eff.Tests
                 where T : struct, IFuncEffect
             {
                 int y = 0;
-                await default(T).Action(() => y = x + 1).AsEffect();
+                await default(T).Action(() => y = x + 1);
                 return y + 1;
             }
 
@@ -332,7 +332,7 @@ namespace Nessos.Eff.Tests
         {
             async Eff<DateTime> Foo()
             {
-                return await (new CustomEffect()).DateTimeNow().AsEffect();
+                return await (new CustomEffect()).DateTimeNow();
             }
 
             var exn = await Assert.ThrowsAsync<EffException>(() => Foo().Run(new DefaultEffectHandler()));

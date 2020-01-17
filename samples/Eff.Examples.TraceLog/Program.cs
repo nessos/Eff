@@ -1,10 +1,9 @@
 ﻿#pragma warning disable 1998
 using Nessos.Eff;
-using Nessos.Eff.ImplicitAwaitables;
 using System;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.TraceLog
+namespace Nessos.Eff.Examples.TraceLog
 {
     class Program
     {
@@ -19,7 +18,7 @@ namespace Eff.Examples.TraceLog
             int sum = 0;
             for (int i = 0; i < n; i++)
             {
-                sum += await Bar(i);
+                sum += await Bar(i).ConfigureAwait();
             }
             return sum;
         }

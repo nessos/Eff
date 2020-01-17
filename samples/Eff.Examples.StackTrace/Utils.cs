@@ -1,12 +1,9 @@
-﻿using Nessos.Eff;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Eff.Examples.StackTrace
+namespace Nessos.Eff.Examples.StackTrace
 {
 
     public class ExceptionLog

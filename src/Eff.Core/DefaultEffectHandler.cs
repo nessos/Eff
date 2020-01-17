@@ -4,6 +4,6 @@ namespace Nessos.Eff
 {
     public class DefaultEffectHandler : EffectHandler
     {
-        public override Task Handle<TResult>(EffectAwaiter<TResult> effect) => Task.CompletedTask;
+        public override Task Handle<TResult>(EffectEffAwaiter<TResult> effect) => Task.CompletedTask;
     }
 }

@@ -1,17 +1,17 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security;
-using System.Reflection;
-using System.ComponentModel;
 
 namespace Nessos.Eff
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class EffMethodBuilder<TResult> : EffMethodBuilderBase<TResult>
     {
         public Eff<TResult>? Task => _eff;
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
         public static EffMethodBuilder<TResult> Create()
         {
             return new EffMethodBuilder<TResult>();
@@ -40,22 +40,23 @@ namespace Nessos.Eff
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : Awaiter
+            where TAwaiter : EffAwaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
         }
 
 
-        //[SecuritySafeCritical]
+        [SecuritySafeCritical]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : Awaiter
+            where TAwaiter : EffAwaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
         }
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class EffMethodBuilder : EffMethodBuilderBase<Unit>
     {
         public Eff? Task => _eff;
@@ -70,6 +71,7 @@ namespace Nessos.Eff
         {
 
         }
+
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
             _state = stateMachine;
@@ -88,22 +90,23 @@ namespace Nessos.Eff
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : Awaiter
+            where TAwaiter : EffAwaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
         }
 
 
-        //[SecuritySafeCritical]
+        [SecuritySafeCritical]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : Awaiter
+            where TAwaiter : EffAwaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
         }
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public abstract class EffMethodBuilderBase<TResult> : IContinuation<TResult>
     {
         protected IAsyncStateMachine? _state;
@@ -129,7 +132,7 @@ namespace Nessos.Eff
         }
 
         protected void AwaitOnCompletedCore<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
-            where TAwaiter : Awaiter
+            where TAwaiter : EffAwaiter
             where TStateMachine : IAsyncStateMachine
         {
             awaiter.SetState(_state!);

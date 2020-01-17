@@ -1,27 +1,44 @@
 ﻿#pragma warning disable 1998
-using Nessos.Eff;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.NonDeterminism
+namespace Nessos.Eff.Examples.NonDeterminism
 {
-    public class NonDetHandler<TResult> : EffectHandler
+    public static class NonDetEffectHandler
+    {
+        public static List<TResult> Run<TResult>(Eff<TResult> eff)
+        {
+            switch (eff)
+            {
+                case SetException<TResult> setException:
+                    throw setException.Exception;
+                case SetResult<TResult> setResult:
+                    return new List<TResult> { setResult.Result };
+                case Delay<TResult> delay:
+                    return Run(delay.Continuation.Trigger());
+                case Await<TResult> awaitEff:
+                    var handler = new NonDetEffectHandler<TResult>(awaitEff.Continuation);
+                    awaitEff.Awaiter.Accept(handler);
+                    return handler.Results;
+                default:
+                    throw new NotSupportedException($"{eff.GetType().Name}");
+            }
+        }
+    }
+
+    public class NonDetEffectHandler<TResult> : EffectHandler
     {
         private readonly IContinuation<TResult> _continuation;
 
-        public NonDetHandler(IContinuation<TResult> continuation)
+        public NonDetEffectHandler(IContinuation<TResult> continuation)
         {
             _continuation = continuation;
         }
 
         public List<TResult> Results { get; } = new List<TResult>();
 
-        public async override Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
+        public async override Task Handle<TValue>(EffectEffAwaiter<TValue> awaiter)
         {
             switch (awaiter.Effect)
             {
@@ -30,7 +47,8 @@ namespace Eff.Examples.NonDeterminism
                     foreach (var choice in nde.Choices)
                     {
                         awaiter.SetResult(choice);
-                        var results = Effect.Run(_continuation.Trigger(useClonedStateMachine: true));
+                        var next = _continuation.Trigger(useClonedStateMachine: true);
+                        var results = NonDetEffectHandler.Run(next);
                         Results.AddRange(results);
                     }
                     break;

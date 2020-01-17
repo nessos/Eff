@@ -1,6 +1,16 @@
-﻿namespace Eff.Examples.Config
+﻿namespace Nessos.Eff.Examples.Config
 {
-    public static class Effect
+    public class ConfigEffect : Effect<string>
+    {
+        public ConfigEffect(string key)
+        {
+            Key = key;
+        }
+
+        public string Key { get; }
+    }
+
+    public static class Effects
     {
         public static ConfigEffect Config(string key) => new ConfigEffect(key);
     }

@@ -1,12 +1,8 @@
 ﻿#pragma warning disable 1998
-using Nessos.Eff;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.StackTrace
+namespace Nessos.Eff.Examples.StackTrace
 {
     class Program
     {
@@ -22,8 +18,8 @@ namespace Eff.Examples.StackTrace
 
         static async Eff<int> Foo(int x)
         {
-            var y = await Baz(x).AsEffect();
-            var z = await Bar(x).AsEffect();
+            var y = await Baz(x);
+            var z = await Bar(x);
             return y + z;
         }
 

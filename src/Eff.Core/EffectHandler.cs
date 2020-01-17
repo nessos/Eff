@@ -5,38 +5,33 @@ namespace Nessos.Eff
 {
     public abstract class EffectHandler : IEffectHandler
     {
-        public EffectHandler()
-        {
-            
-        }
-
         public virtual bool CloneDelayedStateMachines { get; set; } = false;
 
-        public abstract Task Handle<TResult>(EffectAwaiter<TResult> effect);
+        public abstract Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter);
        
-        public virtual async Task Handle<TResult>(TaskAwaiter<TResult> effect)
+        public virtual async Task Handle<TResult>(TaskEffAwaiter<TResult> awaiter)
         {
-            var result = await effect.Task;
-            effect.SetResult(result);
+            var result = await awaiter.Task;
+            awaiter.SetResult(result);
         }
 
-        public virtual async Task Handle<TResult>(EffAwaiter<TResult> effect)
+        public virtual async Task Handle<TResult>(EffEffAwaiter<TResult> awaiter)
         {
-            var result = await effect.Eff.Run(this);
-            effect.SetResult(result);
+            var result = await awaiter.Eff.Run(this);
+            awaiter.SetResult(result);
         }
 
-        public virtual Task<TResult> Handle<TResult>(SetResult<TResult> setResult) => Task.FromResult(setResult.Result);
+        public virtual Task<TResult> Handle<TResult>(SetResult<TResult> setResultEff) => Task.FromResult(setResultEff.Result);
 
-        public virtual Task Handle<TResult>(SetException<TResult> setException)
+        public virtual Task Handle<TResult>(SetException<TResult> setExceptionEff)
         {
-            System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(setException.Exception).Throw();
+            System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(setExceptionEff.Exception).Throw();
             return default!;
         }
 
-        public virtual Task<Eff<TResult>> Handle<TResult>(Delay<TResult> delay)
+        public virtual Task<Eff<TResult>> Handle<TResult>(Delay<TResult> delayEff)
         {
-            return Task.FromResult(delay.Continuation.Trigger(useClonedStateMachine: CloneDelayedStateMachines));
+            return Task.FromResult(delayEff.Continuation.Trigger(useClonedStateMachine: CloneDelayedStateMachines));
         }
 
         public virtual async Task<Eff<TResult>> Handle<TResult>(Await<TResult> awaitEff)

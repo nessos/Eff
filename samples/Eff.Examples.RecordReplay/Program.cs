@@ -1,18 +1,14 @@
-using Nessos.Eff;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.RecordReplay
+namespace Nessos.Eff.Examples.RecordReplay
 {
     class Program
     {
-
         static async Eff<(DateTime date, int random)> Foo()
         {
-            var now = await IO.Do(_ => DateTime.UtcNow).AsEffect();
-            var rnd = await IO.Do(ctx => ctx.Random.Next(0, 10)).AsEffect();
+            var now = await IO.Do(_ => DateTime.UtcNow).ConfigureAwait();
+            var rnd = await IO.Do(ctx => ctx.Random.Next(0, 10)).ConfigureAwait();
 
             return (now, rnd);
         }
@@ -26,7 +22,7 @@ namespace Eff.Examples.RecordReplay
 
             await Task.Delay(1000);
 
-            var _handler = new ReplayEffectHandler(JsonConvert.DeserializeObject<List<Result>>(replayLog));
+            var _handler = ReplayEffectHandler.FromJson(replayLog);
             result = await Foo().Run(_handler);
             Console.WriteLine($"Replayed: {result}");
         }

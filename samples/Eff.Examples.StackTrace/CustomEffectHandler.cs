@@ -1,19 +1,16 @@
 ﻿#pragma warning disable 1998
-using Nessos.Eff;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.StackTrace
+namespace Nessos.Eff.Examples.StackTrace
 {
     public class CustomEffectHandler : EffectHandler
     {
 
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> effect) { }
+        public override async Task Handle<TResult>(EffectEffAwaiter<TResult> effect) { }
 
-        public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(TaskEffAwaiter<TResult> effect)
         {
             try
             {
@@ -27,7 +24,7 @@ namespace Eff.Examples.StackTrace
             }
         }
 
-        public override async Task Handle<TResult>(EffAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(EffEffAwaiter<TResult> effect)
         {
             try
             {
@@ -42,7 +39,7 @@ namespace Eff.Examples.StackTrace
         }
 
 
-        public async Task Log(Exception ex, Awaiter awaiter)
+        public async Task Log(Exception ex, EffAwaiter awaiter)
         {
             var log =
                 new ExceptionLog

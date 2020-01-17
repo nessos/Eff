@@ -11,7 +11,7 @@ namespace Nessos.Eff
 			this.ctx = ctx;
 		}
 
-		public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+		public override async Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
 		{
 			switch (awaiter.Effect)
 			{

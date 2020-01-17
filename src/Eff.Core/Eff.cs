@@ -4,13 +4,26 @@ using System.Runtime.CompilerServices;
 
 namespace Nessos.Eff
 {
-
     [AsyncMethodBuilder(typeof(EffMethodBuilder))]
     public abstract class Eff
     {
         internal Eff() { }
 
-        internal abstract Eff<Unit> Ignore();
+        public EffAwaiter ConfigureAwait([CallerMemberName] string callerMemberName = "",
+                                      [CallerFilePath] string callerFilePath = "",
+                                      [CallerLineNumber] int callerLineNumber = 0)
+        {
+            var awaiter = GetAwaiterCore();
+            awaiter.CallerMemberName = callerMemberName;
+            awaiter.CallerFilePath = callerFilePath;
+            awaiter.CallerLineNumber = callerLineNumber;
+            return awaiter;
+        }
+
+        public EffAwaiter GetAwaiter() => GetAwaiterCore();
+
+        internal abstract Task Accept(IEffectHandler handler);
+        internal abstract EffAwaiter GetAwaiterCore();
     }
 
     [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
@@ -18,18 +31,33 @@ namespace Nessos.Eff
     {
         internal Eff() { }
 
-        internal async override Eff<Unit> Ignore() { await this.AsEffect(); return Unit.Value; }
+        public new EffAwaiter<TResult> ConfigureAwait([CallerMemberName] string callerMemberName = "",
+                                                      [CallerFilePath] string callerFilePath = "",
+                                                      [CallerLineNumber] int callerLineNumber = 0)
+        {
+            return new EffEffAwaiter<TResult>(this) 
+            { 
+                CallerMemberName = callerMemberName, 
+                CallerFilePath = callerFilePath, 
+                CallerLineNumber = callerLineNumber 
+            };
+        }
+
+        public new EffAwaiter<TResult> GetAwaiter() => new EffEffAwaiter<TResult>(this);
+
+        internal override Task Accept(IEffectHandler handler) => this.Run(handler);
+        internal override EffAwaiter GetAwaiterCore() => GetAwaiter();
     }
 
     public class Await<TResult> : Eff<TResult>
     {
-        public Await(Awaiter awaiter, IContinuation<TResult> continuation)
+        public Await(EffAwaiter awaiter, IContinuation<TResult> continuation)
         {
             Awaiter = awaiter;
             Continuation = continuation;
         }
 
-        public Awaiter Awaiter { get; }
+        public EffAwaiter Awaiter { get; }
         public IContinuation<TResult> Continuation { get; }
     }
 

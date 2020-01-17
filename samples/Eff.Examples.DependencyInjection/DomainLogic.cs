@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Nessos.Eff;
-using Nessos.Eff.ImplicitAwaitables;
 
-namespace Eff.Examples.DependencyInjection
+namespace Nessos.Eff.Examples.DependencyInjection
 {
     public interface ILogger
     {

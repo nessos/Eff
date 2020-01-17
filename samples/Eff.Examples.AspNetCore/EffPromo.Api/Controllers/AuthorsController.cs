@@ -37,7 +37,7 @@ namespace Nessos.EffPromo.Api.Controllers
 			var authors = await IO.Do(ctx => ctx.Resolve<EffDbContext>()
 				.Authors
 				.TagWith($"Retrieving authors for {nameof(GetAuthors)}")
-				.ToListAsync()).AsEffect();
+				.ToListAsync());
 
 			//Logger.LogCritical("Found {Count} authors: {@Authors}", authors.Count, authors);
 			return authors;

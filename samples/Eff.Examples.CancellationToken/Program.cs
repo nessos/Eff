@@ -1,9 +1,8 @@
-﻿using Nessos.Eff;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.CancellationToken
+namespace Nessos.Eff.Examples.CancellationToken
 {
     class Program
     {
@@ -12,7 +11,7 @@ namespace Eff.Examples.CancellationToken
         {
             while (true)
             {
-                var token = await Effect.CancellationToken().AsEffect();
+                var token = await Effects.CancellationToken();
                 Console.WriteLine($"IsCancellationRequested:{token.IsCancellationRequested}");
                 await Task.Delay(1000).AsEffect();
             }

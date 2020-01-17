@@ -84,11 +84,11 @@ namespace Nessos.Eff.Benchmarks
             {
                 int sum = 0;
                 foreach (var i in inputs)
-                    if (i % 2 == 1) sum += await Square(i).AsEffect();
+                    if (i % 2 == 1) sum += await Square(i);
 
                 return sum;
 
-                static async Eff<int> Square(int x) => await Echo(x).AsEffect() * await Echo(x).AsEffect();
+                static async Eff<int> Square(int x) => await Echo(x) * await Echo(x);
                 static async Eff<T> Echo<T>(T x) => x;
             }
         }

@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Nessos.Eff;
 
-namespace Eff.Examples.DependencyInjection
+namespace Nessos.Eff.Examples.DependencyInjection
 {
     public class DependencyEffect<T> : Effect<T>
     {

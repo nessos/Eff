@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Eff.Examples.DependencyInjection
+namespace Nessos.Eff.Examples.DependencyInjection
 {
     // Poor man's DI container
     public class Container

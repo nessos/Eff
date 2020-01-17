@@ -1,13 +1,10 @@
 ﻿#pragma warning disable 1998
-using Nessos.Eff;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.RecordReplay
+namespace Nessos.Eff.Examples.RecordReplay
 {
     public class Result
     {
@@ -20,23 +17,24 @@ namespace Eff.Examples.RecordReplay
 
     public class RecordEffectHandler : EffectHandler
     {
-        private readonly EffCtx ctx;
+        private readonly EffCtx _ctx;
+        private readonly List<Result> _results = new List<Result>();
+
         public RecordEffectHandler(EffCtx ctx)
         {
-            this.ctx = ctx;
+            _ctx = ctx;
         }
 
-        private List<Result> results = new List<Result>();
-
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override async Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
         {
             switch (awaiter.Effect)
             {
                 case DoEffect<TResult> doEffect:
-                    awaiter.SetResult(doEffect.Func(ctx));
+                    awaiter.SetResult(doEffect.Func(_ctx));
                     break;
             }
-            results.Add(new Result
+
+            _results.Add(new Result
             {
                 FilePath = awaiter.CallerFilePath,
                 MemberName = awaiter.CallerMemberName,
@@ -46,7 +44,7 @@ namespace Eff.Examples.RecordReplay
             });
         }
 
-        public string GetJson() => JsonConvert.SerializeObject(results);
+        public string GetJson() => JsonConvert.SerializeObject(_results);
             
     }
 }

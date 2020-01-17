@@ -30,7 +30,7 @@ namespace Nessos.EffPromo.Api.EffImplementation
 
 		private ILogger<RecordHandler> Logger { get; }
 
-		public override async Task Handle<TResult>(EffectAwaiter<TResult> effect)
+		public override async Task Handle<TResult>(EffectEffAwaiter<TResult> effect)
 		{
 			await base.Handle(effect);
 			results.Add(new EffectResult {Value = effect.Result, Type = typeof(TResult)});

@@ -1,32 +1,32 @@
-﻿#pragma warning disable 1998
-using Nessos.Eff;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace Eff.Examples.CancellationToken
+namespace Nessos.Eff.Examples.CancellationToken
 {
     public class CustomEffectHandler : EffectHandler
     {
-        private readonly System.Threading.CancellationToken token;
+        private readonly System.Threading.CancellationToken _token;
 
         public CustomEffectHandler(System.Threading.CancellationToken token)
         {
-            this.token = token;
+            _token = token;
         }
 
-        public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
-        {
-            token.ThrowIfCancellationRequested();
-            await base.Handle(effect);
-        }
-
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
         {
             switch (awaiter)
             {
-                case EffectAwaiter<System.Threading.CancellationToken> { Effect: CancellationTokenEffect _ } awter :
-                    awter.SetResult(token);
+                case EffectEffAwaiter<System.Threading.CancellationToken> { Effect: CancellationTokenEffect _ } awter :
+                    awter.SetResult(_token);
                     break;
             };
+
+            return Task.CompletedTask;
+        }
+
+        public override async Task<Eff<TResult>> Handle<TResult>(Await<TResult> effect)
+        {
+            _token.ThrowIfCancellationRequested();
+            return await base.Handle(effect);
         }
     }
 }

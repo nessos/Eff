@@ -5,7 +5,6 @@ namespace Nessos.Eff
 {
     public static class EffExecutor
     {
-
         public static async Task<TResult> Run<TResult>(this Eff<TResult> eff, IEffectHandler handler)
         {   
             var result = default(TResult)!;
@@ -35,6 +34,6 @@ namespace Nessos.Eff
             return result;
         }
 
-        public static Task Run(this Eff eff, IEffectHandler handler) => eff.Ignore().Run(handler);
+        public static Task Run(this Eff eff, IEffectHandler handler) => eff.Accept(handler);
     }
 }

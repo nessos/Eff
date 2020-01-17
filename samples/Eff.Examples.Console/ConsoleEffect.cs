@@ -1,10 +1,6 @@
-﻿using Nessos.Eff;
-using System;
-using System.Runtime.CompilerServices;
-
-namespace Eff.Examples.Console
+﻿namespace Nessos.Eff.Examples.Console
 {
-    public class ConsolePrintEffect : Effect<Unit>
+    public class ConsolePrintEffect : Effect
     {
         public ConsolePrintEffect(string message)
         {
@@ -19,7 +15,7 @@ namespace Eff.Examples.Console
 
     }
 
-    public static class Effect
+    public static class Effects
     {
         public static ConsolePrintEffect Print(string message) => new ConsolePrintEffect(message);
 

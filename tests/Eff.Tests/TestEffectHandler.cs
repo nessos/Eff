@@ -23,11 +23,11 @@ namespace Nessos.Eff.Tests
         public TestEffectHandler() : this(DateTime.Now)
         { }
 
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override async Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
         {
             switch (awaiter)
             {
-                case EffectAwaiter<DateTime> { Effect: DateTimeNowEffect _ } _awaiter:
+                case EffectEffAwaiter<DateTime> { Effect: DateTimeNowEffect _ } _awaiter:
                     _awaiter.SetResult(_now);
                     break;
                 case { Effect: FuncEffect<TResult> funcEffect }:
@@ -39,7 +39,7 @@ namespace Nessos.Eff.Tests
 
         public (string name, object value)[] CaptureStateParameters { private set; get; }
         public (string name, object value)[] CaptureStateLocalVariables { private set; get; }
-        public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(TaskEffAwaiter<TResult> effect)
         {
             CaptureStateParameters = TraceHelpers.GetParametersValues(effect.State);
             CaptureStateLocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State);
@@ -58,7 +58,7 @@ namespace Nessos.Eff.Tests
 
         }
 
-        public override async Task Handle<TResult>(EffAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(EffEffAwaiter<TResult> effect)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace Nessos.Eff.Tests
             }
         }
 
-        public async ValueTask<ValueTuple> Log(Exception ex, Awaiter effect)
+        public async ValueTask<ValueTuple> Log(Exception ex, EffAwaiter effect)
         {
             var log =
                 new ExceptionLog
@@ -101,7 +101,7 @@ namespace Nessos.Eff.Tests
             return ValueTuple.Create();
         }
 
-        public async ValueTask<ValueTuple> Log(object result, Awaiter effect)
+        public async ValueTask<ValueTuple> Log(object result, EffAwaiter effect)
         {
             var log =
                 new ResultLog

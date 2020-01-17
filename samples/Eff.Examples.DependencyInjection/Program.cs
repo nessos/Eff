@@ -2,9 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Nessos.Eff;
 
-namespace Eff.Examples.DependencyInjection
+namespace Nessos.Eff.Examples.DependencyInjection
 {
     class Program
     {

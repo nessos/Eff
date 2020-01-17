@@ -1,18 +1,17 @@
 ﻿using System;
+using System.Configuration;
 using System.Threading.Tasks;
-using Nessos.Eff;
-using Nessos.Eff.ImplicitAwaitables;
 
-namespace Eff.Examples.Config
+namespace Nessos.Eff.Examples.Config
 {
     class Program
     {
         public static async Eff<string> Foo()
         {
-            var google = await Effect.Config("google");
-            var microsoft = await Effect.Config("microsoft");
+            var value1 = await Effects.Config("Setting1");
+            var value2 = await Effects.Config("Setting2");
 
-            return $"{google} - {microsoft}";
+            return $"{value1} - {value2}";
         }
 
         static async Task Main()

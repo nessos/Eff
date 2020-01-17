@@ -1,8 +1,6 @@
-﻿using Nessos.Eff;
-using System;
-using System.Runtime.CompilerServices;
+﻿using System;
 
-namespace Eff.Examples.RecordReplay
+namespace Nessos.Eff.Examples.RecordReplay
 {
 
     public class EffCtx

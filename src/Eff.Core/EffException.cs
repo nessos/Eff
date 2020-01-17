@@ -9,7 +9,7 @@ namespace Nessos.Eff
         public EffException(string message) : base(message)
         { }
 
-        public EffException(string message, Exception innerException) : base(message, innerException)
+        public EffException(string message, Exception? innerException) : base(message, innerException)
         { }
 
         public EffException(SerializationInfo info, StreamingContext context) : base(info, context)

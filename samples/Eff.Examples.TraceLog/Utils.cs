@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Eff.Examples.TraceLog
+namespace Nessos.Eff.Examples.TraceLog
 {
 
     public class ResultLog
