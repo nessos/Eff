@@ -26,7 +26,7 @@ namespace Nessos.Eff
 
         public bool IsCompleted => _hasResult || _exception != null;
         public bool HasResult => _hasResult;
-        public virtual object? Result => null;
+        public abstract object? Result { get; }
         public Exception? Exception => _exception;
         public object? State => _state;
 
@@ -116,7 +116,7 @@ namespace Nessos.Eff
             return this;
         }
 
-        public override object? Result => _result;
+        public override object? Result => GetResult();
 
         public void SetResult(TResult result)
         {

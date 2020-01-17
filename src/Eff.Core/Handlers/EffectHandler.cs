@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace Nessos.Eff
 {
+    /// <summary>
+    /// Provides an abstract effect handler implementation which uses regular async method semantics.
+    /// </summary>
     public abstract class EffectHandler : IEffectHandler
     {
         public virtual bool CloneDelayedStateMachines { get; set; } = false;
