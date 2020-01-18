@@ -43,7 +43,7 @@ namespace Nessos.Eff.Tests
                 }
             }
 
-            var test = Test();
+        var test = Test();
             Assert.Equal(0, counter);
             await test.Run(new DefaultEffectHandler());
             Assert.Equal(55, counter);
