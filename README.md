@@ -7,7 +7,7 @@ exception handling, nondeterministic computation, trace logging and much more.
 ## Introduction
 
 The Eff library takes advantage of the [async method extensibility features](https://devblogs.microsoft.com/premier-developer/dissecting-the-async-methods-in-c/) available since C# 7.
-At its core, the library defines task-like type, `Eff<TResult>`, which can be built using "async" methods:
+At its core, the library defines a task-like type, `Eff<TResult>`, which can be built using `async` methods:
 
 ```csharp
 async Eff HelloWorld()
@@ -16,6 +16,7 @@ async Eff HelloWorld()
 
     async Eff<string> Helper() => "World";
 }
+```
 
 Note that unlike `Task`, `Eff` types have cold semantics and so running
 
