@@ -4,26 +4,58 @@ using System.Threading.Tasks;
 
 namespace Nessos.Eff
 {
+    /// <summary>
+    /// Awaiter class for Eff computations.
+    /// </summary>
     public abstract class EffAwaiter : ICriticalNotifyCompletion
     {
         protected bool _hasResult;
         protected Exception? _exception;
         protected object? _state;
 
+        internal EffAwaiter() { }
+
+        /// <summary>
+        /// Awaiter identifier for debugging purposes.
+        /// </summary>
         public abstract string Id { get; }
+
         public string CallerMemberName { get; set; } = "";
         public string CallerFilePath { get; set; } = "";
         public int CallerLineNumber { get; set; } = 0;
 
         public bool IsCompleted => _hasResult || _exception != null;
         public bool HasResult => _hasResult;
-        public virtual object? Result => null;
+        public abstract object? Result { get; }
         public Exception? Exception => _exception;
         public object? State => _state;
 
         public abstract Task Accept(IEffectHandler handler);
 
+        /// <summary>
+        /// Configures the EffAwaiter instance with supplied parameters.
+        /// </summary>
+        /// <param name="callerMemberName"></param>
+        /// <param name="callerFilePath"></param>
+        /// <param name="callerLineNumber"></param>
+        /// <returns>An EffAwaiter instance with callsite metadata.</returns>
+        public EffAwaiter ConfigureAwait([CallerMemberName] string callerMemberName = "",
+                                         [CallerFilePath] string callerFilePath = "",
+                                         [CallerLineNumber] int callerLineNumber = 0)
+        {
+            CallerMemberName = callerMemberName;
+            CallerFilePath = callerFilePath;
+            CallerLineNumber = callerLineNumber;
+            return this;
+        }
+
+        /// <summary>
+        /// For use by EffMethodBuilder
+        /// </summary>
         public EffAwaiter GetAwaiter() => this;
+        /// <summary>
+        /// For use by EffMethodBuilder
+        /// </summary>
         public void GetResult()
         {
             if (!(_exception is null))
@@ -44,21 +76,39 @@ namespace Nessos.Eff
         void ICriticalNotifyCompletion.UnsafeOnCompleted(Action continuation) => throw new NotSupportedException("EffAwaiter objects should only be awaited by EffMethodBuilder");
     }
 
+    /// <summary>
+    /// Awaiter class for Eff computations.
+    /// </summary>
     public abstract class EffAwaiter<TResult> : EffAwaiter
     {
         private TResult _result = default!;
 
+        internal EffAwaiter() { }
+
+        /// <summary>
+        /// For use by EffMethodBuilder
+        /// </summary>
         public new TResult GetResult()
         {
             base.GetResult();
             return _result;
         }
 
+        /// <summary>
+        /// For use by EffMethodBuilder
+        /// </summary>
         public new EffAwaiter<TResult> GetAwaiter() => this;
 
-        public EffAwaiter<TResult> ConfigureAwait([CallerMemberName] string callerMemberName = "",
-                                                  [CallerFilePath] string callerFilePath = "",
-                                                  [CallerLineNumber] int callerLineNumber = 0)
+        /// <summary>
+        /// Configures the EffAwaiter instance with supplied parameters.
+        /// </summary>
+        /// <param name="callerMemberName"></param>
+        /// <param name="callerFilePath"></param>
+        /// <param name="callerLineNumber"></param>
+        /// <returns>An EffAwaiter instance with callsite metadata.</returns>
+        public new EffAwaiter<TResult> ConfigureAwait([CallerMemberName] string callerMemberName = "",
+                                                      [CallerFilePath] string callerFilePath = "",
+                                                      [CallerLineNumber] int callerLineNumber = 0)
         {
             CallerMemberName = callerMemberName;
             CallerFilePath = callerFilePath;
@@ -66,7 +116,7 @@ namespace Nessos.Eff
             return this;
         }
 
-        public override object? Result => _result;
+        public override object? Result => GetResult();
 
         public void SetResult(TResult result)
         {
@@ -75,9 +125,12 @@ namespace Nessos.Eff
         }
     }
 
+    /// <summary>
+    /// Awaiter for nested Eff computations.
+    /// </summary>
     public class EffEffAwaiter<TResult> : EffAwaiter<TResult>
     {
-        public EffEffAwaiter(Eff<TResult> eff)
+        internal EffEffAwaiter(Eff<TResult> eff)
         {
             Eff = eff;
         }
@@ -89,6 +142,9 @@ namespace Nessos.Eff
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
 
+    /// <summary>
+    /// Awaiter for abstract Effects.
+    /// </summary>
     public class EffectEffAwaiter<TResult> : EffAwaiter<TResult>
     {
         public EffectEffAwaiter(Effect<TResult> effect)
@@ -103,6 +159,9 @@ namespace Nessos.Eff
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
 
+    /// <summary>
+    /// Awaiter adapter for TPL tasks.
+    /// </summary>
     public class TaskEffAwaiter<TResult> : EffAwaiter<TResult>
     {
         public TaskEffAwaiter(ValueTask<TResult> task)

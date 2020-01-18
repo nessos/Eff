@@ -43,7 +43,7 @@ namespace Nessos.Eff.Tests
                 }
             }
 
-            var test = Test();
+        var test = Test();
             Assert.Equal(0, counter);
             await test.Run(new DefaultEffectHandler());
             Assert.Equal(55, counter);
@@ -85,7 +85,7 @@ namespace Nessos.Eff.Tests
         {
             async Eff<int> Foo(int x)
             {
-                var y = await Task.Run(() => x + 1).AsEffect();
+                var y = await Task.Run(() => x + 1).AsEff();
                 return y + 1;
             }
 
@@ -103,7 +103,7 @@ namespace Nessos.Eff.Tests
             }
             async Eff<int> Foo(int x)
             {
-                var y = await Bar(x).AsEffect();
+                var y = await Bar(x).AsEff();
                 return y + 1;
             }
 
@@ -116,8 +116,8 @@ namespace Nessos.Eff.Tests
         {
             async Eff<int> Bar(int x)
             {
-                await Task.Delay(1000).AsEffect();
-                var y = await Task.FromResult(x + 1).AsEffect();
+                await Task.Delay(1000).AsEff();
+                var y = await Task.FromResult(x + 1).AsEff();
                 return y;
             }
             async Eff<int> Foo(int x)
@@ -136,12 +136,12 @@ namespace Nessos.Eff.Tests
         {
             async Eff<int> Bar(int x)
             {
-                var y = await Task.FromResult(x + 1).AsEffect();
+                var y = await Task.FromResult(x + 1).AsEff();
                 return y;
             }
             async Eff<int> Foo(int x)
             {
-                await Task.Delay(1000).AsEffect();
+                await Task.Delay(1000).AsEff();
                 var y = await Bar(x);
                 return y + 1;
             }
@@ -227,7 +227,7 @@ namespace Nessos.Eff.Tests
         {
             async Eff<int> Foo(int x)
             {
-                var y = await Task.FromResult(1).AsEffect();
+                var y = await Task.FromResult(1).AsEff();
                 return x + y;
             }
             var handler = new TestEffectHandler();
@@ -244,8 +244,8 @@ namespace Nessos.Eff.Tests
         {
             async Eff<int> Foo(int x)
             {
-                var y = await Task.FromResult(1).AsEffect();
-                await Task.Delay(10).AsEffect();
+                var y = await Task.FromResult(1).AsEff();
+                await Task.Delay(10).AsEff();
                 return x + y;
             }
             var handler = new TestEffectHandler();
@@ -294,8 +294,8 @@ namespace Nessos.Eff.Tests
         {
             async Eff<int> Foo(int x)
             {
-                var y = await Task.FromResult(1).AsEffect();
-                await Task.Delay(10).AsEffect();
+                var y = await Task.FromResult(1).AsEff();
+                await Task.Delay(10).AsEff();
                 return x + y;
             }
             var handler = new TestEffectHandler();
@@ -317,7 +317,7 @@ namespace Nessos.Eff.Tests
                 int sum = x;
                 for (int i = 0; i < 10000; i++)
                 {
-                    sum += await Task.FromResult(1).AsEffect();
+                    sum += await Task.FromResult(1).AsEff();
                 }
                 
                 return sum;
@@ -348,7 +348,7 @@ namespace Nessos.Eff.Tests
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    await Task.Delay(1).AsEffect();
+                    await Task.Delay(1).AsEff();
                     Interlocked.Increment(ref counter);
                 }
 
@@ -372,7 +372,7 @@ namespace Nessos.Eff.Tests
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    await Task.Delay(1).AsEffect();
+                    await Task.Delay(1).AsEff();
                     Interlocked.Increment(ref counter);
                 }
             }

@@ -23,7 +23,7 @@ namespace Nessos.Eff.Examples.CancellationToken
             return Task.CompletedTask;
         }
 
-        public override async Task<Eff<TResult>> Handle<TResult>(Await<TResult> effect)
+        public override async Task<Eff<TResult>> Handle<TResult>(AwaitEff<TResult> effect)
         {
             _token.ThrowIfCancellationRequested();
             return await base.Handle(effect);

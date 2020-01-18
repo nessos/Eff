@@ -13,7 +13,7 @@ namespace Nessos.Eff.Examples.CancellationToken
             {
                 var token = await Effects.CancellationToken();
                 Console.WriteLine($"IsCancellationRequested:{token.IsCancellationRequested}");
-                await Task.Delay(1000).AsEffect();
+                await Task.Delay(1000).AsEff();
             }
         }
 
