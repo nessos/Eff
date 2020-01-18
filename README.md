@@ -21,14 +21,14 @@ async Eff HelloWorld()
 Note that unlike `Task`, `Eff` types have cold semantics and so running
 
 ```csharp
-Eff foo = Foo();
+Eff hello = HelloWorld();
 ```
 
 will have no observable side-effect in stdout.
 An `Eff` instance has to be run explicitly by passing an _effect handler_:
 
 ```csharp
-foo.Run(new DefaultEffectHandler()); // "Hello, World!"
+hello.Run(new DefaultEffectHandler()); // "Hello, World!"
 ```
 
 So what is the benefit of using a convoluted version of regular async methods?
