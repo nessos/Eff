@@ -80,7 +80,7 @@ public class RandomCoinTossHandler : EffectHandler
 We can then execute the method by passing the handler:
 
 ```csharp
-TossNCoins(100).Run(new RandomCoinTossHandler()); // prints random sequence of booleans
+TossNCoins(100).Run(new RandomCoinTossHandler()); // prints random sequence of Heads and Tails
 ```
 
 Note that we can reuse the same method using other interpretations of the effect:
@@ -101,7 +101,7 @@ public class BiasedCoinTossHandler : EffectHandler
     }
 }
 
-TossNCoins(100).Run(new BiasedCoinTossHandler()); // prints sequence of mostly false booleans
+TossNCoins(100).Run(new BiasedCoinTossHandler()); // prints sequence of mostly Tails
 ```
 
 Please see the [samples folder](https://github.com/nessos/Eff/tree/master/samples) for more examples of Eff applications.
