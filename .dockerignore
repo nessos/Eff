@@ -253,3 +253,5 @@
 
 # BenchmarkDotNet
 **/BenchmarkDotNet.Artifacts/
+
+**/artifacts/
