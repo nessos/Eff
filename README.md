@@ -1,8 +1,12 @@
-# Eff [![Build Status](https://travis-ci.org/nessos/Eff.svg?branch=master)](https://travis-ci.org/nessos/Eff) [![NuGet Badge](https://buildstats.info/nuget/Eff)](https://www.nuget.org/packages/Eff/)
-A library for programming with effects and handlers in C#, inspired by the [Eff] programming language 
-and the implementation of Algebraic Effects in [OCaml], [Eff Directly in OCaml]. 
-Effects are a powerful language feature that can be used to implement dependency injection, 
-exception handling, nondeterministic computation, trace logging and much more.
+# Eff
+
+![Nuget](https://img.shields.io/nuget/v/Eff?style=flat)
+[![Build Status](https://travis-ci.org/nessos/Eff.svg?branch=master)](https://travis-ci.org/nessos/Eff)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+![GitHub language count](https://img.shields.io/github/languages/count/nessos/Eff)
+![GitHub top language](https://img.shields.io/github/languages/top/nessos/Eff)
+
+A library for programming with effects and handlers in C#, inspired by the [Eff] programming language and the implementation of Algebraic Effects in [OCaml], [Eff Directly in OCaml]. Effects are a powerful language feature that can be used to implement dependency injection, exception handling, nondeterministic computation, trace logging and much more.
 
 ## Introduction
 
@@ -59,7 +63,7 @@ async Eff TossNCoins(int n)
 
 So how do we run this method now?
 The answer is we need write an effect handler that _interprets the abstract effect_:
-    
+
 ```csharp
 public class RandomCoinTossHandler : EffectHandler
 {
