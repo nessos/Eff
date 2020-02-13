@@ -11,11 +11,11 @@ namespace Nessos.Eff.Examples.CancellationToken
             _token = token;
         }
 
-        public override Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
+        public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             switch (awaiter)
             {
-                case EffectEffAwaiter<System.Threading.CancellationToken> { Effect: CancellationTokenEffect _ } awter :
+                case EffectAwaiter<System.Threading.CancellationToken> { Effect: CancellationTokenEffect _ } awter :
                     awter.SetResult(_token);
                     break;
             };

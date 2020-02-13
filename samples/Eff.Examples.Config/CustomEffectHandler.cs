@@ -5,11 +5,11 @@ namespace Nessos.Eff.Examples.Config
 {
     public class CustomEffectHandler : EffectHandler
     {
-        public override Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
+        public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             switch (awaiter)
             {
-                case EffectEffAwaiter<string> { Effect: ConfigEffect { Key: string key } } awtr:
+                case EffectAwaiter<string> { Effect: ConfigEffect { Key: string key } } awtr:
                     var value = ConfigurationManager.AppSettings[key];
                     awtr.SetResult(value);
                     break;

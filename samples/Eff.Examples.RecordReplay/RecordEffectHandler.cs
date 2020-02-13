@@ -25,7 +25,7 @@ namespace Nessos.Eff.Examples.RecordReplay
             _ctx = ctx;
         }
 
-        public override async Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             switch (awaiter.Effect)
             {

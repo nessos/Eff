@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable 1998
+using System;
 using System.Threading.Tasks;
 
 namespace Nessos.Eff.Examples.Maybe
@@ -42,7 +43,7 @@ namespace Nessos.Eff.Examples.Maybe
 
             public Maybe<TResult> Result { get; private set; } = Maybe<TResult>.Nothing;
 
-            public async override Task Handle<TValue>(EffectEffAwaiter<TValue> awaiter)
+            public async override Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
             {
                 switch (awaiter.Effect)
                 {
@@ -57,7 +58,7 @@ namespace Nessos.Eff.Examples.Maybe
                 }
             }
 
-            public async override Task Handle<TValue>(EffEffAwaiter<TValue> awaiter)
+            public async override Task Handle<TValue>(EffAwaiter<TValue> awaiter)
             {
                 var result = MaybeEffectHandler.Run(awaiter.Eff);
                 if (result.HasValue)

@@ -7,13 +7,13 @@ namespace Nessos.Eff
     /// <summary>
     /// Awaiter class for Eff computations.
     /// </summary>
-    public abstract class EffAwaiter : ICriticalNotifyCompletion
+    public abstract class EffAwaiterBase : ICriticalNotifyCompletion
     {
         protected bool _hasResult;
         protected Exception? _exception;
         protected object? _state;
 
-        internal EffAwaiter() { }
+        internal EffAwaiterBase() { }
 
         /// <summary>
         /// Awaiter identifier for debugging purposes.
@@ -39,7 +39,7 @@ namespace Nessos.Eff
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public EffAwaiter ConfigureAwait([CallerMemberName] string callerMemberName = "",
+        public EffAwaiterBase ConfigureAwait([CallerMemberName] string callerMemberName = "",
                                          [CallerFilePath] string callerFilePath = "",
                                          [CallerLineNumber] int callerLineNumber = 0)
         {
@@ -52,7 +52,7 @@ namespace Nessos.Eff
         /// <summary>
         /// For use by EffMethodBuilder
         /// </summary>
-        public EffAwaiter GetAwaiter() => this;
+        public EffAwaiterBase GetAwaiter() => this;
         /// <summary>
         /// For use by EffMethodBuilder
         /// </summary>
@@ -79,11 +79,11 @@ namespace Nessos.Eff
     /// <summary>
     /// Awaiter class for Eff computations.
     /// </summary>
-    public abstract class EffAwaiter<TResult> : EffAwaiter
+    public abstract class EffAwaiterBase<TResult> : EffAwaiterBase
     {
         private TResult _result = default!;
 
-        internal EffAwaiter() { }
+        internal EffAwaiterBase() { }
 
         /// <summary>
         /// For use by EffMethodBuilder
@@ -97,7 +97,7 @@ namespace Nessos.Eff
         /// <summary>
         /// For use by EffMethodBuilder
         /// </summary>
-        public new EffAwaiter<TResult> GetAwaiter() => this;
+        public new EffAwaiterBase<TResult> GetAwaiter() => this;
 
         /// <summary>
         /// Configures the EffAwaiter instance with supplied parameters.
@@ -106,7 +106,7 @@ namespace Nessos.Eff
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public new EffAwaiter<TResult> ConfigureAwait([CallerMemberName] string callerMemberName = "",
+        public new EffAwaiterBase<TResult> ConfigureAwait([CallerMemberName] string callerMemberName = "",
                                                       [CallerFilePath] string callerFilePath = "",
                                                       [CallerLineNumber] int callerLineNumber = 0)
         {
@@ -128,9 +128,9 @@ namespace Nessos.Eff
     /// <summary>
     /// Awaiter for nested Eff computations.
     /// </summary>
-    public class EffEffAwaiter<TResult> : EffAwaiter<TResult>
+    public class EffAwaiter<TResult> : EffAwaiterBase<TResult>
     {
-        internal EffEffAwaiter(Eff<TResult> eff)
+        internal EffAwaiter(Eff<TResult> eff)
         {
             Eff = eff;
         }
@@ -145,9 +145,9 @@ namespace Nessos.Eff
     /// <summary>
     /// Awaiter for abstract Effects.
     /// </summary>
-    public class EffectEffAwaiter<TResult> : EffAwaiter<TResult>
+    public class EffectAwaiter<TResult> : EffAwaiterBase<TResult>
     {
-        public EffectEffAwaiter(Effect<TResult> effect)
+        public EffectAwaiter(Effect<TResult> effect)
         {
             Effect = effect;
         }
@@ -162,9 +162,9 @@ namespace Nessos.Eff
     /// <summary>
     /// Awaiter adapter for TPL tasks.
     /// </summary>
-    public class TaskEffAwaiter<TResult> : EffAwaiter<TResult>
+    public class TaskAwaiter<TResult> : EffAwaiterBase<TResult>
     {
-        public TaskEffAwaiter(ValueTask<TResult> task)
+        public TaskAwaiter(ValueTask<TResult> task)
         {
             Task = task;
         }

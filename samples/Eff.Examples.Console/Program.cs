@@ -13,15 +13,15 @@ namespace Nessos.Eff.Examples.Console
 
         class ConsoleEffectHandler : EffectHandler
         {
-            public override Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
+            public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
             {
                 switch (awaiter)
                 {
-                    case EffectEffAwaiter<Unit> { Effect: ConsolePrintEffect printEffect } awtr:
+                    case EffectAwaiter<Unit> { Effect: ConsolePrintEffect printEffect } awtr:
                         System.Console.Write(printEffect.Message);
                         awtr.SetResult(Unit.Value);
                         break;
-                    case EffectEffAwaiter<string> { Effect: ConsoleReadEffect _ } awtr:
+                    case EffectAwaiter<string> { Effect: ConsoleReadEffect _ } awtr:
                         string message = System.Console.ReadLine();
                         awtr.SetResult(message);
                         break;

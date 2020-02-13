@@ -40,7 +40,7 @@ namespace Nessos.Eff
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : EffAwaiter
+            where TAwaiter : EffAwaiterBase
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
@@ -49,7 +49,7 @@ namespace Nessos.Eff
 
         [SecuritySafeCritical]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : EffAwaiter
+            where TAwaiter : EffAwaiterBase
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
@@ -90,7 +90,7 @@ namespace Nessos.Eff
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : EffAwaiter
+            where TAwaiter : EffAwaiterBase
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
@@ -99,7 +99,7 @@ namespace Nessos.Eff
 
         [SecuritySafeCritical]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : EffAwaiter
+            where TAwaiter : EffAwaiterBase
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
@@ -128,7 +128,7 @@ namespace Nessos.Eff
         object IEffStateMachine<TResult>.State => _state!;
 
         protected void AwaitOnCompletedCore<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
-            where TAwaiter : EffAwaiter
+            where TAwaiter : EffAwaiterBase
             where TStateMachine : IAsyncStateMachine
         {
             awaiter.SetState(_state!);

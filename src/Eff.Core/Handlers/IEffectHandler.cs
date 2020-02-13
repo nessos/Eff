@@ -10,17 +10,17 @@ namespace Nessos.Eff
         /// <summary>
         /// Handles nested Eff computation awaiters
         /// </summary>
-        Task Handle<TResult>(EffEffAwaiter<TResult> awaiter);
+        Task Handle<TResult>(EffAwaiter<TResult> awaiter);
 
         /// <summary>
         /// Handles abstract effect awaiters
         /// </summary>
-        Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter);
+        Task Handle<TResult>(EffectAwaiter<TResult> awaiter);
 
         /// <summary>
         /// Handles TPL task awaiters
         /// </summary>
-        Task Handle<TResult>(TaskEffAwaiter<TResult> awaiter);
+        Task Handle<TResult>(TaskAwaiter<TResult> awaiter);
 
 
         //--------------------------------------------------//
