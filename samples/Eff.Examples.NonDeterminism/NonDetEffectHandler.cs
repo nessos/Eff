@@ -38,7 +38,7 @@ namespace Nessos.Eff.Examples.NonDeterminism
 
         public List<TResult> Results { get; } = new List<TResult>();
 
-        public async override Task Handle<TValue>(EffectEffAwaiter<TValue> awaiter)
+        public async override Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
         {
             switch (awaiter.Effect)
             {

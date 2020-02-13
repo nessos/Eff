@@ -12,13 +12,13 @@ namespace Nessos.Eff
         /// <param name="callerMemberName"></param>
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
-        public static EffAwaiter<TResult> AsEff<TResult>(this Task<TResult> task,
+        public static EffAwaiterBase<TResult> AsEff<TResult>(this Task<TResult> task,
                                             [CallerMemberName] string callerMemberName = "",
                                             [CallerFilePath] string callerFilePath = "",
                                             [CallerLineNumber] int callerLineNumber = 0)
         {
             async ValueTask<TResult> Wrap() { return await task;  }
-            return new TaskEffAwaiter<TResult>(Wrap())
+            return new TaskAwaiter<TResult>(Wrap())
             {
                 CallerMemberName = callerMemberName,
                 CallerFilePath = callerFilePath,
@@ -33,13 +33,13 @@ namespace Nessos.Eff
         /// <param name="callerMemberName"></param>
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
-        public static EffAwaiter AsEff(this Task task,
+        public static EffAwaiterBase AsEff(this Task task,
                                             [CallerMemberName] string callerMemberName = "",
                                             [CallerFilePath] string callerFilePath = "",
                                             [CallerLineNumber] int callerLineNumber = 0)
         {
             async ValueTask<Unit> Wrap() { await task; return Unit.Value; }
-            return new TaskEffAwaiter<Unit>(Wrap())
+            return new TaskAwaiter<Unit>(Wrap())
             {
                 CallerMemberName = callerMemberName,
                 CallerFilePath = callerFilePath,
@@ -54,12 +54,12 @@ namespace Nessos.Eff
         /// <param name="callerMemberName"></param>
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
-        public static EffAwaiter<TResult> AsEff<TResult>(this ValueTask<TResult> task,
+        public static EffAwaiterBase<TResult> AsEff<TResult>(this ValueTask<TResult> task,
                                     [CallerMemberName] string callerMemberName = "",
                                     [CallerFilePath] string callerFilePath = "",
                                     [CallerLineNumber] int callerLineNumber = 0)
         {
-            return new TaskEffAwaiter<TResult>(task)
+            return new TaskAwaiter<TResult>(task)
             {
                 CallerMemberName = callerMemberName,
                 CallerFilePath = callerFilePath,

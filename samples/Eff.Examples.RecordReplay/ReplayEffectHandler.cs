@@ -22,7 +22,7 @@ namespace Nessos.Eff.Examples.RecordReplay
             return new ReplayEffectHandler(JsonConvert.DeserializeObject<List<Result>>(json));
         }
 
-        public override async Task Handle<TResult>(EffectEffAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> effect)
         {
             var result = 
                 _results.Single(it => it.FilePath == effect.CallerFilePath && 

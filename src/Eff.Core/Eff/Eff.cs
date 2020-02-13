@@ -21,7 +21,7 @@ namespace Nessos.Eff
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public EffAwaiter ConfigureAwait([CallerMemberName] string callerMemberName = "",
+        public EffAwaiterBase ConfigureAwait([CallerMemberName] string callerMemberName = "",
                                          [CallerFilePath] string callerFilePath = "",
                                          [CallerLineNumber] int callerLineNumber = 0)
         {
@@ -35,7 +35,7 @@ namespace Nessos.Eff
         /// <summary>
         /// Implements the awaitable/awaiter pattern for Eff
         /// </summary>
-        public EffAwaiter GetAwaiter() => GetAwaiterCore();
+        public EffAwaiterBase GetAwaiter() => GetAwaiterCore();
 
         /// <summary>
         /// Helper method for interpreting untyped Eff instances
@@ -45,7 +45,7 @@ namespace Nessos.Eff
         /// <summary>
         /// Helper method for untyped GetAwaiter() instances
         /// </summary>
-        internal abstract EffAwaiter GetAwaiterCore();
+        internal abstract EffAwaiterBase GetAwaiterCore();
     }
 
     /// <summary>
@@ -66,11 +66,11 @@ namespace Nessos.Eff
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public new EffAwaiter<TResult> ConfigureAwait([CallerMemberName] string callerMemberName = "",
+        public new EffAwaiterBase<TResult> ConfigureAwait([CallerMemberName] string callerMemberName = "",
                                                       [CallerFilePath] string callerFilePath = "",
                                                       [CallerLineNumber] int callerLineNumber = 0)
         {
-            return new EffEffAwaiter<TResult>(this) 
+            return new EffAwaiter<TResult>(this) 
             { 
                 CallerMemberName = callerMemberName, 
                 CallerFilePath = callerFilePath, 
@@ -81,10 +81,10 @@ namespace Nessos.Eff
         /// <summary>
         /// Implements the awaitable/awaiter pattern for Eff
         /// </summary>
-        public new EffAwaiter<TResult> GetAwaiter() => new EffEffAwaiter<TResult>(this);
+        public new EffAwaiterBase<TResult> GetAwaiter() => new EffAwaiter<TResult>(this);
 
         internal override Task RunCore(IEffectHandler handler) => this.Run(handler);
-        internal override EffAwaiter GetAwaiterCore() => GetAwaiter();
+        internal override EffAwaiterBase GetAwaiterCore() => GetAwaiter();
     }
 
     /// <summary>
@@ -105,13 +105,13 @@ namespace Nessos.Eff
     /// </summary>
     public class AwaitEff<TResult> : Eff<TResult>
     {
-        internal AwaitEff(EffAwaiter awaiter, IEffStateMachine<TResult> continuation)
+        internal AwaitEff(EffAwaiterBase awaiter, IEffStateMachine<TResult> continuation)
         {
             Awaiter = awaiter;
             Continuation = continuation;
         }
 
-        public EffAwaiter Awaiter { get; }
+        public EffAwaiterBase Awaiter { get; }
         /// <summary>
         ///  The current state object of the machine.
         /// </summary>

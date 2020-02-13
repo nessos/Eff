@@ -69,11 +69,11 @@ public class RandomCoinTossHandler : EffectHandler
 {
     private readonly Random _random = new Random();
 
-    public override async Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
+    public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
     {
         switch (awaiter)
         {
-            case EffectEffAwaiter<bool> { Effect: CoinToss _ } awtr:
+            case EffectAwaiter<bool> { Effect: CoinToss _ } awtr:
                 awtr.SetResult(_random.NextDouble() < 0.5);
                 break;
         }
@@ -94,11 +94,11 @@ public class BiasedCoinTossHandler : EffectHandler
 {
     private readonly Random _random = new Random();
 
-    public override async Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter)
+    public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
     {
         switch (awaiter)
         {
-            case EffectEffAwaiter<bool> { Effect: CoinToss _ } awtr:
+            case EffectAwaiter<bool> { Effect: CoinToss _ } awtr:
                 awtr.SetResult(_random.NextDouble() < 0.01);
                 break;
         }

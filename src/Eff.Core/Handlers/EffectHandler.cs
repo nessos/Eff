@@ -10,15 +10,15 @@ namespace Nessos.Eff
     {
         public virtual bool CloneDelayedStateMachines { get; set; } = false;
 
-        public abstract Task Handle<TResult>(EffectEffAwaiter<TResult> awaiter);
+        public abstract Task Handle<TResult>(EffectAwaiter<TResult> awaiter);
        
-        public virtual async Task Handle<TResult>(TaskEffAwaiter<TResult> awaiter)
+        public virtual async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
         {
             var result = await awaiter.Task;
             awaiter.SetResult(result);
         }
 
-        public virtual async Task Handle<TResult>(EffEffAwaiter<TResult> awaiter)
+        public virtual async Task Handle<TResult>(EffAwaiter<TResult> awaiter)
         {
             var result = await awaiter.Eff.Run(this);
             awaiter.SetResult(result);
