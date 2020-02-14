@@ -1,6 +1,6 @@
 # Eff
 
-![Nuget](https://img.shields.io/nuget/v/Eff?style=flat)
+[![Nuget](https://img.shields.io/nuget/v/Eff?style=flat)](https://www.nuget.org/packages/Eff)
 [![Build Status](https://travis-ci.org/nessos/Eff.svg?branch=master)](https://travis-ci.org/nessos/Eff)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 ![GitHub language count](https://img.shields.io/github/languages/count/nessos/Eff)
