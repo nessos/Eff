@@ -18,4 +18,4 @@ if [ ! -d $ARTIFACTS_FOLDER ]; then
 	exit 1
 fi
 
-dotnet nuget push --skip-duplicate -s $NUGET_SOURCE -k $NUGET_API_KEY $ARTIFACTS_FOLDER
+dotnet nuget push -s $NUGET_SOURCE -k $NUGET_API_KEY --skip-duplicate $ARTIFACTS_FOLDER

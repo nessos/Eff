@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <nullable>enable</nullable>
+    <IsPackable>true</IsPackable>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
