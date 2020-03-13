@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29421.154
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A2A7479C-772D-4E7D-A32C-7C84D6DF500C}"
-	ProjectSection(SolutionItems) = preProject
-		src\Directory.Build.props = src\Directory.Build.props
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{42267E9E-0BA9-4713-822F-19482AE1FF60}"
 EndProject
@@ -55,7 +52,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EffPromo.Api", "samples\Eff
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EffPromo.Persistence", "samples\Eff.Examples.AspNetCore\EffPromo.Persistence\EffPromo.Persistence.csproj", "{17A87916-4131-4F68-9B54-BE9E121A2DB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Examples.Maybe", "samples\Eff.Examples.Maybe\Eff.Examples.Maybe.csproj", "{F80F4B41-FBF6-4C43-A416-9AA77E7AF730}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Maybe", "samples\Eff.Examples.Maybe\Eff.Examples.Maybe.csproj", "{F80F4B41-FBF6-4C43-A416-9AA77E7AF730}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
