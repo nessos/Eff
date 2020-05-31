@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -70,7 +71,8 @@ namespace Nessos.Eff
             }
         }
 
-        internal void SetException(Exception ex) => _exception = ex;
+        public void SetException(Exception ex) => _exception = ex;
+
         internal void SetState(object state) => _state = state;
         void INotifyCompletion.OnCompleted(Action continuation) => throw new NotSupportedException("EffAwaiter objects should only be awaited by EffMethodBuilder");
         void ICriticalNotifyCompletion.UnsafeOnCompleted(Action continuation) => throw new NotSupportedException("EffAwaiter objects should only be awaited by EffMethodBuilder");
@@ -81,7 +83,8 @@ namespace Nessos.Eff
     /// </summary>
     public abstract class EffAwaiterBase<TResult> : EffAwaiterBase
     {
-        private TResult _result = default!;
+        [AllowNull]
+        private TResult _result = default;
 
         internal EffAwaiterBase() { }
 

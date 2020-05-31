@@ -23,11 +23,11 @@ namespace Nessos.Eff.Examples.DependencyInjection
         {
             var userService = await Effect.GetDependency<IUserService>();
 
-            if (await userService.Exists(username).AsEff())
+            if (await userService.Exists(username))
             {
                 username = username + "1";
 
-                if (await userService.Exists(username).AsEff())
+                if (await userService.Exists(username))
                 {
                     // Two checks should be enough
                     username = username.Replace("1", "2");
@@ -44,7 +44,7 @@ namespace Nessos.Eff.Examples.DependencyInjection
 
             var newUserName = await CheckUsername(userName);
 
-            if (await userService.CreateUser(newUserName, password).AsEff())
+            if (await userService.CreateUser(newUserName, password))
             {
                 logger.Log($"Successfully created user '{newUserName}'");
                 return true;
