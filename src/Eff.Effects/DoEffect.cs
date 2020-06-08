@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Nessos.Eff
@@ -18,12 +17,58 @@ namespace Nessos.Eff
 		}
 	}
 
+	public class DoEffect : DoEffect<Unit>
+    {
+		public DoEffect(Func<IEffCtx, Task> func) :
+			base(async ctx => { await func(ctx); return Unit.Value; })
+        {
+
+        }
+	}
 
 	public static class IO
 	{
-		public static DoEffect<T> Do<T>(Func<IEffCtx, Task<T>> func)
+		public static DoEffect<TResult> Do<TResult>(Func<IEffCtx, TResult> func)
 		{
-			return new DoEffect<T>(func);
+			return new DoEffect<TResult>(ctx => Task.FromResult(func(ctx)));
+		}
+
+		public static DoEffect Do(Action<IEffCtx> func)
+		{
+			return new DoEffect(ctx => { func(ctx); return Task.CompletedTask; });
+		}
+
+		public static DoEffect<TResult> Do<TResult>(Func<IEffCtx, Task<TResult>> func)
+		{
+			return new DoEffect<TResult>(func);
+		}
+
+		public static DoEffect Do(Func<IEffCtx, Task> func)
+		{
+			return new DoEffect(func);
 		}
 	}
+
+	public static class IO<TDependency>
+    {
+		public static DoEffect<TResult> Do<TResult>(Func<TDependency, TResult> func)
+		{
+			return new DoEffect<TResult>(ctx => Task.FromResult(func(ctx.Resolve<TDependency>())));
+		}
+
+		public static DoEffect Do(Action<TDependency> func)
+		{
+			return new DoEffect(ctx => { func(ctx.Resolve<TDependency>()); return Task.CompletedTask; });
+		}
+
+		public static DoEffect<TResult> Do<TResult>(Func<TDependency, Task<TResult>> func)
+        {
+			return new DoEffect<TResult>(ctx => func(ctx.Resolve<TDependency>()));
+        }
+
+		public static DoEffect Do(Func<TDependency, Task> func)
+        {
+			return new DoEffect(ctx => func(ctx.Resolve<TDependency>()));
+        }
+    }
 }

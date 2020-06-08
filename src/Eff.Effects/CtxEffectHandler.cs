@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace Nessos.Eff
@@ -16,7 +17,27 @@ namespace Nessos.Eff
 			switch (awaiter.Effect)
 			{
 				case DoEffect<TResult> doEffect:
-					awaiter.SetResult(await doEffect.Func(ctx));
+					Exception? error = null;
+					TResult result = default!;
+
+					try
+                    {
+						result = await doEffect.Func(ctx);
+                    }
+					catch (Exception e)
+                    {
+						error = e;
+                    }
+
+					if (error is null)
+                    {
+						awaiter.SetResult(result);
+                    }
+					else
+                    {
+						awaiter.SetException(error);
+                    }
+
 					break;
 			}
 		}
