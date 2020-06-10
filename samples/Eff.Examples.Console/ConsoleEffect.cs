@@ -15,7 +15,7 @@
 
     }
 
-    public static class Effects
+    public static class ConsoleEffect
     {
         public static ConsolePrintEffect Print(string message) => new ConsolePrintEffect(message);
 

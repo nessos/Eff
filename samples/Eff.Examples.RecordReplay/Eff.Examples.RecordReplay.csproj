@@ -3,14 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\Eff.Core\Eff.csproj" />
+    <ProjectReference Include="..\..\src\Eff.Effects\Eff.Effects.csproj" />
   </ItemGroup>
 
 </Project>

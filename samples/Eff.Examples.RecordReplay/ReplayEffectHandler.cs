@@ -1,6 +1,5 @@
 ﻿#pragma warning disable 1998
 using Nessos.Effects.Handlers;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,26 +9,23 @@ namespace Nessos.Effects.Examples.RecordReplay
 {
     public class ReplayEffectHandler : EffectHandler
     {
+        private readonly RecordedResult[] _results;
+        private int _index = 0;
 
-        private readonly List<Result> _results;
-
-        public ReplayEffectHandler(List<Result> results)
+        public ReplayEffectHandler(IEnumerable<RecordedResult> results)
         {
-            _results = results;
-        }
-
-        public static ReplayEffectHandler FromJson(string json)
-        {
-            return new ReplayEffectHandler(JsonConvert.DeserializeObject<List<Result>>(json));
+            _results = results.ToArray();
         }
 
         public override async Task Handle<TResult>(EffectAwaiter<TResult> effect)
         {
-            var result = 
-                _results.Single(it => it.FilePath == effect.CallerFilePath && 
-                                     it.MemberName == effect.CallerMemberName && 
-                                     it.LineNumber == effect.CallerLineNumber);
-            effect.SetResult((TResult)Convert.ChangeType(result.Value, result.Type));
+            if (_index == _results.Length)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var result = _results[_index++];
+            result.ToAwaiter(effect);
         }
     }
 }

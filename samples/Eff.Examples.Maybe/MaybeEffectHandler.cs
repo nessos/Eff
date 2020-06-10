@@ -20,7 +20,7 @@ namespace Nessos.Effects.Examples.Maybe
                     return Run(delay.Continuation.MoveNext());
                 case AwaitEff<TResult> awaitEff:
                     var handler = new MaybeEffectHandlerImpl<TResult>(awaitEff.Continuation);
-                    awaitEff.Awaiter.Accept(handler);
+                    awaitEff.Awaiter.Accept(handler).Wait();
                     return handler.Result;
                 default:
                     throw new NotSupportedException($"{eff.GetType().Name}");

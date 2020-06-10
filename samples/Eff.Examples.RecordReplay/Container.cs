@@ -1,9 +1,9 @@
-﻿using Nessos.Effects.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Nessos.Effects.DependencyInjection;
 
-namespace Nessos.Effects.Examples.DependencyInjection
+namespace Nessos.Effects.Examples.RecordReplay
 {
     // Poor man's DI container
     public class Container : IContainer, IEnumerable

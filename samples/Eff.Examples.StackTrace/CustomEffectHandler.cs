@@ -9,7 +9,6 @@ namespace Nessos.Effects.Examples.StackTrace
 {
     public class CustomEffectHandler : EffectHandler
     {
-
         public override async Task Handle<TResult>(EffectAwaiter<TResult> effect) { }
 
         public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
@@ -39,7 +38,6 @@ namespace Nessos.Effects.Examples.StackTrace
                 throw;
             }
         }
-
 
         public async Task Log(Exception ex, EffAwaiterBase awaiter)
         {

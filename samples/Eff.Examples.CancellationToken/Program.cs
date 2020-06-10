@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nessos.Effects.Cancellation;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -6,12 +7,11 @@ namespace Nessos.Effects.Examples.CancellationToken
 {
     class Program
     {
-
-        static async Eff<int> Foo()
+        static async Eff Foo()
         {
             while (true)
             {
-                var token = await Effects.CancellationToken();
+                var token = await CancellationTokenEffect.Value;
                 Console.WriteLine($"IsCancellationRequested:{token.IsCancellationRequested}");
                 await Task.Delay(1000).AsEff();
             }
@@ -20,7 +20,7 @@ namespace Nessos.Effects.Examples.CancellationToken
         static async Task Main()
         {
             var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            var handler = new CustomEffectHandler(cts.Token);
+            var handler = new CancellationEffectHandler(cts.Token);
             try
             {
                 await Foo().Run(handler);

@@ -1,27 +1,27 @@
 namespace Nessos.Effects.Examples.AspNetCore.EffBindings
 {
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using Nessos.Effects.DependencyInjection;
+    using Nessos.Effects.Handlers;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Logging;
-    using Nessos.Effects.Handlers;
-    using Nessos.Effects.DependencyInjection;
 
     /// <summary>
     ///   An effect handler with the following features:
     ///   1. Provides effectful dependecy injection by wrapping an IServiceProvider instance.
     ///   2. Logs the results of effectful operations for future replay.
     /// </summary>
-    public class RecordingEffectHandler : CtxEffectHandler, IMvcEffectHandler
+    public class RecordingEffectHandler : DependencyEffectHandler, IMvcEffectHandler
     {
         private readonly List<PersistedEffect> _results = new List<PersistedEffect>();
         private readonly EffectLogger _store;
         private readonly HttpResponse _response;
 
-        public RecordingEffectHandler(IEffCtx ctx, HttpResponse response, EffectLogger store) : base(ctx)
+        public RecordingEffectHandler(IContainer ctx, HttpResponse response, EffectLogger store) : base(ctx)
         {
             _store = store;
             _response = response;
@@ -38,7 +38,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
         public void Commit()
         {
             string replayToken = _store.Commit(_results);
-            ctx.Resolve<ILogger<RecordingEffectHandler>>().LogInformation($"Eff Replay Token {replayToken}");
+            Container.Resolve<ILogger<RecordingEffectHandler>>().LogInformation($"Eff Replay Token {replayToken}");
             _response.AddReplayTokenHeader(replayToken);
         }
 
@@ -61,7 +61,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
             return new RecordingEffectHandler(_effCtx, ctx.HttpContext.Response, _store);
         }
 
-        private class ServiceProviderEffContext : IEffCtx
+        private class ServiceProviderEffContext : IContainer
         {
             private readonly IServiceProvider _provider;
 

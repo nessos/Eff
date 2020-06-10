@@ -10,8 +10,9 @@
         public T[] Choices { get; }
     }
 
-    public static class Effects
+    public static class NonDetEffect
     {
+        /// Defines a nondeterminism effect which runs the eff continuation for every provided result
         public static NonDetEffect<T> Choose<T>(params T[] choices)
         {
             return new NonDetEffect<T>(choices);

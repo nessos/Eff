@@ -5,7 +5,6 @@ using System.Text;
 
 namespace Nessos.Effects.Examples.StackTrace
 {
-
     public class ExceptionLog
     {
         public string CallerMemberName { get; set; }

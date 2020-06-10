@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Eff.Core\Eff.csproj" />
+    <ProjectReference Include="..\..\src\Eff.Effects\Eff.Effects.csproj" />
   </ItemGroup>
 
 </Project>

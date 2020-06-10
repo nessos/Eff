@@ -2,7 +2,6 @@
 
 namespace Nessos.Effects.Examples.Maybe
 {
-
     class Program
     {
         static async Eff<int> Divide(int m, int n)
@@ -19,7 +18,7 @@ namespace Nessos.Effects.Examples.Maybe
 
         static async Eff Test()
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 100; i++)
             {
                 await DivideAndReportToConsole(23, 5 - i);
             }

@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 
 namespace Nessos.Effects.Examples.Config
 {
-    public class CustomEffectHandler : EffectHandler
+    public class ConfigurationManagerEffectHandler : EffectHandler
     {
         public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             switch (awaiter)
             {
-                case EffectAwaiter<string> { Effect: ConfigEffect { Key: string key } } awtr:
-                    var value = ConfigurationManager.AppSettings[key];
+                case EffectAwaiter<string> { Effect: ConfigEffect eff } awtr:
+                    var value = ConfigurationManager.AppSettings[eff.Key];
                     awtr.SetResult(value);
                     break;
             };
