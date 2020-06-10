@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Eff.Core\Eff.csproj" />
+    <ProjectReference Include="..\..\src\Eff\Eff.csproj" />
   </ItemGroup>
 
 </Project>

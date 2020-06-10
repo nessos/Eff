@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{42267E9E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{44695613-30F8-4FB7-9586-B0BD127D337B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff", "src\Eff.Core\Eff.csproj", "{5AA6CB90-B978-4F62-87EF-6165CF9471E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff", "src\Eff\Eff.csproj", "{5AA6CB90-B978-4F62-87EF-6165CF9471E7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Tests", "tests\Eff.Tests\Eff.Tests.csproj", "{E6858454-56BA-46D2-85B5-220B1248D6FA}"
 EndProject
