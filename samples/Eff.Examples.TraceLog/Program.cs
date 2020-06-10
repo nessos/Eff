@@ -1,9 +1,9 @@
 ﻿#pragma warning disable 1998
-using Nessos.Eff;
+using Nessos.Effects;
 using System;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.TraceLog
+namespace Nessos.Effects.Examples.TraceLog
 {
     class Program
     {

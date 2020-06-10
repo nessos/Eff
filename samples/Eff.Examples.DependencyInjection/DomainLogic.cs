@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Nessos.Eff;
+using Nessos.Effects.DependencyInjection;
 
-namespace Nessos.Eff.Examples.DependencyInjection
+namespace Nessos.Effects.Examples.DependencyInjection
 {
     public interface ILogger
     {
@@ -21,13 +21,11 @@ namespace Nessos.Eff.Examples.DependencyInjection
         // https://twitter.com/shit_sharp/status/1186637048335290368
         public static async Eff<string> CheckUsername(string username)
         {
-            var userService = await Effect.GetDependency<IUserService>();
-
-            if (await userService.Exists(username).AsEff())
+            if (await IO<IUserService>.Do(svc => svc.Exists(username)))
             {
                 username = username + "1";
 
-                if (await userService.Exists(username).AsEff())
+                if (await IO<IUserService>.Do(svc => svc.Exists(username)))
                 {
                     // Two checks should be enough
                     username = username.Replace("1", "2");
@@ -37,21 +35,20 @@ namespace Nessos.Eff.Examples.DependencyInjection
             return username;
         }
 
+        public static async Eff Log(string message) => await IO<ILogger>.Do(logger => logger.Log(message));
+
         public static async Eff<bool> CreateNewUser(string userName, string password)
         {
-            var userService = await Effect.GetDependency<IUserService>();
-            var logger = await Effect.GetDependency<ILogger>();
-
             var newUserName = await CheckUsername(userName);
 
-            if (await userService.CreateUser(newUserName, password).AsEff())
+            if (await IO<IUserService>.Do(svc => svc.CreateUser(newUserName, password)))
             {
-                logger.Log($"Successfully created user '{newUserName}'");
+                await Log($"Successfully created user '{newUserName}'");
                 return true;
             }
             else
             {
-                logger.Log($"Failed to create user '{newUserName}'");
+                await Log($"Failed to create user '{newUserName}'");
                 return false;
             }
         }

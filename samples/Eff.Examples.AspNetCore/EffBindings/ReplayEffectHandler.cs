@@ -1,10 +1,11 @@
-namespace Nessos.Eff.Examples.AspNetCore.EffBindings
+namespace Nessos.Effects.Examples.AspNetCore.EffBindings
 {
     using System;
     using System.Collections.Immutable;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.DependencyInjection;
+    using Nessos.Effects.Handlers;
 
     /// <summary>
     ///   An effect handler that runs an effectful computation using a simplistic replay log.

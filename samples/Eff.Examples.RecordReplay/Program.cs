@@ -1,28 +1,30 @@
+using Nessos.Effects.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.RecordReplay
+namespace Nessos.Effects.Examples.RecordReplay
 {
     class Program
     {
         static async Eff<(DateTime date, int random)> Foo()
         {
             var now = await IO.Do(_ => DateTime.UtcNow).ConfigureAwait();
-            var rnd = await IO.Do(ctx => ctx.Random.Next(0, 10)).ConfigureAwait();
+            var rnd = await IO<Random>.Do(rnd => rnd.Next(0, 10)).ConfigureAwait();
 
             return (now, rnd);
         }
 
         static async Task Main()
         {
-            var handler = new RecordEffectHandler(new EffCtx { Random = new Random() });
+            var container = new Container() { new Random() };
+            var handler = new RecordEffectHandler(container);
             var result = await Foo().Run(handler);
-            string replayLog = handler.GetJson();
+            var replayLog = handler.GetReplayLog();
             Console.WriteLine($"Recorded: {result}");
 
             await Task.Delay(1000);
 
-            var _handler = ReplayEffectHandler.FromJson(replayLog);
+            var _handler = new ReplayEffectHandler(replayLog);
             result = await Foo().Run(_handler);
             Console.WriteLine($"Replayed: {result}");
         }

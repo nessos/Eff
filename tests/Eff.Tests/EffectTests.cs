@@ -1,12 +1,13 @@
 ﻿#pragma warning disable 1998
 
+using Nessos.Effects.Handlers;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Nessos.Eff.Tests
+namespace Nessos.Effects.Tests
 {
     public class EffectTests
     {
@@ -335,8 +336,7 @@ namespace Nessos.Eff.Tests
                 return await (new CustomEffect()).DateTimeNow();
             }
 
-            var exn = await Assert.ThrowsAsync<EffException>(() => Foo().Run(new DefaultEffectHandler()));
-            Assert.Contains("Effect DateTimeNowEffect is not completed", exn.Message);
+            await Assert.ThrowsAsync<NotSupportedException>(() => Foo().Run(new DefaultEffectHandler()));
         }
 
         [Fact]

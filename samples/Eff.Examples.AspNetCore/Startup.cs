@@ -1,4 +1,4 @@
-namespace Nessos.Eff.Examples.AspNetCore
+namespace Nessos.Effects.Examples.AspNetCore
 {
     using System.IO;
     using Microsoft.AspNetCore.Builder;
@@ -8,8 +8,8 @@ namespace Nessos.Eff.Examples.AspNetCore
     using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
 
-    using Nessos.Eff.Examples.AspNetCore.EffBindings;
-    using Nessos.Eff.Examples.AspNetCore.Domain;
+    using Nessos.Effects.Examples.AspNetCore.EffBindings;
+    using Nessos.Effects.Examples.AspNetCore.Domain;
 
     public class Startup
     {

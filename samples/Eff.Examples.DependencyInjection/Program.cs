@@ -1,9 +1,10 @@
 ﻿#pragma warning disable 1998
+using Nessos.Effects.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.DependencyInjection
+namespace Nessos.Effects.Examples.DependencyInjection
 {
     class Program
     {
@@ -27,7 +28,7 @@ namespace Nessos.Eff.Examples.DependencyInjection
             container.Add<ILogger>(new ConsoleLogger());
             container.Add<IUserService>(new MockUserService());
 
-            var handler = new CustomEffectHandler(container);
+            var handler = new DependencyEffectHandler(container);
             await DomainLogic.CreateNewUsers(new[] { ("user1", "sekrid"), ("user1", "sekrider"), ("user1", "sekridest") }).Run(handler);
         }
     }

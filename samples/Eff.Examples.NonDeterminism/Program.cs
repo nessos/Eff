@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Nessos.Eff.Examples.NonDeterminism
+namespace Nessos.Effects.Examples.NonDeterminism
 {
     class Program
     {
 
         static async Eff<(int, string)> Foo()
         {
-            var x = await Effects.Choose(1, 2, 3);
-            var y = await Effects.Choose("one", "two", "three");
+            var x = await NonDetEffect.Choose(1, 2, 3);
+            var y = await NonDetEffect.Choose("one", "two", "three");
             return (x, y);
         }
 

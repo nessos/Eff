@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nessos.Eff.Tests
+namespace Nessos.Effects.Tests
 {
     public interface IDateTimeNowEffect
     {

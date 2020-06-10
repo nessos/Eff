@@ -1,37 +1,15 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.Console
+namespace Nessos.Effects.Examples.Console
 {
-    class Program
+    partial class Program
     {
         static async Eff Foo()
         {
-            await Effects.Print("Enter your name: ");
-            await Effects.Print($"Hello, { await Effects.Read()}!\n");
+            await ConsoleEffect.Print("Enter your name: ");
+            await ConsoleEffect.Print($"Hello, { await ConsoleEffect.Read()}!\n");
         }
 
-        class ConsoleEffectHandler : EffectHandler
-        {
-            public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
-            {
-                switch (awaiter)
-                {
-                    case EffectAwaiter<Unit> { Effect: ConsolePrintEffect printEffect } awtr:
-                        System.Console.Write(printEffect.Message);
-                        awtr.SetResult(Unit.Value);
-                        break;
-                    case EffectAwaiter<string> { Effect: ConsoleReadEffect _ } awtr:
-                        string message = System.Console.ReadLine();
-                        awtr.SetResult(message);
-                        break;
-                    default:
-                        throw new NotSupportedException(awaiter.Id);
-                }
-
-                return Task.CompletedTask;
-            }
-        }
         static async Task Main()
         {
             await Foo().Run(new ConsoleEffectHandler());

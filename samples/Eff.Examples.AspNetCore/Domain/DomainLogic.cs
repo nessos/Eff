@@ -1,7 +1,8 @@
-namespace Nessos.Eff.Examples.AspNetCore.Domain
+namespace Nessos.Effects.Examples.AspNetCore.Domain
 {
     using System;
     using Microsoft.Extensions.Logging;
+    using Nessos.Effects.DependencyInjection;
 
     public class DomainLogic
     {
@@ -40,9 +41,9 @@ namespace Nessos.Eff.Examples.AspNetCore.Domain
             }
         }
 
-        public static async Eff DeleteUser(string username)
+        public static async Eff<bool> DeleteUser(string username)
         {
-            await IO<IUserService>.Do(svc => svc.Delete(username));
+            return await IO<IUserService>.Do(svc => svc.Delete(username));
         }
 
         public static async Eff<bool> Authenticate(string username, string password)

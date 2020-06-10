@@ -3,8 +3,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using Nessos.Effects.Handlers;
 
-namespace Nessos.Eff.Benchmarks
+namespace Nessos.Effects.Benchmarks
 {
     [MemoryDiagnoser]
     public class Benchmark

@@ -1,15 +1,18 @@
-﻿using System;
+﻿using Nessos.Effects.DependencyInjection;
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Nessos.Eff.Examples.DependencyInjection
+namespace Nessos.Effects.Examples.DependencyInjection
 {
     // Poor man's DI container
-    public class Container
+    public class Container : IContainer, IEnumerable
     {
         private Dictionary<Type, object> _index = new Dictionary<Type, object>();
 
-        public void Add<T>(T value) => _index[typeof(T)] = value;
-        public T Get<T>() => (T)_index[typeof(T)];
+        public void Add<T>(T value) => _index[typeof(T)] = value!;
+
+        public T Resolve<T>() => (T)_index[typeof(T)];
+        public IEnumerator GetEnumerator() => _index.Values.GetEnumerator();
     }
 }

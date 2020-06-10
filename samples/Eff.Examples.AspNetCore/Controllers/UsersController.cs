@@ -1,10 +1,10 @@
-namespace Nessos.Eff.Examples.AspNetCore.Controllers
+namespace Nessos.Effects.Examples.AspNetCore.Controllers
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
 
-    using Nessos.Eff.Examples.AspNetCore.EffBindings;
-    using Nessos.Eff.Examples.AspNetCore.Domain;
+    using Nessos.Effects.Examples.AspNetCore.EffBindings;
+    using Nessos.Effects.Examples.AspNetCore.Domain;
 
     [Route("api/users")]
     public class UsersController : EffControllerBase
@@ -19,7 +19,7 @@ namespace Nessos.Eff.Examples.AspNetCore.Controllers
         ///   For instance, attempting to create the same username twice will not fail.
         ///   However doing it four times will result in a 500 error.
         ///   
-        ///   Each request will return an <code>Eff-Replay-Token</code> header, 
+        ///   Each request will return an <code>eff-replay-token</code> header, 
         ///   which can be passed to future requests to induce a dry run.
         ///   This can be used to step through requests that were handled in the past.
         /// </remarks>
@@ -30,14 +30,21 @@ namespace Nessos.Eff.Examples.AspNetCore.Controllers
         }
 
         /// <remarks>
-        ///   Each request will return an <code>Eff-Replay-Token</code> header, 
+        ///   Each request will return an <code>eff-replay-token</code> header, 
         ///   which can be passed to future requests to induce a dry run.
         ///   This can be used to step through requests that were handled in the past.
         /// </remarks>
         [HttpDelete("delete")]
-        public Task DeleteUser(string username)
+        public async Task<ActionResult> DeleteUser(string username)
         {
-            return Execute(DomainLogic.DeleteUser(username));
+            if (await Execute(DomainLogic.DeleteUser(username)))
+            {
+                return Accepted();
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         /// <remarks>

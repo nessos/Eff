@@ -1,8 +1,10 @@
 ﻿#pragma warning disable 1998
+using Nessos.Effects.Builders;
+using Nessos.Effects.Handlers;
 using System;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.Maybe
+namespace Nessos.Effects.Examples.Maybe
 {
     public static class MaybeEffectHandler
     {
@@ -18,7 +20,7 @@ namespace Nessos.Eff.Examples.Maybe
                     return Run(delay.Continuation.MoveNext());
                 case AwaitEff<TResult> awaitEff:
                     var handler = new MaybeEffectHandlerImpl<TResult>(awaitEff.Continuation);
-                    awaitEff.Awaiter.Accept(handler);
+                    awaitEff.Awaiter.Accept(handler).Wait();
                     return handler.Result;
                 default:
                     throw new NotSupportedException($"{eff.GetType().Name}");

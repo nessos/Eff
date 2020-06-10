@@ -1,12 +1,14 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Nessos.Effects.Builders;
+using Nessos.Effects.Handlers;
 
-namespace Nessos.Eff
+namespace Nessos.Effects
 {
-    public static class EffExtensions
+    public static class TaskExtensionMethods
     {
         /// <summary>
-        /// Configures task instance as an Eff awaiter.
+        ///   Configures task instance as an Eff awaiter.
         /// </summary>
         /// <param name="task"></param>
         /// <param name="callerMemberName"></param>
@@ -18,7 +20,7 @@ namespace Nessos.Eff
                                             [CallerLineNumber] int callerLineNumber = 0)
         {
             async ValueTask<TResult> Wrap() { return await task;  }
-            return new TaskAwaiter<TResult>(Wrap())
+            return new Handlers.TaskAwaiter<TResult>(Wrap())
             {
                 CallerMemberName = callerMemberName,
                 CallerFilePath = callerFilePath,
@@ -27,7 +29,7 @@ namespace Nessos.Eff
         }
 
         /// <summary>
-        /// Configures task instance as an Eff awaiter.
+        ///   Configures task instance as an Eff awaiter.
         /// </summary>
         /// <param name="task"></param>
         /// <param name="callerMemberName"></param>
@@ -39,7 +41,7 @@ namespace Nessos.Eff
                                             [CallerLineNumber] int callerLineNumber = 0)
         {
             async ValueTask<Unit> Wrap() { await task; return Unit.Value; }
-            return new TaskAwaiter<Unit>(Wrap())
+            return new Handlers.TaskAwaiter<Unit>(Wrap())
             {
                 CallerMemberName = callerMemberName,
                 CallerFilePath = callerFilePath,
@@ -48,7 +50,7 @@ namespace Nessos.Eff
         }
 
         /// <summary>
-        /// Configures task instance as an Eff awaiter.
+        ///   Configures task instance as an Eff awaiter.
         /// </summary>
         /// <param name="task"></param>
         /// <param name="callerMemberName"></param>
@@ -59,7 +61,7 @@ namespace Nessos.Eff
                                     [CallerFilePath] string callerFilePath = "",
                                     [CallerLineNumber] int callerLineNumber = 0)
         {
-            return new TaskAwaiter<TResult>(task)
+            return new Handlers.TaskAwaiter<TResult>(task)
             {
                 CallerMemberName = callerMemberName,
                 CallerFilePath = callerFilePath,

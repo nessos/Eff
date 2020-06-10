@@ -1,4 +1,4 @@
-﻿namespace Nessos.Eff.Examples.Console
+﻿namespace Nessos.Effects.Examples.Console
 {
     public class ConsolePrintEffect : Effect
     {
@@ -15,7 +15,7 @@
 
     }
 
-    public static class Effects
+    public static class ConsoleEffect
     {
         public static ConsolePrintEffect Print(string message) => new ConsolePrintEffect(message);
 

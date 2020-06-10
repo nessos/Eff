@@ -14,6 +14,8 @@ The Eff library takes advantage of the [async method extensibility features](htt
 At its core, the library defines a task-like type, `Eff<TResult>`, which can be built using `async` methods:
 
 ```csharp
+using Nessos.Effects;
+
 async Eff HelloWorld()
 {
     Console.WriteLine($"Hello, {await Helper()}!");

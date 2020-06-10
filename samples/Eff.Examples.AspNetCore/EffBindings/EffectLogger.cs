@@ -1,9 +1,10 @@
-namespace Nessos.Eff.Examples.AspNetCore.EffBindings
+namespace Nessos.Effects.Examples.AspNetCore.EffBindings
 {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using Nessos.Effects.Handlers;
     using Newtonsoft.Json;
 
     /// <summary>

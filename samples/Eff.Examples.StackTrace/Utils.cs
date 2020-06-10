@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Nessos.Eff.Examples.StackTrace
+namespace Nessos.Effects.Examples.StackTrace
 {
-
     public class ExceptionLog
     {
         public string CallerMemberName { get; set; }

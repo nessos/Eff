@@ -1,7 +1,8 @@
-namespace Nessos.Eff.Examples.AspNetCore.EffBindings
+namespace Nessos.Effects.Examples.AspNetCore.EffBindings
 {
     using System;
     using Microsoft.AspNetCore.Mvc;
+    using Nessos.Effects.Handlers;
 
     /// <summary>
     ///   An effect handler that must be disposed at the end of an MVC controller lifetime.

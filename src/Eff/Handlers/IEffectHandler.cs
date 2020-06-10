@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Nessos.Effects.Builders;
 
-namespace Nessos.Eff
+namespace Nessos.Effects.Handlers
 {
     /// <summary>
     /// Abstract effect handler. Implementations provide interpretation semantics for Eff computations.

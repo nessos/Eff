@@ -1,7 +1,7 @@
-﻿using Nessos.Eff;
+﻿using Nessos.Effects;
 using System;
 
-namespace Nessos.Eff.Tests
+namespace Nessos.Effects.Tests
 {
     public class FuncEffect<TResult> : Effect<TResult>
     {

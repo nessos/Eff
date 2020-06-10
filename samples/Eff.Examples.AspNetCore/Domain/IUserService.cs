@@ -1,4 +1,4 @@
-namespace Nessos.Eff.Examples.AspNetCore.Domain
+namespace Nessos.Effects.Examples.AspNetCore.Domain
 {
     using System.Collections.Concurrent;
     using System.Threading.Tasks;
@@ -14,7 +14,7 @@ namespace Nessos.Eff.Examples.AspNetCore.Domain
 
         Task<bool> Authenticate(string username, string password);
 
-        Task Delete(string username);
+        Task<bool> Delete(string username);
     }
 
     /// <summary>
@@ -33,7 +33,7 @@ namespace Nessos.Eff.Examples.AspNetCore.Domain
             }
         }
 
-        public async Task Delete(string username) => _users.TryRemove(username, out var _);
+        public async Task<bool> Delete(string username) => _users.TryRemove(username, out var _);
         public async Task<bool> Authenticate(string username, string password) => _users.TryGetValue(username, out var pass) && password == pass;
     }
 }
