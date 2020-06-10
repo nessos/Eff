@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Nessos.Effects.Handlers;
+using Nessos.Effects.Utils;
 
 namespace Nessos.Effects.Tests
 {
@@ -13,7 +15,7 @@ namespace Nessos.Effects.Tests
         public List<ExceptionLog> ExceptionLogs { get; }
         public List<ResultLog> TraceLogs { get; }
 
-        public TestEffectHandler(DateTime now) : base()
+        public TestEffectHandler(DateTime now)
         {
             _now = now;
             ExceptionLogs = new List<ExceptionLog>();

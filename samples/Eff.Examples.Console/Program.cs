@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nessos.Effects.Handlers;
+using System;
 using System.Threading.Tasks;
 
 namespace Nessos.Effects.Examples.Console

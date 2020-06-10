@@ -7,6 +7,8 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
+    using Nessos.Effects.Handlers;
+    using Nessos.Effects.DependencyInjection;
 
     /// <summary>
     ///   An effect handler with the following features:

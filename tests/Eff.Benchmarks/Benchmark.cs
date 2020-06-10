@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using Nessos.Effects.Handlers;
 
 namespace Nessos.Effects.Benchmarks
 {

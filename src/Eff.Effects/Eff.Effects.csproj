@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <RootNamespace>Nessos.Effects</RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
     <nullable>enable</nullable>
     <IsPackable>true</IsPackable>
@@ -8,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eff.Core\Eff.Core.csproj" />
+    <ProjectReference Include="..\Eff.Core\Eff.csproj" />
   </ItemGroup>
 
   <ItemGroup>

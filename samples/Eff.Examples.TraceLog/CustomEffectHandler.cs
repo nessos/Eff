@@ -1,6 +1,8 @@
 ﻿#pragma warning disable 1998
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Nessos.Effects.Utils;
+using Nessos.Effects.Handlers;
 
 namespace Nessos.Effects.Examples.TraceLog
 {

@@ -1,5 +1,6 @@
 ﻿#pragma warning disable 1998
 using Nessos.Effects;
+using Nessos.Effects.Handlers;
 using System.Threading.Tasks;
 
 namespace Nessos.Effects.Examples.DependencyInjection

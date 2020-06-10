@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Nessos.Effects.Builders;
+using Nessos.Effects.Handlers;
 
 namespace Nessos.Effects.Examples.NonDeterminism
 {

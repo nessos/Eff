@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 
-namespace Nessos.Effects
+namespace Nessos.Effects.Utils
 {
     public static class TraceHelpers
     {

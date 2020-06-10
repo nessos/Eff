@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Nessos.Effects.Builders;
 
-namespace Nessos.Effects
+namespace Nessos.Effects.Handlers
 {
     public static class EffExecutor
     {
@@ -11,11 +12,9 @@ namespace Nessos.Effects
         /// <typeparam name="TResult"></typeparam>
         /// <param name="eff">Eff computation to be run.</param>
         /// <param name="handler">Effect handler to be used in execution.</param>
-        public static async Task<TResult> Run<TResult>(this Eff<TResult> eff, IEffectHandler handler)
-        {   
-            var result = default(TResult)!;
-            var done = false;
-            while (!done)
+        public static async Task<TResult> Execute<TResult>(Eff<TResult> eff, IEffectHandler handler)
+        {
+            while (true)
             {
                 switch (eff)
                 {
@@ -23,9 +22,7 @@ namespace Nessos.Effects
                         await handler.Handle(setException);
                         break;
                     case ResultEff<TResult> setResult:
-                        result = await handler.Handle(setResult);
-                        done = true;
-                        break;
+                        return await handler.Handle(setResult);
                     case DelayEff<TResult> delay:
                         eff = await handler.Handle(delay);
                         break;
@@ -33,19 +30,9 @@ namespace Nessos.Effects
                         eff = await handler.Handle(awaitEff);
                         break;
                     default:
-                        throw new NotSupportedException($"{eff.GetType().Name}");
+                        throw new NotSupportedException($"Unrecognized Eff type {eff.GetType().Name}.");
                 }
             }
-
-            return result;
         }
-
-        /// <summary>
-        /// Runs supplied Eff computation using provided effect handler.
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="eff">Eff computation to be run.</param>
-        /// <param name="handler">Effect handler to be used in execution.</param>
-        public static Task Run(this Eff eff, IEffectHandler handler) => eff.RunCore(handler);
     }
 }

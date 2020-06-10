@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Nessos.Effects
+namespace Nessos.Effects.DependencyInjection
 {
     public interface IEffCtx
     {

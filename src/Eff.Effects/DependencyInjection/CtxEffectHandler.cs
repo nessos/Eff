@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Nessos.Effects.Handlers;
 
-namespace Nessos.Effects
+namespace Nessos.Effects.DependencyInjection
 {
     public class CtxEffectHandler : EffectHandler
     {

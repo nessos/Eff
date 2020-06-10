@@ -3,10 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Nessos.Effects
+namespace Nessos.Effects.Handlers
 {
     /// <summary>
-    /// Awaiter class for Eff computations.
+    ///   Awaiter class for Eff computations.
     /// </summary>
     public abstract class EffAwaiterBase : ICriticalNotifyCompletion
     {
@@ -17,7 +17,7 @@ namespace Nessos.Effects
         internal EffAwaiterBase() { }
 
         /// <summary>
-        /// Awaiter identifier for debugging purposes.
+        ///   Awaiter identifier for debugging purposes.
         /// </summary>
         public abstract string Id { get; }
 
@@ -40,9 +40,10 @@ namespace Nessos.Effects
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public EffAwaiterBase ConfigureAwait([CallerMemberName] string callerMemberName = "",
-                                         [CallerFilePath] string callerFilePath = "",
-                                         [CallerLineNumber] int callerLineNumber = 0)
+        public EffAwaiterBase ConfigureAwait(
+            [CallerMemberName] string callerMemberName = "",
+            [CallerFilePath] string callerFilePath = "",
+            [CallerLineNumber] int callerLineNumber = 0)
         {
             CallerMemberName = callerMemberName;
             CallerFilePath = callerFilePath;
@@ -74,12 +75,12 @@ namespace Nessos.Effects
         public void SetException(Exception ex) => _exception = ex;
 
         internal void SetState(object state) => _state = state;
-        void INotifyCompletion.OnCompleted(Action continuation) => throw new NotSupportedException("EffAwaiter objects should only be awaited by EffMethodBuilder");
-        void ICriticalNotifyCompletion.UnsafeOnCompleted(Action continuation) => throw new NotSupportedException("EffAwaiter objects should only be awaited by EffMethodBuilder");
+        void INotifyCompletion.OnCompleted(Action continuation) => throw new NotSupportedException("EffAwaiter objects should only be awaited by EffMethodBuilder.");
+        void ICriticalNotifyCompletion.UnsafeOnCompleted(Action continuation) => throw new NotSupportedException("EffAwaiter objects should only be awaited by EffMethodBuilder.");
     }
 
     /// <summary>
-    /// Awaiter class for Eff computations.
+    ///   Awaiter class for Eff computations.
     /// </summary>
     public abstract class EffAwaiterBase<TResult> : EffAwaiterBase
     {
@@ -129,7 +130,7 @@ namespace Nessos.Effects
     }
 
     /// <summary>
-    /// Awaiter for nested Eff computations.
+    ///   Awaiter for nested Eff computations.
     /// </summary>
     public class EffAwaiter<TResult> : EffAwaiterBase<TResult>
     {
@@ -146,7 +147,7 @@ namespace Nessos.Effects
     }
 
     /// <summary>
-    /// Awaiter for abstract Effects.
+    ///   Awaiter for abstract Effects.
     /// </summary>
     public class EffectAwaiter<TResult> : EffAwaiterBase<TResult>
     {
@@ -163,7 +164,7 @@ namespace Nessos.Effects
     }
 
     /// <summary>
-    /// Awaiter adapter for TPL tasks.
+    ///   Awaiter adapter for TPL tasks.
     /// </summary>
     public class TaskAwaiter<TResult> : EffAwaiterBase<TResult>
     {
@@ -172,7 +173,7 @@ namespace Nessos.Effects
             Task = task;
         }
 
-        public override string Id => "TaskAwaiter";
+        public override string Id => nameof(TaskAwaiter);
 
         public ValueTask<TResult> Task { get; }
 

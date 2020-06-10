@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Nessos.Effects.Builders;
 
-namespace Nessos.Effects
+namespace Nessos.Effects.Handlers
 {
     /// <summary>
-    /// Provides an abstract effect handler implementation which uses regular async method semantics.
+    ///   Provides an abstract effect handler implementation which uses regular async method semantics.
     /// </summary>
     public abstract class EffectHandler : IEffectHandler
     {
@@ -20,7 +21,7 @@ namespace Nessos.Effects
 
         public virtual async Task Handle<TResult>(EffAwaiter<TResult> awaiter)
         {
-            var result = await awaiter.Eff.Run(this);
+            var result = await EffExecutor.Execute(awaiter.Eff, this);
             awaiter.SetResult(result);
         }
 
@@ -40,20 +41,19 @@ namespace Nessos.Effects
         public virtual async Task<Eff<TResult>> Handle<TResult>(AwaitEff<TResult> awaitEff)
         {
             var awaiter = awaitEff.Awaiter;            
-            // Execute Effect
+
             try
             {
                 await awaiter.Accept(this);
                 if (!awaiter.IsCompleted)
-                    throw new EffException($"Effect {awaiter.Id} is not completed.");
+                    throw new InvalidOperationException($"Effect {awaiter.Id} has not been completed.");
             }
             catch (Exception ex)
             {
                 awaiter.SetException(ex);
             }
 
-            var eff = awaitEff.Continuation.MoveNext();
-            return eff;
+            return awaitEff.Continuation.MoveNext();
         }
     }
 }

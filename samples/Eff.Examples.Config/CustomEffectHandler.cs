@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using Nessos.Effects.Handlers;
+using System.Configuration;
 using System.Threading.Tasks;
 
 namespace Nessos.Effects.Examples.Config

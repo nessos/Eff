@@ -2,6 +2,7 @@ namespace Nessos.Effects.Examples.AspNetCore.Domain
 {
     using System;
     using Microsoft.Extensions.Logging;
+    using Nessos.Effects.DependencyInjection;
 
     public class DomainLogic
     {
