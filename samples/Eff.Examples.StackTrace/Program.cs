@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.StackTrace
+namespace Nessos.Effects.Examples.StackTrace
 {
     class Program
     {

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.CancellationToken
+namespace Nessos.Effects.Examples.CancellationToken
 {
     public class CustomEffectHandler : EffectHandler
     {

@@ -1,4 +1,4 @@
-﻿namespace Nessos.Eff.Examples.Config
+﻿namespace Nessos.Effects.Examples.Config
 {
     public class ConfigEffect : Effect<string>
     {

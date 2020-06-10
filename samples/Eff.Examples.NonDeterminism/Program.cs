@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nessos.Eff.Examples.NonDeterminism
+namespace Nessos.Effects.Examples.NonDeterminism
 {
     class Program
     {

@@ -1,4 +1,4 @@
-namespace Nessos.Eff.Examples.AspNetCore.EffBindings
+namespace Nessos.Effects.Examples.AspNetCore.EffBindings
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;

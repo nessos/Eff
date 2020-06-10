@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.Maybe
+namespace Nessos.Effects.Examples.Maybe
 {
     public static class MaybeEffectHandler
     {

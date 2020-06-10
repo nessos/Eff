@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff
+namespace Nessos.Effects
 {
     /// <summary>
     /// Provides an abstract effect handler implementation which uses regular async method semantics.

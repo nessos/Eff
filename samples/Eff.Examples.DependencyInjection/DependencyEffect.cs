@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Nessos.Eff;
+using Nessos.Effects;
 
-namespace Nessos.Eff.Examples.DependencyInjection
+namespace Nessos.Effects.Examples.DependencyInjection
 {
     public class DependencyEffect<T> : Effect<T>
     {

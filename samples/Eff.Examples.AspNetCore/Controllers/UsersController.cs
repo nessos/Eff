@@ -1,10 +1,10 @@
-namespace Nessos.Eff.Examples.AspNetCore.Controllers
+namespace Nessos.Effects.Examples.AspNetCore.Controllers
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
 
-    using Nessos.Eff.Examples.AspNetCore.EffBindings;
-    using Nessos.Eff.Examples.AspNetCore.Domain;
+    using Nessos.Effects.Examples.AspNetCore.EffBindings;
+    using Nessos.Effects.Examples.AspNetCore.Domain;
 
     [Route("api/users")]
     public class UsersController : EffControllerBase

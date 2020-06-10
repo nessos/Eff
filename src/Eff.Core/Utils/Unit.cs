@@ -1,4 +1,4 @@
-﻿namespace Nessos.Eff
+﻿namespace Nessos.Effects
 {
     /// <summary>
     /// A type inhabited by a single value.

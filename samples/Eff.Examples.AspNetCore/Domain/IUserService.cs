@@ -1,4 +1,4 @@
-namespace Nessos.Eff.Examples.AspNetCore.Domain
+namespace Nessos.Effects.Examples.AspNetCore.Domain
 {
     using System.Collections.Concurrent;
     using System.Threading.Tasks;

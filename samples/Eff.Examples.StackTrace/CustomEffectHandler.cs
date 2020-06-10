@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.StackTrace
+namespace Nessos.Effects.Examples.StackTrace
 {
     public class CustomEffectHandler : EffectHandler
     {

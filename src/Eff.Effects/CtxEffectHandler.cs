@@ -36,7 +36,7 @@ namespace Nessos.Eff
 					else
                     {
 						awaiter.SetException(error);
-                    }
+				    }
 
 					break;
 			}

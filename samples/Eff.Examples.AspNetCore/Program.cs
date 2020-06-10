@@ -1,4 +1,4 @@
-namespace Nessos.Eff.Examples.AspNetCore
+namespace Nessos.Effects.Examples.AspNetCore
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Hosting;

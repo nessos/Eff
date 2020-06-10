@@ -14,8 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Eff.Core\Eff.Core.csproj" />
-    <ProjectReference Include="..\..\src\Eff.Effects\Eff.Effects.csproj" />
+    <ProjectReference Include="..\..\src\Eff.Core\Eff.csproj" />
   </ItemGroup>
 
   <ItemGroup>

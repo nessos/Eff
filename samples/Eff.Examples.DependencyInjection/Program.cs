@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.DependencyInjection
+namespace Nessos.Effects.Examples.DependencyInjection
 {
     class Program
     {

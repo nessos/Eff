@@ -1,8 +1,8 @@
 ﻿#pragma warning disable 1998
-using Nessos.Eff;
+using Nessos.Effects;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.DependencyInjection
+namespace Nessos.Effects.Examples.DependencyInjection
 {
     public class CustomEffectHandler : EffectHandler
     {

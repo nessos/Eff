@@ -1,4 +1,4 @@
-﻿namespace Nessos.Eff.Examples.Console
+﻿namespace Nessos.Effects.Examples.Console
 {
     public class ConsolePrintEffect : Effect
     {

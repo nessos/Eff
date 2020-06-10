@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.TraceLog
+namespace Nessos.Effects.Examples.TraceLog
 {
     public class CustomEffectHandler : EffectHandler
     {

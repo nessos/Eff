@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 
-namespace Nessos.Eff
+namespace Nessos.Effects
 {
     /// <summary>
     /// Represents an effectful computation built using the Eff library.

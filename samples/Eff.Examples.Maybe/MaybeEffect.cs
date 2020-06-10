@@ -1,4 +1,4 @@
-﻿namespace Nessos.Eff.Examples.Maybe
+﻿namespace Nessos.Effects.Examples.Maybe
 {
     public struct Maybe<T>
     {

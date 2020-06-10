@@ -1,4 +1,4 @@
-namespace Nessos.Eff.Examples.AspNetCore.EffBindings
+namespace Nessos.Effects.Examples.AspNetCore.EffBindings
 {
     using System.Collections.Generic;
     using Swashbuckle.AspNetCore.SwaggerGen;

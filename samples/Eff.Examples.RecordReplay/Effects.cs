@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nessos.Eff.Examples.RecordReplay
+namespace Nessos.Effects.Examples.RecordReplay
 {
 
     public class EffCtx

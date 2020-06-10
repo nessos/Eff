@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff
+namespace Nessos.Effects
 {
     public static class EffExecutor
     {

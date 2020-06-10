@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.RecordReplay
+namespace Nessos.Effects.Examples.RecordReplay
 {
     class Program
     {

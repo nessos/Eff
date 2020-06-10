@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nessos.Eff.Examples.Maybe
+namespace Nessos.Effects.Examples.Maybe
 {
 
     class Program

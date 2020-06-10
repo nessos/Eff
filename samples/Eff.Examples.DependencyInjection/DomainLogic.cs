@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Nessos.Eff;
+using Nessos.Effects;
 
-namespace Nessos.Eff.Examples.DependencyInjection
+namespace Nessos.Effects.Examples.DependencyInjection
 {
     public interface ILogger
     {

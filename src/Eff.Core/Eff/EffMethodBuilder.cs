@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security;
 
-namespace Nessos.Eff
+namespace Nessos.Effects
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class EffMethodBuilder<TResult> : EffMethodBuilderBase<TResult>

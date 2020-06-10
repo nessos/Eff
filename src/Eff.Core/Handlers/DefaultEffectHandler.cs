@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Nessos.Eff
+namespace Nessos.Effects
 {
     /// <summary>
     /// An effect handler implementing default interpretation semantics which takes no action on awaited effects.

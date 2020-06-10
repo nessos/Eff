@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.RecordReplay
+namespace Nessos.Effects.Examples.RecordReplay
 {
     public class ReplayEffectHandler : EffectHandler
     {

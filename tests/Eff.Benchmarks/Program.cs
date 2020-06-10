@@ -1,7 +1,7 @@
 ﻿using System;
 using BenchmarkDotNet.Running;
 
-namespace Nessos.Eff.Benchmarks
+namespace Nessos.Effects.Benchmarks
 {
     class Program
     {

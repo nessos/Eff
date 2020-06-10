@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff
+namespace Nessos.Effects
 {
     /// <summary>
     /// Abstract effect type.

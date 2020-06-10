@@ -1,4 +1,4 @@
-﻿using Nessos.Eff;
+﻿using Nessos.Effects;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.TraceLog
+namespace Nessos.Effects.Examples.TraceLog
 {
 
     public class ResultLog

@@ -1,4 +1,4 @@
-namespace Nessos.Eff.Examples.AspNetCore.Domain
+namespace Nessos.Effects.Examples.AspNetCore.Domain
 {
     using System;
     using Microsoft.Extensions.Logging;

@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff
+namespace Nessos.Effects
 {
     /// <summary>
     /// Awaiter class for Eff computations.

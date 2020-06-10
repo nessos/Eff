@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.CancellationToken
+namespace Nessos.Effects.Examples.CancellationToken
 {
     class Program
     {

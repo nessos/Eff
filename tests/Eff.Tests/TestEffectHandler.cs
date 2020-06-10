@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Tests
+namespace Nessos.Effects.Tests
 {
     public class TestEffectHandler : EffectHandler
     {

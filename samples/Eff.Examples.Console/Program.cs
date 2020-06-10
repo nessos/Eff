@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.Console
+namespace Nessos.Effects.Examples.Console
 {
     class Program
     {

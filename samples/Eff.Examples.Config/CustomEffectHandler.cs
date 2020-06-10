@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.Config
+namespace Nessos.Effects.Examples.Config
 {
     public class CustomEffectHandler : EffectHandler
     {

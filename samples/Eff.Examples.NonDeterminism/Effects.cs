@@ -1,4 +1,4 @@
-﻿namespace Nessos.Eff.Examples.NonDeterminism
+﻿namespace Nessos.Effects.Examples.NonDeterminism
 {
     public class NonDetEffect<T> : Effect<T>
     {

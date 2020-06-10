@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Nessos.Eff.Examples.NonDeterminism
+namespace Nessos.Effects.Examples.NonDeterminism
 {
     public static class NonDetEffectHandler
     {

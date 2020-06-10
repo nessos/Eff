@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Nessos.Eff.Tests
+namespace Nessos.Effects.Tests
 {
     public class EffectTests
     {
