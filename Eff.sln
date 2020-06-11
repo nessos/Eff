@@ -48,8 +48,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.AspNetCore", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Maybe", "samples\Eff.Examples.Maybe\Eff.Examples.Maybe.csproj", "{F80F4B41-FBF6-4C43-A416-9AA77E7AF730}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Effects", "src\Eff.Effects\Eff.Effects.csproj", "{B91D438E-F88E-4177-91FE-D20EB2A08804}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,10 +106,6 @@ Global
 		{F80F4B41-FBF6-4C43-A416-9AA77E7AF730}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F80F4B41-FBF6-4C43-A416-9AA77E7AF730}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F80F4B41-FBF6-4C43-A416-9AA77E7AF730}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B91D438E-F88E-4177-91FE-D20EB2A08804}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B91D438E-F88E-4177-91FE-D20EB2A08804}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B91D438E-F88E-4177-91FE-D20EB2A08804}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B91D438E-F88E-4177-91FE-D20EB2A08804}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -130,7 +124,6 @@ Global
 		{D13876A1-FAA0-4462-97CD-6B3A5C9999A7} = {42267E9E-0BA9-4713-822F-19482AE1FF60}
 		{ADD705A9-FEA2-40E0-82A7-0156D7C522A9} = {44695613-30F8-4FB7-9586-B0BD127D337B}
 		{F80F4B41-FBF6-4C43-A416-9AA77E7AF730} = {44695613-30F8-4FB7-9586-B0BD127D337B}
-		{B91D438E-F88E-4177-91FE-D20EB2A08804} = {A2A7479C-772D-4E7D-A32C-7C84D6DF500C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9592188A-5C47-498C-B4A9-28A6AAE887ED}
