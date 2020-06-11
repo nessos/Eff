@@ -17,7 +17,6 @@ namespace Nessos.Effects.DependencyInjection
     /// <summary>
     ///   Represents an effect that performs an operation against a supplied dependency container
     /// </summary>
-    /// <typeparam name="TDependency"></typeparam>
     public abstract class DependencyEffect<TResult> : Effect<TResult>
     {
         public abstract ValueTask<TResult> Handle(IContainer container);

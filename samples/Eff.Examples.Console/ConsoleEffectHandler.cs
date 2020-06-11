@@ -22,7 +22,7 @@ namespace Nessos.Effects.Examples.Console
                     awtr.SetResult(message);
                     break;
                 default:
-                    throw new NotSupportedException(awaiter.Id);
+                    throw new NotSupportedException(awaiter.Effect.GetType().Name);
             }
 
             return Task.CompletedTask;

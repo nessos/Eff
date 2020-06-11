@@ -21,7 +21,7 @@ namespace Nessos.Effects.Examples.NonDeterminism
                     return Run(delay.Continuation.MoveNext());
                 case AwaitEff<TResult> awaitEff:
                     var handler = new NonDetEffectHandler<TResult>(awaitEff.Continuation);
-                    awaitEff.Awaiter.Accept(handler);
+                    awaitEff.Awaiter.Accept(handler).Wait();
                     return handler.Results;
                 default:
                     throw new NotSupportedException($"{eff.GetType().Name}");
@@ -52,6 +52,7 @@ namespace Nessos.Effects.Examples.NonDeterminism
                         var next = _continuation.MoveNext(useClonedStateMachine: true);
                         var results = NonDetEffectHandler.Run(next);
                         Results.AddRange(results);
+                        awaiter.Clear();
                     }
                     break;
             }
