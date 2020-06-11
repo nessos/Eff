@@ -7,7 +7,7 @@ namespace Nessos.Effects.Handlers
     public static class EffExecutor
     {
         /// <summary>
-        /// Runs supplied Eff computation using provided effect handler.
+        ///   Runs supplied Eff computation using provided effect handler.
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="eff">Eff computation to be run.</param>
