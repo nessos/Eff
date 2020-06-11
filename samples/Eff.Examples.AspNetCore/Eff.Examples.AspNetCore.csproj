@@ -13,7 +13,6 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
-    <PackageReference Include="MinVer" Version="2.3.0" PrivateAssets="All" />
   </ItemGroup>
 
   <Choose>

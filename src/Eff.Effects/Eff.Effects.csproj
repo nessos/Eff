@@ -14,6 +14,6 @@
 
   <ItemGroup>
     <PackageReference Include="Nullable" Version="1.2.1" PrivateAssets="All" />
-    <PackageReference Include="MinVer" Version="2.0.0" PrivateAssets="All" />
+    <PackageReference Include="MinVer" Version="2.3.0" PrivateAssets="All" />
   </ItemGroup>
 </Project>
