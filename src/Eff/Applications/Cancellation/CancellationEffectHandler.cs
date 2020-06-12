@@ -38,11 +38,11 @@ namespace Nessos.Effects.Cancellation
             return Task.CompletedTask;
         }
 
-        public override Task<Eff<TResult>> Handle<TResult>(AwaitEff<TResult> effect)
-        {
-            Token.ThrowIfCancellationRequested();
-            return base.Handle(effect);
-        }
+        //public override Task<Eff<TResult>> Handle<TResult>(AwaitEff<TResult> effect)
+        //{
+        //    Token.ThrowIfCancellationRequested();
+        //    return base.Handle(effect);
+        //}
 
         public override Task<Eff<TResult>> Handle<TResult>(DelayEff<TResult> effect)
         {
