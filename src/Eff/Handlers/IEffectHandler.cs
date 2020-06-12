@@ -33,7 +33,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Handles an eff computation that has thrown an exception
         /// </summary>
-        Task Handle<TResult>(ExceptionEff<TResult> exceptionEff);
+        Task<TResult> Handle<TResult>(ExceptionEff<TResult> exceptionEff);
 
         /// <summary>
         ///   Handles a delayed eff computation
@@ -44,6 +44,8 @@ namespace Nessos.Effects.Handlers
         ///   Handles an awaiting eff computation
         /// </summary>
         Task<Eff<TResult>> Handle<TResult>(AwaitEff<TResult> awaitEff);
+
+        //--------------------------------------------------//
 
         /// <summary>
         ///   Executes a top-level eff computation

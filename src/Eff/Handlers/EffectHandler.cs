@@ -33,7 +33,7 @@ namespace Nessos.Effects.Handlers
 
         public virtual Task<TResult> Handle<TResult>(ResultEff<TResult> setResultEff) => Task.FromResult(setResultEff.Result);
 
-        public virtual Task Handle<TResult>(ExceptionEff<TResult> setExceptionEff)
+        public virtual Task<TResult> Handle<TResult>(ExceptionEff<TResult> setExceptionEff)
         {
             System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(setExceptionEff.Exception).Throw();
             return default!;
@@ -72,13 +72,12 @@ namespace Nessos.Effects.Handlers
             {
                 switch (eff)
                 {
-                    case ExceptionEff<TResult> setException:
-                        await Handle(setException);
-                        break;
-                    case ResultEff<TResult> setResult:
-                        return await Handle(setResult);
-                    case DelayEff<TResult> delay:
-                        eff = await Handle(delay);
+                    case ResultEff<TResult> setResultEff:
+                        return await Handle(setResultEff);
+                    case ExceptionEff<TResult> setExceptionEff:
+                        return await Handle(setExceptionEff);
+                    case DelayEff<TResult> delayEff:
+                        eff = await Handle(delayEff);
                         break;
                     case AwaitEff<TResult> awaitEff:
                         eff = await Handle(awaitEff);
