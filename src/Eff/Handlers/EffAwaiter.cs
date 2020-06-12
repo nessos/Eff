@@ -165,9 +165,10 @@ namespace Nessos.Effects.Handlers
                     throw _exception;
                 }
 
+                
                 if (!_hasResult)
                 {
-                    throw new InvalidOperationException("EffAwaiter has not been completed.");
+                    throw new InvalidOperationException($"Awaiter of type {Id} has not been completed.");
                 }
 
                 return _result;

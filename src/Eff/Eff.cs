@@ -93,10 +93,10 @@ namespace Nessos.Effects
         /// </summary>
         /// <param name="handler">Effect handler to be used in execution.</param>
         /// <returns></returns>
-        public new Task<TResult> Run(IEffectHandler handler) => handler.Execute(this);
+        public new Task<TResult> Run(IEffectHandler handler) => handler.Handle(this);
 
 
-        protected override Task RunCore(IEffectHandler handler) => handler.Execute(this);
+        protected override Task RunCore(IEffectHandler handler) => handler.Handle(this);
         protected override Awaiter GetAwaiterCore() => GetAwaiter();
     }
 }

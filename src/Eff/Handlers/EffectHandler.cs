@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Nessos.Effects.Builders;
 
@@ -27,61 +28,47 @@ namespace Nessos.Effects.Handlers
 
         public virtual async Task Handle<TResult>(EffAwaiter<TResult> awaiter)
         {
-            var result = await Execute(awaiter.Eff);
+            var result = await Handle(awaiter.Eff);
             awaiter.SetResult(result);
         }
 
-        public virtual Task<TResult> Handle<TResult>(ResultEff<TResult> setResultEff) => Task.FromResult(setResultEff.Result);
-
-        public virtual Task<TResult> Handle<TResult>(ExceptionEff<TResult> setExceptionEff)
-        {
-            System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(setExceptionEff.Exception).Throw();
-            return default!;
-        }
-
-        public virtual Task<Eff<TResult>> Handle<TResult>(DelayEff<TResult> delayEff)
-        {
-            return Task.FromResult(delayEff.Continuation.MoveNext(useClonedStateMachine: CloneDelayedStateMachines));
-        }
-
-        public virtual async Task<Eff<TResult>> Handle<TResult>(AwaitEff<TResult> awaitEff)
-        {
-            var awaiter = awaitEff.Awaiter;
-
-            try
-            {
-                await awaiter.Accept(this);
-            }
-            catch (Exception ex)
-            {
-                awaiter.SetException(ex);
-            }
-
-            if (!awaiter.IsCompleted)
-            {
-                var exn = new InvalidOperationException($"Awaiter of type {awaiter.Id} has not been completed.");
-                awaiter.SetException(exn);
-            }
-
-            return awaitEff.Continuation.MoveNext();
-        }
-
-        public async Task<TResult> Execute<TResult>(Eff<TResult> eff)
+        public virtual async Task<TResult> Handle<TResult>(Eff<TResult> eff)
         {
             while (true)
             {
                 switch (eff)
                 {
                     case ResultEff<TResult> setResultEff:
-                        return await Handle(setResultEff);
+                        return setResultEff.Result;
+
                     case ExceptionEff<TResult> setExceptionEff:
-                        return await Handle(setExceptionEff);
+                        ExceptionDispatchInfo.Capture(setExceptionEff.Exception).Throw();
+                        return default!;
+
                     case DelayEff<TResult> delayEff:
-                        eff = await Handle(delayEff);
+                        eff = delayEff.Continuation.MoveNext(useClonedStateMachine: CloneDelayedStateMachines);
                         break;
+
                     case AwaitEff<TResult> awaitEff:
-                        eff = await Handle(awaitEff);
+                        var awaiter = awaitEff.Awaiter;
+                        try
+                        {
+                            await awaiter.Accept(this);
+                        }
+                        catch (Exception ex)
+                        {
+                            // clear any existing results and surface the current exception
+                            if (awaiter.IsCompleted)
+                            {
+                                awaiter.Clear();
+                            }
+
+                            awaiter.SetException(ex);
+                        }
+
+                        eff = awaitEff.Continuation.MoveNext();
                         break;
+
                     default:
                         Debug.Fail("Unrecognized Eff type.");
                         throw new Exception($"Internal error: unrecognized Eff type {eff.GetType().Name}.");

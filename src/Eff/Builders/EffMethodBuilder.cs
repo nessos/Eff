@@ -6,6 +6,9 @@ using Nessos.Effects.Handlers;
 
 namespace Nessos.Effects.Builders
 {
+    /// <summary>
+    ///   Typed Eff method builder
+    /// </summary>
     public class EffMethodBuilder<TResult> : EffMethodBuilderBase<TResult>
     {
         public Eff<TResult>? Task => _eff;
@@ -54,6 +57,9 @@ namespace Nessos.Effects.Builders
         }
     }
 
+    /// <summary>
+    ///   Untyped Eff method builder
+    /// </summary>
     public class EffMethodBuilder : EffMethodBuilderBase<Unit>
     {
         public Eff? Task => _eff;

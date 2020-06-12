@@ -398,7 +398,11 @@ namespace Nessos.Effects.Tests
         {
             public override string Id => throw new NotImplementedException();
 
-            public override Task Accept(IEffectHandler handler) => throw new NotImplementedException();
+            public override Task Accept(IEffectHandler handler)
+            {
+                SetException(new DivideByZeroException());
+                throw new NotImplementedException();
+            }
         }
 
         [Fact]
