@@ -22,7 +22,7 @@ namespace Nessos.Effects.Builders
         object IEffStateMachine<TResult>.State => _state!;
 
         protected void AwaitOnCompletedCore<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
-            where TAwaiter : EffAwaiterBase
+            where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
             awaiter.SetState(_state!);

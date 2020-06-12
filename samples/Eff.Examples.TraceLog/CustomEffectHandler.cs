@@ -28,7 +28,7 @@ namespace Nessos.Effects.Examples.TraceLog
         }
 
         public List<ResultLog> TraceLogs = new List<ResultLog>();
-        public async Task Log(object result, EffAwaiterBase effect)
+        public async Task Log(object result, Awaiter effect)
         {
             var log =
                 new ResultLog

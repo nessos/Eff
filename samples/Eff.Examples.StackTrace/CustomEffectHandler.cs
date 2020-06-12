@@ -39,7 +39,7 @@ namespace Nessos.Effects.Examples.StackTrace
             }
         }
 
-        public async Task Log(Exception ex, EffAwaiterBase awaiter)
+        public async Task Log(Exception ex, Awaiter awaiter)
         {
             var log =
                 new ExceptionLog

@@ -17,7 +17,7 @@ namespace Nessos.Effects.Tests
             Assert.False(awaiter.IsCompleted);
 
             Assert.Throws<InvalidOperationException>(() => awaiter.Result);
-            Assert.Throws<InvalidOperationException>(() => ((EffAwaiterBase)awaiter).Result);
+            Assert.Throws<InvalidOperationException>(() => ((Awaiter)awaiter).Result);
             Assert.Null(awaiter.Exception);
         }
 
@@ -33,7 +33,7 @@ namespace Nessos.Effects.Tests
             Assert.True(awaiter.IsCompleted);
 
             Assert.Equal(42, awaiter.Result);
-            Assert.Equal(42, ((EffAwaiterBase)awaiter).Result);
+            Assert.Equal(42, ((Awaiter)awaiter).Result);
             Assert.Null(awaiter.Exception);
         }
 
@@ -50,7 +50,7 @@ namespace Nessos.Effects.Tests
             Assert.True(awaiter.IsCompleted);
 
             Assert.Throws<DivideByZeroException>(() => awaiter.Result);
-            Assert.Throws<DivideByZeroException>(() => ((EffAwaiterBase)awaiter).Result);
+            Assert.Throws<DivideByZeroException>(() => ((Awaiter)awaiter).Result);
             Assert.Equal(exn, awaiter.Exception);
         }
 

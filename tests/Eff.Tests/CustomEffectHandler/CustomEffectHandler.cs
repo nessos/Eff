@@ -73,7 +73,7 @@ namespace Nessos.Effects.Tests
             }
         }
 
-        public async ValueTask<ValueTuple> Log(Exception ex, EffAwaiterBase effect)
+        public async ValueTask<ValueTuple> Log(Exception ex, Awaiter effect)
         {
             var log =
                 new ExceptionLog
@@ -101,7 +101,7 @@ namespace Nessos.Effects.Tests
             return ValueTuple.Create();
         }
 
-        public async ValueTask<ValueTuple> Log(object result, EffAwaiterBase effect)
+        public async ValueTask<ValueTuple> Log(object result, Awaiter effect)
         {
             var log =
                 new ResultLog

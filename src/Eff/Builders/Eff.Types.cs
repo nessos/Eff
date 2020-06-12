@@ -21,13 +21,13 @@ namespace Nessos.Effects.Builders
     /// </summary>
     public sealed class AwaitEff<TResult> : Eff<TResult>
     {
-        internal AwaitEff(EffAwaiterBase awaiter, IEffStateMachine<TResult> continuation)
+        internal AwaitEff(Awaiter awaiter, IEffStateMachine<TResult> continuation)
         {
             Awaiter = awaiter;
             Continuation = continuation;
         }
 
-        public EffAwaiterBase Awaiter { get; }
+        public Awaiter Awaiter { get; }
 
         /// <summary>
         ///  The current state object of the machine.

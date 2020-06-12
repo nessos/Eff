@@ -38,7 +38,7 @@ namespace Nessos.Effects.Builders
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : EffAwaiterBase
+            where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
@@ -47,7 +47,7 @@ namespace Nessos.Effects.Builders
 
         [SecuritySafeCritical]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : EffAwaiterBase
+            where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
@@ -87,7 +87,7 @@ namespace Nessos.Effects.Builders
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : EffAwaiterBase
+            where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
@@ -96,7 +96,7 @@ namespace Nessos.Effects.Builders
 
         [SecuritySafeCritical]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine stateMachine)
-            where TAwaiter : EffAwaiterBase
+            where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
             AwaitOnCompletedCore(ref awaiter, ref stateMachine);
