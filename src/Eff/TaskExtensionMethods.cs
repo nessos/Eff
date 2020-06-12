@@ -68,5 +68,26 @@ namespace Nessos.Effects
                 CallerLineNumber = callerLineNumber
             };
         }
+
+        /// <summary>
+        ///   Configures task instance as an Eff awaiter.
+        /// </summary>
+        /// <param name="task"></param>
+        /// <param name="callerMemberName"></param>
+        /// <param name="callerFilePath"></param>
+        /// <param name="callerLineNumber"></param>
+        public static EffAwaiterBase AsEff(this ValueTask task,
+                                    [CallerMemberName] string callerMemberName = "",
+                                    [CallerFilePath] string callerFilePath = "",
+                                    [CallerLineNumber] int callerLineNumber = 0)
+        {
+            async ValueTask<Unit> Wrap() { await task; return Unit.Value; }
+            return new Handlers.TaskAwaiter<Unit>(Wrap())
+            {
+                CallerMemberName = callerMemberName,
+                CallerFilePath = callerFilePath,
+                CallerLineNumber = callerLineNumber
+            };
+        }
     }
 }

@@ -8,29 +8,27 @@ using Nessos.Effects.Utils;
 
 namespace Nessos.Effects.Tests
 {
-    public class TestEffectHandler : EffectHandler
+    public class CustomEffectHandler : EffectHandler
     {
         private readonly DateTime _now;
 
-        public List<ExceptionLog> ExceptionLogs { get; }
-        public List<ResultLog> TraceLogs { get; }
+        public List<ExceptionLog> ExceptionLogs { get; } = new List<ExceptionLog>();
+        public List<ResultLog> TraceLogs { get; } = new List<ResultLog>();
 
-        public TestEffectHandler(DateTime now)
+        public CustomEffectHandler(DateTime now)
         {
             _now = now;
-            ExceptionLogs = new List<ExceptionLog>();
-            TraceLogs = new List<ResultLog>();
         }
 
-        public TestEffectHandler() : this(DateTime.Now)
+        public CustomEffectHandler() : this(DateTime.Now)
         { }
 
         public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             switch (awaiter)
             {
-                case EffectAwaiter<DateTime> { Effect: DateTimeNowEffect _ } _awaiter:
-                    _awaiter.SetResult(_now);
+                case EffectAwaiter<DateTime> { Effect: DateTimeNowEffect _ } awtr:
+                    awtr.SetResult(_now);
                     break;
                 case { Effect: FuncEffect<TResult> funcEffect }:
                     var result = funcEffect.Func();
@@ -119,6 +117,4 @@ namespace Nessos.Effects.Tests
             return ValueTuple.Create();
         }
     }
-
-
 }
