@@ -6,7 +6,7 @@ namespace Nessos.Effects.Builders
     /// <summary>
     ///   Eff instance representing a delayed computation.
     /// </summary>
-    public class DelayEff<TResult> : Eff<TResult>
+    public sealed class DelayEff<TResult> : Eff<TResult>
     {
         internal DelayEff(IEffStateMachine<TResult> continuation)
         {
@@ -19,7 +19,7 @@ namespace Nessos.Effects.Builders
     /// <summary>
     ///   Eff instance representing an await-ed computation
     /// </summary>
-    public class AwaitEff<TResult> : Eff<TResult>
+    public sealed class AwaitEff<TResult> : Eff<TResult>
     {
         internal AwaitEff(EffAwaiterBase awaiter, IEffStateMachine<TResult> continuation)
         {
@@ -28,6 +28,7 @@ namespace Nessos.Effects.Builders
         }
 
         public EffAwaiterBase Awaiter { get; }
+
         /// <summary>
         ///  The current state object of the machine.
         /// </summary>
@@ -37,7 +38,7 @@ namespace Nessos.Effects.Builders
     /// <summary>
     ///   Eff instance representing a completed computation.
     /// </summary>
-    public class ResultEff<TResult> : Eff<TResult>
+    public sealed class ResultEff<TResult> : Eff<TResult>
     {
         internal ResultEff(TResult result, object state)
         {
@@ -49,6 +50,7 @@ namespace Nessos.Effects.Builders
         ///   Materialized result of the computation
         /// </summary>
         public TResult Result { get; }
+
         /// <summary>
         ///  The current state object of the machine.
         /// </summary>
@@ -59,7 +61,7 @@ namespace Nessos.Effects.Builders
     ///   Eff instance representing an exceptional computation.
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public class ExceptionEff<TResult> : Eff<TResult>
+    public sealed class ExceptionEff<TResult> : Eff<TResult>
     {
         internal ExceptionEff(Exception exception, object state)
         {

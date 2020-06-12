@@ -50,7 +50,7 @@ namespace Nessos.Effects.Builders
             {
                 if (builder._state is null)
                 {
-                    throw new InvalidOperationException("Cannot clone uninitialized state machine builder");
+                    throw new InvalidOperationException("Cannot clone uninitialized state machine builder.");
                 }
 
                 var clonedBuilder = new TBuilder();

@@ -44,5 +44,10 @@ namespace Nessos.Effects.Handlers
         ///   Handles an awaiting eff computation
         /// </summary>
         Task<Eff<TResult>> Handle<TResult>(AwaitEff<TResult> awaitEff);
+
+        /// <summary>
+        ///   Executes a top-level eff computation
+        /// </summary>
+        Task<TResult> Execute<TResult>(Eff<TResult> eff);
     }
 }

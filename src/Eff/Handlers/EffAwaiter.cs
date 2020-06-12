@@ -152,8 +152,6 @@ namespace Nessos.Effects.Handlers
         [AllowNull]
         private TResult _result = default;
 
-        internal EffAwaiterBase() { }
-
         /// <summary>
         ///   Gets either the result value or throws the exception that have been stored in the awaiter.
         /// </summary>
@@ -239,15 +237,14 @@ namespace Nessos.Effects.Handlers
     /// </summary>
     public class EffAwaiter<TResult> : EffAwaiterBase<TResult>
     {
-        internal EffAwaiter(Eff<TResult> eff)
+        public EffAwaiter(Eff<TResult> eff)
         {
             Eff = eff;
         }
 
-        public override string Id => Eff.GetType().Name;
-
         public Eff<TResult> Eff { get; }
 
+        public override string Id => Eff.GetType().Name;
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
 
@@ -261,10 +258,9 @@ namespace Nessos.Effects.Handlers
             Effect = effect;
         }
 
-        public override string Id => Effect.GetType().Name;
-
         public Effect<TResult> Effect { get; }
 
+        public override string Id => Effect.GetType().Name;
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
 
@@ -278,9 +274,9 @@ namespace Nessos.Effects.Handlers
             Task = task;
         }
 
-        public override string Id => nameof(TaskAwaiter);
         public ValueTask<TResult> Task { get; }
 
+        public override string Id => nameof(TaskAwaiter);
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
 }

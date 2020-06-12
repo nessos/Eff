@@ -44,7 +44,6 @@ namespace Nessos.Effects
         ///   Runs supplied Eff computation using provided effect handler.
         /// </summary>
         /// <param name="handler">Effect handler to be used in execution.</param>
-        /// <returns></returns>
         public Task Run(IEffectHandler handler) => RunCore(handler);
         
         // Helper methods for exposing untyped variants of Run and GetAwaiter methods
@@ -94,10 +93,10 @@ namespace Nessos.Effects
         /// </summary>
         /// <param name="handler">Effect handler to be used in execution.</param>
         /// <returns></returns>
-        public new Task<TResult> Run(IEffectHandler handler) => EffExecutor.Execute(this, handler);
+        public new Task<TResult> Run(IEffectHandler handler) => handler.Execute(this);
 
 
-        protected override Task RunCore(IEffectHandler handler) => Run(handler);
+        protected override Task RunCore(IEffectHandler handler) => handler.Execute(this);
         protected override EffAwaiterBase GetAwaiterCore() => GetAwaiter();
     }
 }

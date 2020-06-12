@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Nessos.Effects.Builders;
 
 namespace Nessos.Effects.Handlers
 {
     /// <summary>
-    ///   Provides an abstract effect handler implementation which uses regular async method semantics.
+    ///   Provides a base effect handler implementation using regular async method semantics.
     /// </summary>
     public abstract class EffectHandler : IEffectHandler
     {
@@ -26,7 +27,7 @@ namespace Nessos.Effects.Handlers
 
         public virtual async Task Handle<TResult>(EffAwaiter<TResult> awaiter)
         {
-            var result = await EffExecutor.Execute(awaiter.Eff, this);
+            var result = await Execute(awaiter.Eff);
             awaiter.SetResult(result);
         }
 
@@ -50,17 +51,43 @@ namespace Nessos.Effects.Handlers
             try
             {
                 await awaiter.Accept(this);
-                if (!awaiter.IsCompleted)
-                {
-                    throw new InvalidOperationException($"Awaiter of type {awaiter.Id} has not been completed.");
-                }
             }
             catch (Exception ex)
             {
                 awaiter.SetException(ex);
             }
 
+            if (!awaiter.IsCompleted)
+            {
+                var exn = new InvalidOperationException($"Awaiter of type {awaiter.Id} has not been completed.");
+                awaiter.SetException(exn);
+            }
+
             return awaitEff.Continuation.MoveNext();
+        }
+
+        public async Task<TResult> Execute<TResult>(Eff<TResult> eff)
+        {
+            while (true)
+            {
+                switch (eff)
+                {
+                    case ExceptionEff<TResult> setException:
+                        await Handle(setException);
+                        break;
+                    case ResultEff<TResult> setResult:
+                        return await Handle(setResult);
+                    case DelayEff<TResult> delay:
+                        eff = await Handle(delay);
+                        break;
+                    case AwaitEff<TResult> awaitEff:
+                        eff = await Handle(awaitEff);
+                        break;
+                    default:
+                        Debug.Fail("Unrecognized Eff type.");
+                        throw new Exception($"Internal error: unrecognized Eff type {eff.GetType().Name}.");
+                }
+            }
         }
     }
 }
