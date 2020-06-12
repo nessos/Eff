@@ -21,8 +21,9 @@ namespace Nessos.Effects.Cancellation
             Token = token;
         }
 
-        // note that we do not throw check for cancellation when handling
-        // ResultEff and ExceptionEff, since they represent completed computations.
+        // NB. we do not throw check for cancellation when handling
+        // * ResultEff and ExceptionEff, since they represent completed computations.
+        // * AwaitEff, since throwing there can impact interpretation semantics.
 
         public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
@@ -37,12 +38,6 @@ namespace Nessos.Effects.Cancellation
 
             return Task.CompletedTask;
         }
-
-        //public override Task<Eff<TResult>> Handle<TResult>(AwaitEff<TResult> effect)
-        //{
-        //    Token.ThrowIfCancellationRequested();
-        //    return base.Handle(effect);
-        //}
 
         public override Task<Eff<TResult>> Handle<TResult>(DelayEff<TResult> effect)
         {

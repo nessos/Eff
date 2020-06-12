@@ -393,5 +393,32 @@ namespace Nessos.Effects.Tests
             var eff = Test(0);
             await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler));
         }
+
+        public class AwaiterThatThrows<T> : Awaiter<T>
+        {
+            public override string Id => throw new NotImplementedException();
+
+            public override Task Accept(IEffectHandler handler) => throw new NotImplementedException();
+        }
+
+        [Fact]
+        public async Task AwaiterThatThrows_ShouldNotInterruptInterpretation()
+        {
+            bool isFinallyBlockExecuted = false;
+            async Eff Test()
+            {
+                try
+                {
+                    await new AwaiterThatThrows<int>();
+                }
+                finally
+                {
+                    isFinallyBlockExecuted = true;
+                }
+            }
+
+            await Assert.ThrowsAsync<NotImplementedException>(() => Test().Run(Handler));
+            Assert.True(isFinallyBlockExecuted);
+        }
     }
 }
