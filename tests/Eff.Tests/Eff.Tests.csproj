@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\samples\Eff.Examples.NonDeterminism\Eff.Examples.NonDeterminism.csproj" />
     <ProjectReference Include="..\..\src\Eff\Eff.csproj" />
   </ItemGroup>
 
