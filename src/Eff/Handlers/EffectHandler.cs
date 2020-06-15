@@ -37,6 +37,9 @@ namespace Nessos.Effects.Handlers
             {
                 switch (eff)
                 {
+                    case null:
+                        throw new ArgumentNullException(nameof(eff));
+
                     case ResultEff<TResult> setResultEff:
                         return setResultEff.Result;
 

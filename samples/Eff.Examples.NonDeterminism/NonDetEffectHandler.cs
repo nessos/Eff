@@ -13,16 +13,17 @@ namespace Nessos.Effects.Examples.NonDeterminism
         {
             switch (eff)
             {
-                case ExceptionEff<TResult> setException:
-                    throw setException.Exception;
                 case ResultEff<TResult> setResult:
                     return new List<TResult> { setResult.Result };
+                case ExceptionEff<TResult> setException:
+                    throw setException.Exception;
                 case DelayEff<TResult> delay:
                     return Run(delay.StateMachine.MoveNext());
                 case AwaitEff<TResult> awaitEff:
                     var handler = new NonDetEffectHandler<TResult>(awaitEff.StateMachine);
                     awaitEff.Awaiter.Accept(handler).Wait();
                     return handler.Results;
+
                 default:
                     throw new NotSupportedException($"{eff.GetType().Name}");
             }
