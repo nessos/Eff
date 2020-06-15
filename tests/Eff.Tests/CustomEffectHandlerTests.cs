@@ -64,7 +64,7 @@ namespace Nessos.Effects.Tests
 
             Assert.Equal(2, result);
             Assert.Single(handler.TraceLogs);
-            Assert.Equal(result, (int)handler.TraceLogs[0].Result);
+            Assert.Equal(result, (int)handler.TraceLogs[0].Result!);
         }
 
         [Fact]
@@ -82,8 +82,8 @@ namespace Nessos.Effects.Tests
             Assert.Equal(2, result);
             Assert.Single(handler.TraceLogs);
             Assert.Single(handler.TraceLogs[0].Parameters);
-            Assert.Equal("x", handler.TraceLogs[0].Parameters[0].name);
-            Assert.Equal(1, (int)handler.TraceLogs[0].Parameters[0].value);
+            Assert.Equal("x", handler.TraceLogs[0].Parameters![0].name);
+            Assert.Equal(1, (int)handler.TraceLogs[0].Parameters![0].value!);
         }
 
         [Fact]
@@ -102,11 +102,11 @@ namespace Nessos.Effects.Tests
             Assert.Equal(2, result);
             Assert.Equal(2, handler.TraceLogs.Count);
             Assert.Single(handler.TraceLogs[0].LocalVariables);
-            Assert.Equal("y", handler.TraceLogs[0].LocalVariables[0].name);
-            Assert.Equal(0, (int)handler.TraceLogs[0].LocalVariables[0].value);
+            Assert.Equal("y", handler.TraceLogs[0].LocalVariables![0].name);
+            Assert.Equal(0, (int)handler.TraceLogs[0].LocalVariables![0].value!);
             Assert.Single(handler.TraceLogs[1].LocalVariables);
-            Assert.Equal("y", handler.TraceLogs[1].LocalVariables[0].name);
-            Assert.Equal(1, (int)handler.TraceLogs[1].LocalVariables[0].value);
+            Assert.Equal("y", handler.TraceLogs[1].LocalVariables![0].name!);
+            Assert.Equal(1, (int)handler.TraceLogs[1].LocalVariables![0].value!);
         }
 
         [Fact]
@@ -151,11 +151,11 @@ namespace Nessos.Effects.Tests
 
             Assert.Equal(2, result);
             Assert.Single(handler.CaptureStateParameters);
-            Assert.Equal("x", handler.CaptureStateParameters[0].name);
-            Assert.Equal(1, (int)handler.CaptureStateParameters[0].value);
+            Assert.Equal("x", handler.CaptureStateParameters![0].name);
+            Assert.Equal(1, (int)handler.CaptureStateParameters[0].value!);
             Assert.Single(handler.CaptureStateLocalVariables);
-            Assert.Equal("y", handler.CaptureStateLocalVariables[0].name);
-            Assert.Equal(1, (int)handler.CaptureStateLocalVariables[0].value);
+            Assert.Equal("y", handler.CaptureStateLocalVariables![0].name);
+            Assert.Equal(1, (int)handler.CaptureStateLocalVariables[0].value!);
         }
     }
 }

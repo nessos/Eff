@@ -37,12 +37,13 @@ namespace Nessos.Effects.Tests
             }
         }
 
-        public (string name, object value)[] CaptureStateParameters { private set; get; }
-        public (string name, object value)[] CaptureStateLocalVariables { private set; get; }
+        public (string name, object? value)[]? CaptureStateParameters { private set; get; }
+        public (string name, object? value)[]? CaptureStateLocalVariables { private set; get; }
+
         public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
         {
-            CaptureStateParameters = TraceHelpers.GetParametersValues(effect.State);
-            CaptureStateLocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State);
+            CaptureStateParameters = TraceHelpers.GetParametersValues(effect.State!);
+            CaptureStateLocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State!);
 
             try
             {
@@ -82,8 +83,8 @@ namespace Nessos.Effects.Tests
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
                     Exception = ex,
-                    Parameters = TraceHelpers.GetParametersValues(effect.State),
-                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State),
+                    Parameters = TraceHelpers.GetParametersValues(effect.State!),
+                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State!),
                 };
             ExceptionLogs.Add(log);
 
@@ -96,12 +97,12 @@ namespace Nessos.Effects.Tests
                 return ValueTuple.Create();
             }
 
-            ((Queue<ExceptionLog>)ex.Data["StackTraceLog"]).Enqueue(log);
+            ((Queue<ExceptionLog>)ex.Data["StackTraceLog"]!).Enqueue(log);
 
             return ValueTuple.Create();
         }
 
-        public async ValueTask<ValueTuple> Log(object result, Awaiter effect)
+        public async ValueTask<ValueTuple> Log(object? result, Awaiter effect)
         {
             var log =
                 new ResultLog
@@ -110,8 +111,8 @@ namespace Nessos.Effects.Tests
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
                     Result = result,
-                    Parameters = TraceHelpers.GetParametersValues(effect.State),
-                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State),
+                    Parameters = TraceHelpers.GetParametersValues(effect.State!),
+                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State!),
                 };
             TraceLogs.Add(log);
             return ValueTuple.Create();

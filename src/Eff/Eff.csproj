@@ -6,7 +6,6 @@
     <Description>Programming with effects and handlers in C#</Description>
     <LangVersion>8.0</LangVersion>
     <IsPackable>true</IsPackable>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

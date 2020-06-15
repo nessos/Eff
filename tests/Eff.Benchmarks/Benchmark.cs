@@ -10,8 +10,8 @@ namespace Nessos.Effects.Benchmarks
     [MemoryDiagnoser]
     public class Benchmark
     {
-        private int[] _data;
-        private IEffectHandler _handler;
+        private int[] _data = null!;
+        private IEffectHandler _handler = null!;
 
         [GlobalSetup]
         public void Setup()

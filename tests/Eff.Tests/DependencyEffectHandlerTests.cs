@@ -117,11 +117,11 @@ namespace Nessos.Effects.Tests
 
         private class Container : IContainer, IEnumerable
         {
-            private readonly Dictionary<Type, object> _dict = new Dictionary<Type, object>();
+            private readonly Dictionary<Type, object?> _dict = new Dictionary<Type, object?>();
 
             public void Add<TDependency>(TDependency dependency) => _dict[typeof(TDependency)] = dependency;
 
-            public TDependency Resolve<TDependency>() => (TDependency)_dict[typeof(TDependency)];
+            public TDependency Resolve<TDependency>() => (TDependency)_dict[typeof(TDependency)]!;
 
             public IEnumerator GetEnumerator() => _dict.Values.GetEnumerator();
         }
