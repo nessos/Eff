@@ -8,12 +8,12 @@ namespace Nessos.Effects.Builders
     /// </summary>
     public sealed class DelayEff<TResult> : Eff<TResult>
     {
-        internal DelayEff(IEffStateMachine<TResult> continuation)
+        internal DelayEff(EffStateMachine<TResult> stateMachine)
         {
-            Continuation = continuation;
+            StateMachine = stateMachine;
         }
 
-        public IEffStateMachine<TResult> Continuation { get; }
+        public EffStateMachine<TResult> StateMachine { get; }
     }
 
     /// <summary>
@@ -21,18 +21,21 @@ namespace Nessos.Effects.Builders
     /// </summary>
     public sealed class AwaitEff<TResult> : Eff<TResult>
     {
-        internal AwaitEff(Awaiter awaiter, IEffStateMachine<TResult> continuation)
+        internal AwaitEff(Awaiter awaiter, EffStateMachine<TResult> stateMachine)
         {
             Awaiter = awaiter;
-            Continuation = continuation;
+            StateMachine = stateMachine;
         }
 
+        /// <summary>
+        ///   The eff awaiter that the computation awaits.
+        /// </summary>
         public Awaiter Awaiter { get; }
 
         /// <summary>
         ///  The current state object of the machine.
         /// </summary>
-        public IEffStateMachine<TResult> Continuation { get; }
+        public EffStateMachine<TResult> StateMachine { get; }
     }
 
     /// <summary>

@@ -17,9 +17,9 @@ namespace Nessos.Effects.Examples.Maybe
                 case ResultEff<TResult> setResult:
                     return Maybe<TResult>.Just(setResult.Result);
                 case DelayEff<TResult> delay:
-                    return Run(delay.Continuation.MoveNext());
+                    return Run(delay.StateMachine.MoveNext());
                 case AwaitEff<TResult> awaitEff:
-                    var handler = new MaybeEffectHandlerImpl<TResult>(awaitEff.Continuation);
+                    var handler = new MaybeEffectHandlerImpl<TResult>(awaitEff.StateMachine);
                     awaitEff.Awaiter.Accept(handler).Wait();
                     return handler.Result;
                 default:
@@ -36,11 +36,11 @@ namespace Nessos.Effects.Examples.Maybe
 
         private class MaybeEffectHandlerImpl<TResult> : EffectHandler
         {
-            private readonly IEffStateMachine<TResult> _continuation;
+            private readonly EffStateMachine<TResult> _builder;
 
-            public MaybeEffectHandlerImpl(IEffStateMachine<TResult> continuation)
+            public MaybeEffectHandlerImpl(EffStateMachine<TResult> builder)
             {
-                _continuation = continuation;
+                _builder = builder;
             }
 
             public Maybe<TResult> Result { get; private set; } = Maybe<TResult>.Nothing;
@@ -53,7 +53,7 @@ namespace Nessos.Effects.Examples.Maybe
                         if (me.Result.HasValue)
                         {
                             awaiter.SetResult(me.Result.Value);
-                            var next = _continuation.MoveNext();
+                            var next = _builder.MoveNext();
                             Result = MaybeEffectHandler.Run(next);
                         }
                         break;
@@ -66,7 +66,7 @@ namespace Nessos.Effects.Examples.Maybe
                 if (result.HasValue)
                 {
                     awaiter.SetResult(result.Value);
-                    var next = _continuation.MoveNext();
+                    var next = _builder.MoveNext();
                     Result = MaybeEffectHandler.Run(next);
                 }
             }

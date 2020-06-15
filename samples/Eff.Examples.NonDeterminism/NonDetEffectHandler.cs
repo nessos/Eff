@@ -18,9 +18,9 @@ namespace Nessos.Effects.Examples.NonDeterminism
                 case ResultEff<TResult> setResult:
                     return new List<TResult> { setResult.Result };
                 case DelayEff<TResult> delay:
-                    return Run(delay.Continuation.MoveNext());
+                    return Run(delay.StateMachine.MoveNext());
                 case AwaitEff<TResult> awaitEff:
-                    var handler = new NonDetEffectHandler<TResult>(awaitEff.Continuation);
+                    var handler = new NonDetEffectHandler<TResult>(awaitEff.StateMachine);
                     awaitEff.Awaiter.Accept(handler).Wait();
                     return handler.Results;
                 default:
@@ -31,11 +31,11 @@ namespace Nessos.Effects.Examples.NonDeterminism
 
     public class NonDetEffectHandler<TResult> : EffectHandler
     {
-        private readonly IEffStateMachine<TResult> _continuation;
+        private readonly EffStateMachine<TResult> _stateMachine;
 
-        public NonDetEffectHandler(IEffStateMachine<TResult> continuation)
+        public NonDetEffectHandler(EffStateMachine<TResult> stateMachine)
         {
-            _continuation = continuation;
+            _stateMachine = stateMachine;
         }
 
         public List<TResult> Results { get; } = new List<TResult>();
@@ -49,7 +49,7 @@ namespace Nessos.Effects.Examples.NonDeterminism
                     foreach (var choice in nde.Choices)
                     {
                         awaiter.SetResult(choice);
-                        var next = _continuation.MoveNext(useClonedStateMachine: true);
+                        var next = _stateMachine.Clone().MoveNext();
                         var results = NonDetEffectHandler.Run(next);
                         Results.AddRange(results);
                         awaiter.Clear();

@@ -12,11 +12,10 @@ namespace Nessos.Effects.Handlers
     public abstract class EffectHandler : IEffectHandler
     {
         /// <summary>
-        ///   Determines whether the handler should clone Eff state machines before executing them.
-        ///   Should only be used in handler scenaria where the state machine will be executed more than once,
-        ///   e.g. in nondeterministic handlers. Defaults to false.
+        ///   If set to true, will use cloned copies of Eff state machines.
+        ///   Can be used to ensure thread safety of individual Eff instances.
         /// </summary>
-        public virtual bool CloneDelayedStateMachines { get; set; } = false;
+        public virtual bool UseClonedStateMachines { get; set; } = false;
 
         public abstract Task Handle<TResult>(EffectAwaiter<TResult> awaiter);
        
@@ -46,7 +45,8 @@ namespace Nessos.Effects.Handlers
                         return default!;
 
                     case DelayEff<TResult> delayEff:
-                        eff = delayEff.Continuation.MoveNext(useClonedStateMachine: CloneDelayedStateMachines);
+                        var stateMachine = UseClonedStateMachines ? delayEff.StateMachine.Clone() : delayEff.StateMachine;
+                        eff = stateMachine.MoveNext();
                         break;
 
                     case AwaitEff<TResult> awaitEff:
@@ -66,7 +66,7 @@ namespace Nessos.Effects.Handlers
                             awaiter.SetException(ex);
                         }
 
-                        eff = awaitEff.Continuation.MoveNext();
+                        eff = awaitEff.StateMachine.MoveNext();
                         break;
 
                     default:

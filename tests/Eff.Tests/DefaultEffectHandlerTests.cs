@@ -50,7 +50,7 @@ namespace Nessos.Effects.Tests
             }
 
             var eff = Foo();
-            var handler = new DefaultEffectHandler() { CloneDelayedStateMachines = true };
+            var handler = new DefaultEffectHandler() { UseClonedStateMachines = true };
 
             Assert.Equal(0, counter);
             await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => Task.Run(() => eff.Run(handler))));
@@ -72,7 +72,7 @@ namespace Nessos.Effects.Tests
             }
 
             var eff = Foo();
-            var handler = new DefaultEffectHandler() { CloneDelayedStateMachines = true };
+            var handler = new DefaultEffectHandler() { UseClonedStateMachines = true };
 
             Assert.Equal(0, counter);
             await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => Task.Run(() => eff.Run(handler))));
