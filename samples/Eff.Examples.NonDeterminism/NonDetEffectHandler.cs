@@ -62,21 +62,6 @@ namespace Nessos.Effects.Examples.NonDeterminism
             }
         }
 
-        public async Task Handle<TValue>(TaskAwaiter<TValue> awaiter)
-        {
-            try
-            {
-                var result = await awaiter.Task;
-                awaiter.SetResult(result);
-            }
-            catch (Exception e)
-            {
-                awaiter.SetException(e);
-            }
-
-            await ExecuteStateMachine();
-        }
-
         public async Task Handle<TValue>(EffAwaiter<TValue> awaiter)
         {
             List<TValue>? values = null;
@@ -104,6 +89,21 @@ namespace Nessos.Effects.Examples.NonDeterminism
                 awaiter.SetException(error);
                 await ExecuteStateMachine();
             }
+        }
+
+        public async Task Handle<TValue>(TaskAwaiter<TValue> awaiter)
+        {
+            try
+            {
+                var result = await awaiter.Task;
+                awaiter.SetResult(result);
+            }
+            catch (Exception e)
+            {
+                awaiter.SetException(e);
+            }
+
+            await ExecuteStateMachine();
         }
 
         public Task<TValue> Handle<TValue>(Eff<TValue> _)
