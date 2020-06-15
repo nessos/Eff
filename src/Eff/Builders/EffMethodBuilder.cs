@@ -20,7 +20,7 @@ namespace Nessos.Effects.Builders
 
         public void SetStateMachine(IAsyncStateMachine _)
         {
-
+            throw new NotSupportedException();
         }
 
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
@@ -72,7 +72,7 @@ namespace Nessos.Effects.Builders
 
         public void SetStateMachine(IAsyncStateMachine _)
         {
-
+            throw new NotSupportedException();
         }
 
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
