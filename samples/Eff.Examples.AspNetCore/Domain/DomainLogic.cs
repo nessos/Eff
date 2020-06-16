@@ -27,6 +27,11 @@ namespace Nessos.Effects.Examples.AspNetCore.Domain
 
         public static async Eff CreateNewUser(string username, string password)
         {
+            // lift arguments to effectful computation, 
+            // to allow for replay semantics to kick in.
+            username = await IO.Do(_ => username);
+            password = await IO.Do(_ => password);
+
             var newUsername = await CheckUsername(username);
 
             try
@@ -43,11 +48,20 @@ namespace Nessos.Effects.Examples.AspNetCore.Domain
 
         public static async Eff<bool> DeleteUser(string username)
         {
+            // lift arguments to effectful computation, 
+            // to allow for replay semantics to kick in.
+            username = await IO.Do(_ => username);
+
             return await IO<IUserService>.Do(svc => svc.Delete(username));
         }
 
         public static async Eff<bool> Authenticate(string username, string password)
         {
+            // lift arguments to effectful computation, 
+            // to allow for replay semantics to kick in.
+            username = await IO.Do(_ => username);
+            password = await IO.Do(_ => password);
+
             return await IO<IUserService>.Do(svc => svc.Authenticate(username, password));
         }
     }
