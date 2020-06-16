@@ -23,26 +23,9 @@ namespace Nessos.Effects.Handlers
         /// </summary>
         Task Handle<TResult>(TaskAwaiter<TResult> awaiter);
 
-        //--------------------------------------------------//
-
         /// <summary>
-        ///   Handles an eff computation with a materialized result
+        ///   Handles a top-level eff computation
         /// </summary>
-        Task<TResult> Handle<TResult>(ResultEff<TResult> resultEff);
-
-        /// <summary>
-        ///   Handles an eff computation that has thrown an exception
-        /// </summary>
-        Task Handle<TResult>(ExceptionEff<TResult> exceptionEff);
-
-        /// <summary>
-        ///   Handles a delayed eff computation
-        /// </summary>
-        Task<Eff<TResult>> Handle<TResult>(DelayEff<TResult> delayEff);
-
-        /// <summary>
-        ///   Handles an awaiting eff computation
-        /// </summary>
-        Task<Eff<TResult>> Handle<TResult>(AwaitEff<TResult> awaitEff);
+        Task<TResult> Handle<TResult>(Eff<TResult> eff);
     }
 }

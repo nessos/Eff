@@ -1,5 +1,4 @@
-﻿using Nessos.Effects.Builders;
-using Nessos.Effects.Handlers;
+﻿using Nessos.Effects.Handlers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,9 +20,6 @@ namespace Nessos.Effects.Cancellation
             Token = token;
         }
 
-        // note that we do not throw check for cancellation when handling
-        // ResultEff and ExceptionEff, since they represent completed computations.
-
         public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             Token.ThrowIfCancellationRequested();
@@ -38,18 +34,6 @@ namespace Nessos.Effects.Cancellation
             return Task.CompletedTask;
         }
 
-        public override Task<Eff<TResult>> Handle<TResult>(AwaitEff<TResult> effect)
-        {
-            Token.ThrowIfCancellationRequested();
-            return base.Handle(effect);
-        }
-
-        public override Task<Eff<TResult>> Handle<TResult>(DelayEff<TResult> effect)
-        {
-            Token.ThrowIfCancellationRequested();
-            return base.Handle(effect);
-        }
-
         public override Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
         {
             Token.ThrowIfCancellationRequested();
@@ -60,6 +44,12 @@ namespace Nessos.Effects.Cancellation
         {
             Token.ThrowIfCancellationRequested();
             return base.Handle(awaiter);
+        }
+
+        public override Task<TResult> Handle<TResult>(Eff<TResult> eff)
+        {
+            Token.ThrowIfCancellationRequested();
+            return base.Handle(eff);
         }
     }
 }

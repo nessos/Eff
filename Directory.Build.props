@@ -14,5 +14,6 @@
     <PackageReleaseNotes>Migrate to NetStandard</PackageReleaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>C# effects handlers</tags>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 </Project>

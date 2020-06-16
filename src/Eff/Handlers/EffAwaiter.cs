@@ -10,13 +10,13 @@ namespace Nessos.Effects.Handlers
     /// <summary>
     ///   Awaiter class for Eff computations.
     /// </summary>
-    public abstract class EffAwaiterBase : ICriticalNotifyCompletion
+    public abstract class Awaiter : ICriticalNotifyCompletion
     {
         protected bool _hasResult;
         protected Exception? _exception;
         protected object? _state;
 
-        internal EffAwaiterBase() { }
+        internal Awaiter() { }
 
         /// <summary>
         ///   Awaiter identifier for debugging purposes.
@@ -103,7 +103,7 @@ namespace Nessos.Effects.Handlers
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public EffAwaiterBase ConfigureAwait(
+        public Awaiter ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",
             [CallerFilePath] string callerFilePath = "",
             [CallerLineNumber] int callerLineNumber = 0)
@@ -117,7 +117,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   For use by EffMethodBuilder
         /// </summary>
-        public EffAwaiterBase GetAwaiter() => this;
+        public Awaiter GetAwaiter() => this;
 
         /// <summary>
         ///   For use by EffMethodBuilder
@@ -147,12 +147,10 @@ namespace Nessos.Effects.Handlers
     /// <summary>
     ///   Awaiter class for Eff computations.
     /// </summary>
-    public abstract class EffAwaiterBase<TResult> : EffAwaiterBase
+    public abstract class Awaiter<TResult> : Awaiter
     {
         [AllowNull]
         private TResult _result = default;
-
-        internal EffAwaiterBase() { }
 
         /// <summary>
         ///   Gets either the result value or throws the exception that have been stored in the awaiter.
@@ -167,9 +165,10 @@ namespace Nessos.Effects.Handlers
                     throw _exception;
                 }
 
+                
                 if (!_hasResult)
                 {
-                    throw new InvalidOperationException("EffAwaiter has not been completed.");
+                    throw new InvalidOperationException($"Awaiter of type {Id} has not been completed.");
                 }
 
                 return _result;
@@ -199,7 +198,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   For use by EffMethodBuilder
         /// </summary>
-        public new EffAwaiterBase<TResult> GetAwaiter() => this;
+        public new Awaiter<TResult> GetAwaiter() => this;
 
         /// <summary>
         ///   Configures the EffAwaiter instance with supplied parameters.
@@ -208,7 +207,7 @@ namespace Nessos.Effects.Handlers
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public new EffAwaiterBase<TResult> ConfigureAwait(
+        public new Awaiter<TResult> ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",
             [CallerFilePath] string callerFilePath = "",
             [CallerLineNumber] int callerLineNumber = 0)
@@ -237,50 +236,48 @@ namespace Nessos.Effects.Handlers
     /// <summary>
     ///   Awaiter for nested Eff computations.
     /// </summary>
-    public class EffAwaiter<TResult> : EffAwaiterBase<TResult>
+    public class EffAwaiter<TResult> : Awaiter<TResult>
     {
-        internal EffAwaiter(Eff<TResult> eff)
+        public EffAwaiter(Eff<TResult> eff)
         {
             Eff = eff;
         }
 
-        public override string Id => Eff.GetType().Name;
-
         public Eff<TResult> Eff { get; }
 
+        public override string Id => Eff.GetType().Name;
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
 
     /// <summary>
     ///   Awaiter for abstract Effects.
     /// </summary>
-    public class EffectAwaiter<TResult> : EffAwaiterBase<TResult>
+    public class EffectAwaiter<TResult> : Awaiter<TResult>
     {
         public EffectAwaiter(Effect<TResult> effect)
         {
             Effect = effect;
         }
 
-        public override string Id => Effect.GetType().Name;
-
         public Effect<TResult> Effect { get; }
 
+        public override string Id => Effect.GetType().Name;
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
 
     /// <summary>
     ///   Awaiter adapter for TPL tasks.
     /// </summary>
-    public class TaskAwaiter<TResult> : EffAwaiterBase<TResult>
+    public class TaskAwaiter<TResult> : Awaiter<TResult>
     {
         public TaskAwaiter(ValueTask<TResult> task)
         {
             Task = task;
         }
 
-        public override string Id => nameof(TaskAwaiter);
         public ValueTask<TResult> Task { get; }
 
+        public override string Id => nameof(TaskAwaiter);
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
 }

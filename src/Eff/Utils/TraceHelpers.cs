@@ -9,9 +9,9 @@ namespace Nessos.Effects.Utils
     {
         private static readonly ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> s_parametersInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
         private static readonly ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> s_localVariablesInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();
-        private static (string name, object value)[] GetValues((string name, FieldInfo fieldInfo)[] fieldsInfo, object state)
+        private static (string name, object? value)[] GetValues((string name, FieldInfo fieldInfo)[] fieldsInfo, object state)
         {
-            var result = new(string name, object value)[fieldsInfo.Length];
+            var result = new(string name, object? value)[fieldsInfo.Length];
             for (int j = 0; j < result.Length; j++)
             {
                 result[j] = (fieldsInfo[j].name, fieldsInfo[j].fieldInfo.GetValue(state));
@@ -41,24 +41,36 @@ namespace Nessos.Effects.Utils
             return localVariablesInfo;
         }
 
-        public static (string name, object value)[] GetParametersValues(object state)
+        public static (string name, object? value)[] GetParametersValues(object state)
         {
+            if (state is null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
             var parametersInfo = s_parametersInfoCache.GetOrAdd(state.GetType(), _ => TraceHelpers.GetParametersInfo(state));
 
             return GetValues(parametersInfo, state);
         }
 
-        public static (string name, object value)[] GetLocalVariablesValues(object state)
+        public static (string name, object? value)[] GetLocalVariablesValues(object state)
         {
+            if (state is null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
             var localVariablesInfo = s_localVariablesInfoCache.GetOrAdd(state.GetType(), _ => TraceHelpers.GetLocalVariablesInfo(state));
 
-            return GetValues(localVariablesInfo, state); ;
+            return GetValues(localVariablesInfo, state);
         }
 
         public static string GetMethodName(object state)
         {
-            if (state == null)
+            if (state is null)
+            {
                 throw new ArgumentNullException(nameof(state));
+            }
 
             var name = state.GetType().Name;
             if (name.StartsWith("<"))

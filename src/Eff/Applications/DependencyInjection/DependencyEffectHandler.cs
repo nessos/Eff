@@ -6,7 +6,7 @@ namespace Nessos.Effects.DependencyInjection
 {
 
     /// <summary>
-    ///   Reference effect handler implementation that passes container instances to dependency effects.
+    ///   Reference effect handler implementation that populates dependency effects with container contents.
     /// </summary>
     public class DependencyEffectHandler : EffectHandler
     {

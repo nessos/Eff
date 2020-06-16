@@ -23,7 +23,7 @@ namespace Nessos.Effects
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public EffAwaiterBase ConfigureAwait(
+        public Awaiter ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",
             [CallerFilePath] string callerFilePath = "",
             [CallerLineNumber] int callerLineNumber = 0)
@@ -38,19 +38,18 @@ namespace Nessos.Effects
         /// <summary>
         ///   Implements the awaitable/awaiter pattern for Eff.
         /// </summary>
-        public EffAwaiterBase GetAwaiter() => GetAwaiterCore();
+        public Awaiter GetAwaiter() => GetAwaiterCore();
 
         /// <summary>
         ///   Runs supplied Eff computation using provided effect handler.
         /// </summary>
         /// <param name="handler">Effect handler to be used in execution.</param>
-        /// <returns></returns>
         public Task Run(IEffectHandler handler) => RunCore(handler);
         
         // Helper methods for exposing untyped variants of Run and GetAwaiter methods
         // Can be removed once Covariant return types are brought to C#.
         protected abstract Task RunCore(IEffectHandler handler);
-        protected abstract EffAwaiterBase GetAwaiterCore();
+        protected abstract Awaiter GetAwaiterCore();
     }
 
     /// <summary>
@@ -71,7 +70,7 @@ namespace Nessos.Effects
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public new EffAwaiterBase<TResult> ConfigureAwait(
+        public new Awaiter<TResult> ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",
             [CallerFilePath] string callerFilePath = "",
             [CallerLineNumber] int callerLineNumber = 0)
@@ -87,17 +86,17 @@ namespace Nessos.Effects
         /// <summary>
         ///   Implements the awaitable/awaiter pattern for Eff
         /// </summary>
-        public new EffAwaiterBase<TResult> GetAwaiter() => new EffAwaiter<TResult>(this);
+        public new Awaiter<TResult> GetAwaiter() => new EffAwaiter<TResult>(this);
 
         /// <summary>
         ///   Runs supplied Eff computation using provided effect handler.
         /// </summary>
         /// <param name="handler">Effect handler to be used in execution.</param>
         /// <returns></returns>
-        public new Task<TResult> Run(IEffectHandler handler) => EffExecutor.Execute(this, handler);
+        public new Task<TResult> Run(IEffectHandler handler) => handler.Handle(this);
 
 
-        protected override Task RunCore(IEffectHandler handler) => Run(handler);
-        protected override EffAwaiterBase GetAwaiterCore() => GetAwaiter();
+        protected override Task RunCore(IEffectHandler handler) => handler.Handle(this);
+        protected override Awaiter GetAwaiterCore() => GetAwaiter();
     }
 }

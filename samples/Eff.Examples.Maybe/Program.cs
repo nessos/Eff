@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Nessos.Effects.Examples.Maybe
 {
@@ -24,9 +25,9 @@ namespace Nessos.Effects.Examples.Maybe
             }
         }
 
-        static void Main()
+        static async Task Main()
         {
-            MaybeEffectHandler.Run(Test());
+            await MaybeEffectHandler.Run(Test());
         }
     }
 }

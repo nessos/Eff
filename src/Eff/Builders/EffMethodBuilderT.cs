@@ -6,15 +6,15 @@ using Nessos.Effects.Handlers;
 namespace Nessos.Effects.Builders
 {
     /// <summary>
-    ///   Untyped Eff method builder
+    ///   Typed Eff method builder
     /// </summary>
-    public class EffMethodBuilder : EffStateMachine<Unit>
+    public class EffMethodBuilder<TResult> : EffStateMachine<TResult>
     {
-        public Eff? Task => _currentEff;
+        public Eff<TResult>? Task => _currentEff;
 
-        public static EffMethodBuilder Create()
+        public static EffMethodBuilder<TResult> Create()
         {
-            return new EffMethodBuilder();
+            return new EffMethodBuilder<TResult>();
         }
 
         public void SetStateMachine(IAsyncStateMachine _)
@@ -25,18 +25,18 @@ namespace Nessos.Effects.Builders
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
             _asyncStateMachine = stateMachine;
-            _cloner = StateMachineCloner<EffMethodBuilder, TStateMachine>.Cloner;
-            _currentEff = new DelayEff<Unit>(this);
+            _cloner = StateMachineCloner<EffMethodBuilder<TResult>,TStateMachine>.Cloner;
+            _currentEff = new DelayEff<TResult>(this);
         }
 
-        public void SetResult()
+        public void SetResult(TResult result)
         {
-            _currentEff = new ResultEff<Unit>(Unit.Value, _asyncStateMachine!);
+            _currentEff = new ResultEff<TResult>(result, _asyncStateMachine!);
         }
 
         public void SetException(Exception exception)
         {
-            _currentEff = new ExceptionEff<Unit>(exception, _asyncStateMachine!);
+            _currentEff = new ExceptionEff<TResult>(exception, _asyncStateMachine!);
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
@@ -44,7 +44,7 @@ namespace Nessos.Effects.Builders
             where TStateMachine : IAsyncStateMachine
         {
             awaiter.SetState(_asyncStateMachine!);
-            _currentEff = new AwaitEff<Unit>(awaiter, this);
+            _currentEff = new AwaitEff<TResult>(awaiter, this);
         }
 
 
@@ -54,7 +54,7 @@ namespace Nessos.Effects.Builders
             where TStateMachine : IAsyncStateMachine
         {
             awaiter.SetState(_asyncStateMachine!);
-            _currentEff = new AwaitEff<Unit>(awaiter, this);
+            _currentEff = new AwaitEff<TResult>(awaiter, this);
         }
     }
 }

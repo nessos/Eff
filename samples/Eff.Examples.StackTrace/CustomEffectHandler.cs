@@ -39,7 +39,7 @@ namespace Nessos.Effects.Examples.StackTrace
             }
         }
 
-        public async Task Log(Exception ex, EffAwaiterBase awaiter)
+        public async Task Log(Exception ex, Awaiter awaiter)
         {
             var log =
                 new ExceptionLog
@@ -48,8 +48,8 @@ namespace Nessos.Effects.Examples.StackTrace
                     CallerLineNumber = awaiter.CallerLineNumber,
                     CallerMemberName = awaiter.CallerMemberName,
                     Exception = ex,
-                    Parameters = TraceHelpers.GetParametersValues(awaiter.State),
-                    LocalVariables = TraceHelpers.GetLocalVariablesValues(awaiter.State),
+                    Parameters = TraceHelpers.GetParametersValues(awaiter.State!),
+                    LocalVariables = TraceHelpers.GetLocalVariablesValues(awaiter.State!),
                 };
             if (!ex.Data.Contains("StackTraceLog"))
             {
@@ -59,7 +59,7 @@ namespace Nessos.Effects.Examples.StackTrace
                 return;
             }
 
-            ((Queue<ExceptionLog>)ex.Data["StackTraceLog"]).Enqueue(log);
+            ((Queue<ExceptionLog>)ex.Data["StackTraceLog"]!).Enqueue(log);
         }
     }
 }

@@ -8,29 +8,27 @@ using Nessos.Effects.Utils;
 
 namespace Nessos.Effects.Tests
 {
-    public class TestEffectHandler : EffectHandler
+    public class CustomEffectHandler : EffectHandler
     {
         private readonly DateTime _now;
 
-        public List<ExceptionLog> ExceptionLogs { get; }
-        public List<ResultLog> TraceLogs { get; }
+        public List<ExceptionLog> ExceptionLogs { get; } = new List<ExceptionLog>();
+        public List<ResultLog> TraceLogs { get; } = new List<ResultLog>();
 
-        public TestEffectHandler(DateTime now)
+        public CustomEffectHandler(DateTime now)
         {
             _now = now;
-            ExceptionLogs = new List<ExceptionLog>();
-            TraceLogs = new List<ResultLog>();
         }
 
-        public TestEffectHandler() : this(DateTime.Now)
+        public CustomEffectHandler() : this(DateTime.Now)
         { }
 
         public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             switch (awaiter)
             {
-                case EffectAwaiter<DateTime> { Effect: DateTimeNowEffect _ } _awaiter:
-                    _awaiter.SetResult(_now);
+                case EffectAwaiter<DateTime> { Effect: DateTimeNowEffect _ } awtr:
+                    awtr.SetResult(_now);
                     break;
                 case { Effect: FuncEffect<TResult> funcEffect }:
                     var result = funcEffect.Func();
@@ -39,12 +37,13 @@ namespace Nessos.Effects.Tests
             }
         }
 
-        public (string name, object value)[] CaptureStateParameters { private set; get; }
-        public (string name, object value)[] CaptureStateLocalVariables { private set; get; }
+        public (string name, object? value)[]? CaptureStateParameters { private set; get; }
+        public (string name, object? value)[]? CaptureStateLocalVariables { private set; get; }
+
         public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
         {
-            CaptureStateParameters = TraceHelpers.GetParametersValues(effect.State);
-            CaptureStateLocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State);
+            CaptureStateParameters = TraceHelpers.GetParametersValues(effect.State!);
+            CaptureStateLocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State!);
 
             try
             {
@@ -75,7 +74,7 @@ namespace Nessos.Effects.Tests
             }
         }
 
-        public async ValueTask<ValueTuple> Log(Exception ex, EffAwaiterBase effect)
+        public async ValueTask<ValueTuple> Log(Exception ex, Awaiter effect)
         {
             var log =
                 new ExceptionLog
@@ -84,8 +83,8 @@ namespace Nessos.Effects.Tests
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
                     Exception = ex,
-                    Parameters = TraceHelpers.GetParametersValues(effect.State),
-                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State),
+                    Parameters = TraceHelpers.GetParametersValues(effect.State!),
+                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State!),
                 };
             ExceptionLogs.Add(log);
 
@@ -98,12 +97,12 @@ namespace Nessos.Effects.Tests
                 return ValueTuple.Create();
             }
 
-            ((Queue<ExceptionLog>)ex.Data["StackTraceLog"]).Enqueue(log);
+            ((Queue<ExceptionLog>)ex.Data["StackTraceLog"]!).Enqueue(log);
 
             return ValueTuple.Create();
         }
 
-        public async ValueTask<ValueTuple> Log(object result, EffAwaiterBase effect)
+        public async ValueTask<ValueTuple> Log(object? result, Awaiter effect)
         {
             var log =
                 new ResultLog
@@ -112,13 +111,11 @@ namespace Nessos.Effects.Tests
                     CallerLineNumber = effect.CallerLineNumber,
                     CallerMemberName = effect.CallerMemberName,
                     Result = result,
-                    Parameters = TraceHelpers.GetParametersValues(effect.State),
-                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State),
+                    Parameters = TraceHelpers.GetParametersValues(effect.State!),
+                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State!),
                 };
             TraceLogs.Add(log);
             return ValueTuple.Create();
         }
     }
-
-
 }
