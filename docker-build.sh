@@ -12,6 +12,7 @@ docker build -t $IMAGE_LABEL .
 docker run -t --name $IMAGE_LABEL $IMAGE_LABEL
 
 # copy artifacts
+rm -rf artifacts/
 docker cp $IMAGE_LABEL:/repo/artifacts/ .
 
 # stop & remove container
