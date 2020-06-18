@@ -19,8 +19,7 @@ namespace Nessos.Effects
                                             [CallerFilePath] string callerFilePath = "",
                                             [CallerLineNumber] int callerLineNumber = 0)
         {
-            async ValueTask<TResult> Wrap() { return await task;  }
-            return new Handlers.TaskAwaiter<TResult>(Wrap())
+            return new Handlers.TaskAwaiter<TResult>(new ValueTask<TResult>(task))
             {
                 CallerMemberName = callerMemberName,
                 CallerFilePath = callerFilePath,
