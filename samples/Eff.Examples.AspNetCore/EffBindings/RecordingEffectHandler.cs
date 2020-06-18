@@ -29,7 +29,16 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
 
         public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
-            await base.Handle(awaiter);
+            try
+            {
+                await base.Handle(awaiter);
+            }
+            catch (Exception e)
+            {
+                awaiter.Clear();
+                awaiter.SetException(e);
+            }
+
             var persistedEffect = PersistedEffect.FromCompletedAwaiter(awaiter);
             _results.Add(persistedEffect);
         }
