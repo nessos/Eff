@@ -21,13 +21,13 @@ namespace Nessos.Effects.Handlers
        
         public virtual async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
         {
-            var result = await awaiter.Task;
+            var result = await awaiter.Task.ConfigureAwait(false);
             awaiter.SetResult(result);
         }
 
         public virtual async Task Handle<TResult>(EffAwaiter<TResult> awaiter)
         {
-            var result = await Handle(awaiter.Eff);
+            var result = await Handle(awaiter.Eff).ConfigureAwait(false);
             awaiter.SetResult(result);
         }
 
@@ -56,7 +56,7 @@ namespace Nessos.Effects.Handlers
                         var awaiter = awaitEff.Awaiter;
                         try
                         {
-                            await awaiter.Accept(this);
+                            await awaiter.Accept(this).ConfigureAwait(false);
                         }
                         catch (Exception ex)
                         {

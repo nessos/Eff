@@ -22,7 +22,7 @@ namespace Nessos.Effects.DependencyInjection
             switch (awaiter.Effect)
             {
                 case DependencyEffect<TResult> depEffect:
-                    var result = await depEffect.Handle(Container);
+                    var result = await depEffect.Handle(Container).ConfigureAwait(false);
                     awaiter.SetResult(result);
 
                     break;

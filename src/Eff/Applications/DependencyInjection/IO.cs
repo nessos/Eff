@@ -35,7 +35,7 @@ namespace Nessos.Effects.DependencyInjection
         /// <param name="func">The effectful operation performed against the dependency.</param>
         public static DependencyEffect<TResult> Do<TResult>(Func<TDependency, Task<TResult>> func)
         {
-            return new FuncDependencyEffect<TDependency, TResult>(async dep => await func(dep));
+            return new FuncDependencyEffect<TDependency, TResult>(async dep => await func(dep).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Nessos.Effects.DependencyInjection
         /// <param name="func">The effectful operation performed against the dependency.</param>
         public static DependencyEffect<Unit> Do(Func<TDependency, Task> func)
         {
-            return new FuncDependencyEffect<TDependency, Unit>(async dep => { await func(dep); return Unit.Value; });
+            return new FuncDependencyEffect<TDependency, Unit>(async dep => { await func(dep).ConfigureAwait(false); return Unit.Value; });
         }
     }
 
@@ -79,7 +79,7 @@ namespace Nessos.Effects.DependencyInjection
         /// <param name="func">The effectful operation performed against the dependency.</param>
         public static DependencyEffect<TResult> Do<TResult>(Func<IContainer, Task<TResult>> func)
         {
-            return new ContainerFuncDependencyEffect<TResult>(async c => await func(c));
+            return new ContainerFuncDependencyEffect<TResult>(async c => await func(c).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Nessos.Effects.DependencyInjection
         /// <param name="func">The effectful operation performed against the dependency.</param>
         public static DependencyEffect<Unit> Do(Func<IContainer, Task> func)
         {
-            return new ContainerFuncDependencyEffect<Unit>(async c => { await func(c); return Unit.Value; });
+            return new ContainerFuncDependencyEffect<Unit>(async c => { await func(c).ConfigureAwait(false); return Unit.Value; });
         }
     }
 }

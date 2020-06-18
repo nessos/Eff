@@ -39,7 +39,7 @@ namespace Nessos.Effects
                                             [CallerFilePath] string callerFilePath = "",
                                             [CallerLineNumber] int callerLineNumber = 0)
         {
-            async ValueTask<Unit> Wrap() { await task; return Unit.Value; }
+            async ValueTask<Unit> Wrap() { await task.ConfigureAwait(false); return Unit.Value; }
             return new Handlers.TaskAwaiter<Unit>(Wrap())
             {
                 CallerMemberName = callerMemberName,
@@ -80,7 +80,7 @@ namespace Nessos.Effects
                                     [CallerFilePath] string callerFilePath = "",
                                     [CallerLineNumber] int callerLineNumber = 0)
         {
-            async ValueTask<Unit> Wrap() { await task; return Unit.Value; }
+            async ValueTask<Unit> Wrap() { await task.ConfigureAwait(false); return Unit.Value; }
             return new Handlers.TaskAwaiter<Unit>(Wrap())
             {
                 CallerMemberName = callerMemberName,
