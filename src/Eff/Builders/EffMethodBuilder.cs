@@ -26,6 +26,16 @@ namespace Nessos.Effects.Builders
             _delayEff = new DelayEff<EffMethodBuilder, TStateMachine, Unit>(in stateMachine);
         }
 
+        public void SetStateMachine(IAsyncStateMachine stateMachine)
+        {
+            _stateMachine = (EffStateMachine<Unit>)stateMachine;
+        }
+
+        void IEffMethodBuilder<Unit>.SetStateMachine(EffStateMachine<Unit> stateMachine)
+        {
+            _stateMachine = stateMachine;
+        }
+
         public void SetResult()
         {
             Debug.Assert(_stateMachine != null);
@@ -36,16 +46,6 @@ namespace Nessos.Effects.Builders
         {
             Debug.Assert(_stateMachine != null);
             _stateMachine!.SetEff(new ExceptionEff<Unit>(exception, _stateMachine));
-        }
-
-        public void SetStateMachine(IAsyncStateMachine stateMachine)
-        {
-            _stateMachine = (EffStateMachine<Unit>)stateMachine;
-        }
-
-        void IEffMethodBuilder<Unit>.SetStateMachine(EffStateMachine<Unit> stateMachine)
-        {
-            _stateMachine = stateMachine;
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
