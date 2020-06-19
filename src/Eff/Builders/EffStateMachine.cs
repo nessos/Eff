@@ -62,7 +62,7 @@ namespace Nessos.Effects.Builders
 
             if (null != (object?)default(TStateMachine)) // JIT optimization magic
             {
-                // state machine is a struct, state will be copied
+                // state machine is a struct, will be copied
                 _stateMachine = stateMachine;
                 _stateMachine.SetStateMachine(this); // pass the state machine to the underlying method builder
             }
@@ -107,12 +107,16 @@ namespace Nessos.Effects.Builders
             {
                 if (!s_isInitialized)
                 {
+                    Debug.Assert(typeof(TBuilder).IsValueType && !typeof(TStateMachine).IsValueType);
                     Initialize();
                 }
 
+                // Create a memberwise clone of the heap allocated state machine
                 var clonedStateMachine = (TStateMachine)s_memberwiseCloner!.Invoke(stateMachine, null);
-                IEffMethodBuilder<TResult> newBuilder = new TBuilder();
-                newBuilder.SetEffStateMachine(effStateMachine);
+                // Create a new method builder copy and initialize it with our eff state machine
+                var newBuilder = new TBuilder();
+                newBuilder.SetStateMachine(effStateMachine);
+                // Store a copy of the new method builder to the state machine
                 s_smBuilder!.SetValue(clonedStateMachine, newBuilder);
                 return clonedStateMachine;
             }
@@ -151,6 +155,6 @@ namespace Nessos.Effects.Builders
 
     internal interface IEffMethodBuilder<TResult>
     {
-        void SetEffStateMachine(EffStateMachine<TResult> stateMachine);
+        void SetStateMachine(EffStateMachine<TResult> stateMachine);
     }
 }

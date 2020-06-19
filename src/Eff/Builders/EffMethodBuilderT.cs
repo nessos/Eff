@@ -43,7 +43,7 @@ namespace Nessos.Effects.Builders
             _stateMachine = (EffStateMachine<TResult>)stateMachine;
         }
 
-        void IEffMethodBuilder<TResult>.SetEffStateMachine(EffStateMachine<TResult> stateMachine)
+        void IEffMethodBuilder<TResult>.SetStateMachine(EffStateMachine<TResult> stateMachine)
         {
             _stateMachine = stateMachine;
         }
