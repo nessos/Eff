@@ -41,6 +41,8 @@ namespace Nessos.Effects.Examples.StackTrace
 
         public async Task Log(Exception ex, Awaiter awaiter)
         {
+            var stateMachine = awaiter.AwaitingEvaluator?.GetStateMachine()!;
+
             var log =
                 new ExceptionLog
                 {
@@ -48,8 +50,8 @@ namespace Nessos.Effects.Examples.StackTrace
                     CallerLineNumber = awaiter.CallerLineNumber,
                     CallerMemberName = awaiter.CallerMemberName,
                     Exception = ex,
-                    Parameters = TraceHelpers.GetParametersValues(awaiter.State!),
-                    LocalVariables = TraceHelpers.GetLocalVariablesValues(awaiter.State!),
+                    Parameters = stateMachine.GetParameterValues(),
+                    LocalVariables = stateMachine.GetLocalVariableValues(),
                 };
             if (!ex.Data.Contains("StackTraceLog"))
             {

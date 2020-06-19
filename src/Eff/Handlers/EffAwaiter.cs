@@ -15,7 +15,7 @@ namespace Nessos.Effects.Handlers
     {
         protected bool _hasResult;
         protected Exception? _exception;
-        protected EffStateMachine? _stateMachine;
+        protected EffEvaluator? _evaluator;
 
         internal Awaiter() { }
 
@@ -54,9 +54,9 @@ namespace Nessos.Effects.Handlers
         public Exception? Exception => _exception;
 
         /// <summary>
-        ///   Gets the state machine object associated with the awaiter.
+        ///   Gets the evaluator instance associated with the awaiter.
         /// </summary>
-        public EffStateMachine? State => _stateMachine;
+        public EffEvaluator? AwaitingEvaluator => _evaluator;
 
         /// <summary>
         ///   Sets a result value for the awaiter.
@@ -83,9 +83,9 @@ namespace Nessos.Effects.Handlers
 
 
         /// <summary>
-        ///   Sets the state machine object associated with the awaiter.
+        ///   Sets the evaluator instance associated with the awaiter.
         /// </summary>
-        internal void SetState(EffStateMachine stateMachine) => _stateMachine = stateMachine;
+        internal void SetAwaitingEvaluator(EffEvaluator evaluator) => _evaluator = evaluator;
 
         /// <summary>
         ///   Processes the awaiter using the provided effect handler.

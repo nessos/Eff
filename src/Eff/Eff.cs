@@ -95,6 +95,7 @@ namespace Nessos.Effects
         /// <returns></returns>
         public new Task<TResult> Run(IEffectHandler handler) => handler.Handle(this);
 
+        public abstract EffEvaluator<TResult> GetEvaluator();
 
         protected override Task RunCore(IEffectHandler handler) => handler.Handle(this);
         protected override Awaiter GetAwaiterCore() => GetAwaiter();

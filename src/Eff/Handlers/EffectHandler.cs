@@ -32,23 +32,21 @@ namespace Nessos.Effects.Handlers
                 throw new ArgumentNullException(nameof(eff));
             }
 
+            var evaluator = eff.GetEvaluator();
+
             while (true)
             {
-                switch (eff)
+                evaluator.MoveNext();
+
+                switch (evaluator.Position)
                 {
-                    case DelayEff<TResult> delayEff:
-                        eff = delayEff.CreateStateMachine().MoveNext();
-                        break;
-
-                    case ResultEff<TResult> setResultEff:
-                        return setResultEff.Result;
-
-                    case ExceptionEff<TResult> setExceptionEff:
-                        ExceptionDispatchInfo.Capture(setExceptionEff.Exception).Throw();
+                    case EffEvaluatorPosition.Result:
+                        return evaluator.Result!;
+                    case EffEvaluatorPosition.Exception:
+                        ExceptionDispatchInfo.Capture(evaluator.Exception!).Throw();
                         return default!;
-
-                    case AwaitEff<TResult> awaitEff:
-                        var awaiter = awaitEff.Awaiter;
+                    case EffEvaluatorPosition.Await:
+                        var awaiter = evaluator.Awaiter!;
                         try
                         {
                             await awaiter.Accept(this).ConfigureAwait(false);
@@ -63,13 +61,11 @@ namespace Nessos.Effects.Handlers
 
                             awaiter.SetException(ex);
                         }
-
-                        eff = awaitEff.StateMachine.MoveNext();
                         break;
 
                     default:
-                        Debug.Fail("Unrecognized Eff type.");
-                        throw new Exception($"Internal error: unrecognized Eff type {eff.GetType().Name}.");
+                        Debug.Fail($"Unrecognized evaluator state {evaluator.Position}.");
+                        throw new Exception($"Internal error: unrecognized evaluator state {evaluator.Position}.");
                 }
             }
         }

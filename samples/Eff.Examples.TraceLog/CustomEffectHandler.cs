@@ -28,17 +28,18 @@ namespace Nessos.Effects.Examples.TraceLog
         }
 
         public List<ResultLog> TraceLogs = new List<ResultLog>();
-        public async Task Log(object? result, Awaiter effect)
+        public async Task Log(object? result, Awaiter awaiter)
         {
+            var stateMachine = awaiter.AwaitingEvaluator?.GetStateMachine()!;
             var log =
                 new ResultLog
                 {
-                    CallerFilePath = effect.CallerFilePath,
-                    CallerLineNumber = effect.CallerLineNumber,
-                    CallerMemberName = effect.CallerMemberName,
+                    CallerFilePath = awaiter.CallerFilePath,
+                    CallerLineNumber = awaiter.CallerLineNumber,
+                    CallerMemberName = awaiter.CallerMemberName,
                     Result = result,
-                    Parameters = TraceHelpers.GetParametersValues(effect.State!),
-                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State!),
+                    Parameters = stateMachine.GetParameterValues(),
+                    LocalVariables = stateMachine.GetLocalVariableValues(),
                 };
 
             TraceLogs.Add(log);

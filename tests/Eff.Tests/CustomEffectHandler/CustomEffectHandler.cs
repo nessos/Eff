@@ -40,20 +40,21 @@ namespace Nessos.Effects.Tests
         public (string name, object? value)[]? CaptureStateParameters { private set; get; }
         public (string name, object? value)[]? CaptureStateLocalVariables { private set; get; }
 
-        public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
         {
-            CaptureStateParameters = TraceHelpers.GetParametersValues(effect.State!);
-            CaptureStateLocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State!);
+            var stateMachine = awaiter.AwaitingEvaluator?.GetStateMachine()!;
+            CaptureStateParameters = stateMachine.GetParameterValues();
+            CaptureStateLocalVariables = stateMachine.GetLocalVariableValues();
 
             try
             {
-                var result = await effect.Task;
-                effect.SetResult(result);
-                await Log(result, effect);
+                var result = await awaiter.Task;
+                awaiter.SetResult(result);
+                await Log(result, awaiter);
             }
             catch (Exception ex)
             {
-                await Log(ex, effect);
+                await Log(ex, awaiter);
                 throw;
             }
 
@@ -74,17 +75,18 @@ namespace Nessos.Effects.Tests
             }
         }
 
-        public async ValueTask<ValueTuple> Log(Exception ex, Awaiter effect)
+        public async ValueTask<ValueTuple> Log(Exception ex, Awaiter awaiter)
         {
+            var stateMachine = awaiter.AwaitingEvaluator?.GetStateMachine()!;
             var log =
                 new ExceptionLog
                 {
-                    CallerFilePath = effect.CallerFilePath,
-                    CallerLineNumber = effect.CallerLineNumber,
-                    CallerMemberName = effect.CallerMemberName,
+                    CallerFilePath = awaiter.CallerFilePath,
+                    CallerLineNumber = awaiter.CallerLineNumber,
+                    CallerMemberName = awaiter.CallerMemberName,
                     Exception = ex,
-                    Parameters = TraceHelpers.GetParametersValues(effect.State!),
-                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State!),
+                    Parameters = stateMachine.GetParameterValues(),
+                    LocalVariables = stateMachine.GetLocalVariableValues(),
                 };
             ExceptionLogs.Add(log);
 
@@ -102,17 +104,18 @@ namespace Nessos.Effects.Tests
             return ValueTuple.Create();
         }
 
-        public async ValueTask<ValueTuple> Log(object? result, Awaiter effect)
+        public async ValueTask<ValueTuple> Log(object? result, Awaiter awaiter)
         {
+            var stateMachine = awaiter.AwaitingEvaluator?.GetStateMachine()!;
             var log =
                 new ResultLog
                 {
-                    CallerFilePath = effect.CallerFilePath,
-                    CallerLineNumber = effect.CallerLineNumber,
-                    CallerMemberName = effect.CallerMemberName,
+                    CallerFilePath = awaiter.CallerFilePath,
+                    CallerLineNumber = awaiter.CallerLineNumber,
+                    CallerMemberName = awaiter.CallerMemberName,
                     Result = result,
-                    Parameters = TraceHelpers.GetParametersValues(effect.State!),
-                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State!),
+                    Parameters = stateMachine.GetParameterValues(),
+                    LocalVariables = stateMachine.GetLocalVariableValues(),
                 };
             TraceLogs.Add(log);
             return ValueTuple.Create();

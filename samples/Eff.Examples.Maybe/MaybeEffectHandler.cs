@@ -8,25 +8,29 @@ namespace Nessos.Effects.Examples.Maybe
 {
     public static class MaybeEffectHandler
     {
-        public static async Task<Maybe<TResult>> Run<TResult>(Eff<TResult> eff)
+        public static Task<Maybe<TResult>> Run<TResult>(Eff<TResult> eff) => Run(eff.GetEvaluator());
+
+        private static async Task<Maybe<TResult>> Run<TResult>(EffEvaluator<TResult> evaluator)
         {
             while (true)
             {
-                switch (eff)
+                evaluator.MoveNext();
+
+                switch (evaluator.Position)
                 {
-                    case ExceptionEff<TResult> setException:
-                        throw setException.Exception;
-                    case ResultEff<TResult> setResult:
-                        return Maybe<TResult>.Just(setResult.Result);
-                    case DelayEff<TResult> delay:
-                        eff = delay.CreateStateMachine().MoveNext();
-                        break;
-                    case AwaitEff<TResult> awaitEff:
-                        var handler = new MaybeEffectHandlerImpl<TResult>(awaitEff.StateMachine);
-                        await awaitEff.Awaiter.Accept(handler);
+                    case EffEvaluatorPosition.Result:
+                        return Maybe<TResult>.Just(evaluator.Result);
+                    case EffEvaluatorPosition.Exception:
+                        throw evaluator.Exception!;
+
+                    case EffEvaluatorPosition.Await:
+                        var awaiter = evaluator.Awaiter!;
+                        var handler = new MaybeEffectHandlerImpl<TResult>(evaluator);
+                        await awaiter.Accept(handler);
                         return handler.Result;
+
                     default:
-                        throw new NotSupportedException($"{eff.GetType().Name}");
+                        throw new Exception($"Invalid evaluator state {evaluator.Position}.");
                 }
             }
         }
@@ -40,11 +44,11 @@ namespace Nessos.Effects.Examples.Maybe
 
         private class MaybeEffectHandlerImpl<TResult> : IEffectHandler
         {
-            private readonly EffStateMachine<TResult> _builder;
+            private readonly EffEvaluator<TResult> _evaluator;
 
-            public MaybeEffectHandlerImpl(EffStateMachine<TResult> builder)
+            public MaybeEffectHandlerImpl(EffEvaluator<TResult> evaluator)
             {
-                _builder = builder;
+                _evaluator = evaluator;
             }
 
             public Maybe<TResult> Result { get; private set; } = Maybe<TResult>.Nothing;
@@ -79,7 +83,7 @@ namespace Nessos.Effects.Examples.Maybe
                 await ExecuteStateMachine();
             }
 
-            public Task<TValue> Handle<TValue>(Eff<TValue> eff)
+            public Task<TValue> Handle<TValue>(Eff<TValue> _)
             {
                 throw new NotSupportedException();
             }
@@ -90,7 +94,7 @@ namespace Nessos.Effects.Examples.Maybe
             /// </summary>
             private async Task ExecuteStateMachine()
             {
-                Result = await MaybeEffectHandler.Run(_builder.MoveNext());
+                Result = await MaybeEffectHandler.Run(_evaluator);
             }
         }
     }

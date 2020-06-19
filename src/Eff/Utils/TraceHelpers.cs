@@ -1,8 +1,8 @@
-﻿using Nessos.Effects.Builders;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Nessos.Effects.Utils
 {
@@ -42,44 +42,53 @@ namespace Nessos.Effects.Utils
             return localVariablesInfo;
         }
 
-        public static (string name, object? value)[] GetParametersValues(EffStateMachine stateMachine)
+        /// <summary>
+        ///   Uses reflection to extract all parameter values from an async state machine.
+        /// </summary>
+        /// <param name="stateMachine">The state machine to extract metadata from.</param>
+        /// <returns>Key/value pairs containing all state machine parameter variables.</returns>
+        public static (string name, object? value)[] GetParameterValues(this IAsyncStateMachine stateMachine)
         {
             if (stateMachine is null)
             {
                 throw new ArgumentNullException(nameof(stateMachine));
             }
 
-            var state = stateMachine.GetState();
+            var parametersInfo = s_parametersInfoCache.GetOrAdd(stateMachine.GetType(), _ => GetParametersInfo(stateMachine));
 
-            var parametersInfo = s_parametersInfoCache.GetOrAdd(state.GetType(), _ => TraceHelpers.GetParametersInfo(state));
-
-            return GetValues(parametersInfo, state);
+            return GetValues(parametersInfo, stateMachine);
         }
 
-        public static (string name, object? value)[] GetLocalVariablesValues(EffStateMachine stateMachine)
+        /// <summary>
+        ///   Uses reflection to extract all local variables values from an async state machine.
+        /// </summary>
+        /// <param name="stateMachine">The state machine to extract metadata from.</param>
+        /// <returns>Key/value pairs containing all state machine local variables.</returns>
+        public static (string name, object? value)[] GetLocalVariableValues(this IAsyncStateMachine stateMachine)
         {
             if (stateMachine is null)
             {
                 throw new ArgumentNullException(nameof(stateMachine));
             }
 
-            var state = stateMachine.GetState();
+            var localVariablesInfo = s_localVariablesInfoCache.GetOrAdd(stateMachine.GetType(), _ => GetLocalVariablesInfo(stateMachine));
 
-            var localVariablesInfo = s_localVariablesInfoCache.GetOrAdd(state.GetType(), _ => TraceHelpers.GetLocalVariablesInfo(state));
-
-            return GetValues(localVariablesInfo, state);
+            return GetValues(localVariablesInfo, stateMachine);
         }
 
-        public static string GetMethodName(EffStateMachine stateMachine)
+        /// <summary>
+        ///   Uses reflection to extract the method name from an async state machine.
+        /// </summary>
+        /// <param name="stateMachine">The state machine to extract metadata from.</param>
+        /// <returns>The async method name.</returns>
+        public static string GetMethodName(this IAsyncStateMachine stateMachine)
         {
             if (stateMachine is null)
             {
                 throw new ArgumentNullException(nameof(stateMachine));
             }
 
-            var state = stateMachine.GetState();
-
-            var name = state.GetType().Name;
+            var name = stateMachine.GetType().Name;
             if (name.StartsWith("<"))
                 return name.Substring(1, name.LastIndexOf(">") - 1);
             else
