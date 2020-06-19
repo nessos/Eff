@@ -34,6 +34,8 @@ will have no observable side-effect in stdout.
 An `Eff` instance has to be run explicitly by passing an _effect handler_:
 
 ```csharp
+using Nessos.Effects.Handlers;
+
 hello.Run(new DefaultEffectHandler()); // "Hello, World!"
 ```
 

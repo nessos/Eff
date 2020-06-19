@@ -49,7 +49,7 @@ namespace Nessos.Effects.Builders
         where TStateMachine : IAsyncStateMachine
         where TBuilder : IEffMethodBuilder<TResult>, new()
     {
-        private readonly TStateMachine _stateMachine;
+        private TStateMachine _stateMachine;
 
         public EffStateMachine(in TStateMachine stateMachine)
         {
