@@ -140,7 +140,7 @@ namespace Nessos.Effects.Builders
         where TStateMachine : IAsyncStateMachine
         where TBuilder : IEffMethodBuilder<TResult>, new()
     {
-        private TStateMachine _stateMachine;
+        private readonly TStateMachine _stateMachine;
 
         public DelayEff(in TStateMachine stateMachine)
         {
