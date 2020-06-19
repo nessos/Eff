@@ -19,7 +19,7 @@ namespace Nessos.Effects.Examples.Maybe
                     case ResultEff<TResult> setResult:
                         return Maybe<TResult>.Just(setResult.Result);
                     case DelayEff<TResult> delay:
-                        eff = delay.StateMachine.MoveNext();
+                        eff = delay.CreateStateMachine().MoveNext();
                         break;
                     case AwaitEff<TResult> awaitEff:
                         var handler = new MaybeEffectHandlerImpl<TResult>(awaitEff.StateMachine);

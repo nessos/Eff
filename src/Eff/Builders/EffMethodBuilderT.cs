@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Security;
 using Nessos.Effects.Handlers;
@@ -8,43 +9,52 @@ namespace Nessos.Effects.Builders
     /// <summary>
     ///   Typed Eff method builder
     /// </summary>
-    public class EffMethodBuilder<TResult> : EffStateMachine<TResult>
+    public struct EffMethodBuilder<TResult> : IEffMethodBuilder<TResult>
     {
-        public Eff<TResult>? Task => _currentEff;
+        public DelayEff<TResult>? _delayEff;
+        private EffStateMachine<TResult>? _stateMachine;
 
         public static EffMethodBuilder<TResult> Create()
         {
             return new EffMethodBuilder<TResult>();
         }
 
-        public void SetStateMachine(IAsyncStateMachine _)
+        public Eff<TResult>? Task => _delayEff;
+
+        public void SetStateMachine(IAsyncStateMachine stateMachine)
         {
-            throw new NotSupportedException();
+            _stateMachine = (EffStateMachine<TResult>)stateMachine;
+        }
+
+        public void SetEffStateMachine(EffStateMachine<TResult> stateMachine)
+        {
+            _stateMachine = stateMachine;
         }
 
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
-            _asyncStateMachine = stateMachine;
-            _cloner = StateMachineCloner<EffMethodBuilder<TResult>,TStateMachine>.Cloner;
-            _currentEff = new DelayEff<TResult>(this);
+            _delayEff = new DelayEff<EffMethodBuilder<TResult>, TStateMachine, TResult>(in stateMachine);
         }
 
         public void SetResult(TResult result)
         {
-            _currentEff = new ResultEff<TResult>(result, _asyncStateMachine!);
+            Debug.Assert(_stateMachine != null);
+            _stateMachine!.SetEff(new ResultEff<TResult>(result, _stateMachine));
         }
 
         public void SetException(Exception exception)
         {
-            _currentEff = new ExceptionEff<TResult>(exception, _asyncStateMachine!);
+            Debug.Assert(_stateMachine != null);
+            _stateMachine!.SetEff(new ExceptionEff<TResult>(exception, _stateMachine));
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
             where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
-            awaiter.SetState(_asyncStateMachine!);
-            _currentEff = new AwaitEff<TResult>(awaiter, this);
+            Debug.Assert(_stateMachine != null);
+            awaiter.SetState(_stateMachine!);
+            _stateMachine!.SetEff(new AwaitEff<TResult>(awaiter, _stateMachine));
         }
 
 
@@ -53,8 +63,9 @@ namespace Nessos.Effects.Builders
             where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
-            awaiter.SetState(_asyncStateMachine!);
-            _currentEff = new AwaitEff<TResult>(awaiter, this);
+            Debug.Assert(_stateMachine != null);
+            awaiter.SetState(_stateMachine!);
+            _stateMachine!.SetEff(new AwaitEff<TResult>(awaiter, _stateMachine!));
         }
     }
 }

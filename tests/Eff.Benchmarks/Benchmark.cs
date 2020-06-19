@@ -16,7 +16,8 @@ namespace Nessos.Effects.Benchmarks
         [GlobalSetup]
         public void Setup()
         {
-            _data = Enumerable.Range(1, 100).ToArray();
+            const int offset = 50_000; // prevent task caching from kicking in
+            _data = Enumerable.Range(0, 100).Select(x => x + offset).ToArray(); 
             _handler = new DefaultEffectHandler();
         }
 

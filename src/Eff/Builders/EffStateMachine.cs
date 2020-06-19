@@ -6,70 +6,115 @@ using System.Runtime.CompilerServices;
 
 namespace Nessos.Effects.Builders
 {
-    public abstract class EffStateMachine<TResult>
+    /// <summary>
+    ///   A state machine holding an eff method computation
+    /// </summary>
+    public abstract class EffStateMachine
     {
-        protected IAsyncStateMachine? _asyncStateMachine;
-        protected Func<EffStateMachine<TResult>, EffStateMachine<TResult>>? _cloner;
-        protected Eff<TResult>? _currentEff;
+        internal EffStateMachine() { }
 
         /// <summary>
-        ///   Exposes the underlying async state machine object for metadata use.
+        ///   Gets a heap allocated copy of the underlying compiler-generated state machine, for metadata use.
         /// </summary>
-        public object State
-        {
-            get
-            {
-                Debug.Assert(_asyncStateMachine != null, "The state machine has not been initialized.");
-                return _asyncStateMachine!;
-            }
-        }
+        public abstract object GetState();
+    }
+
+    /// <summary>
+    ///   A state machine holding an eff method computation
+    /// </summary>
+    public abstract class EffStateMachine<TResult> : EffStateMachine
+    {
+        protected Eff<TResult>? _currentEff;
+
+        internal EffStateMachine() { }
 
         /// <summary>
         ///   Advances the state machine to its next stage.
         /// </summary>
         /// <returns>The Eff value denoting the next state of the computation.</returns>
-        public Eff<TResult> MoveNext()
+        public abstract Eff<TResult> MoveNext();
+
+        /// <summary>
+        ///   Creates a cloned copy of the eff state machine.
+        /// </summary>
+        public abstract EffStateMachine<TResult> Clone();
+
+        internal void SetEff(Eff<TResult> eff)
         {
-            Debug.Assert(_asyncStateMachine != null, "The state machine has not been initialized.");
-            _asyncStateMachine!.MoveNext();
+            _currentEff = eff;
+        }
+    }
+
+    internal sealed class EffStateMachine<TBuilder, TStateMachine, TResult> : EffStateMachine<TResult>, IAsyncStateMachine
+        where TStateMachine : IAsyncStateMachine
+        where TBuilder : IEffMethodBuilder<TResult>, new()
+    {
+        private TStateMachine _stateMachine;
+
+        public EffStateMachine(in TStateMachine stateMachine)
+        {
+            // Debug builds of async methods will generally produce class state machines,
+            // while Release builds generate struct machines.
+            // In the latter case state machine cloning can be achieved by simple struct copying
+            // and taking advantage of the SetStateMachine() method.
+            // However for objects we have to fall back to reflection. 
+            // This probably fine since it should only concern Debug builds.
+
+            if (null != (object?)default(TStateMachine)) // JIT optimization magic
+            {
+                // state machine is a struct, state will be copied
+                _stateMachine = stateMachine;
+                _stateMachine.SetStateMachine(this); // pass the state machine to the underlying method builder
+            }
+            else
+            {
+                // state machine is an object, use reflection to create a shallow copy
+                _stateMachine = ReflectionHelpers.Clone(this, stateMachine);
+            }
+        }
+
+        public override Eff<TResult> MoveNext()
+        {
+            _stateMachine.MoveNext();
+            Debug.Assert(_currentEff != null);
             return _currentEff!;
         }
 
-        /// <summary>
-        ///   Creates a cloned instance of the eff state machine.
-        /// </summary>
-        public EffStateMachine<TResult> Clone()
+        public override EffStateMachine<TResult> Clone()
         {
-            Debug.Assert(_cloner != null, "The state machine has not been initialized.");
-            return _cloner!(this);
+            return new EffStateMachine<TBuilder, TStateMachine, TResult>(in _stateMachine);
         }
 
-        /// <summary>
-        ///   Reflection-driven state machine cloner
-        /// </summary>
-        protected static class StateMachineCloner<TBuilder, TStateMachine> where TBuilder : EffStateMachine<TResult>, new()
-                                                                           where TStateMachine : IAsyncStateMachine
+        void IAsyncStateMachine.MoveNext()
+        {
+            throw new NotSupportedException();
+        }
+
+        void IAsyncStateMachine.SetStateMachine(IAsyncStateMachine _)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override object GetState() => _stateMachine;
+
+        private static class ReflectionHelpers
         {
             private static volatile bool s_isInitialized = false;
-            private static MethodInfo? s_memberwiseCloner; 
+            private static MethodInfo? s_memberwiseCloner;
             private static FieldInfo? s_smBuilder;
 
-            public static readonly Func<EffStateMachine<TResult>, TBuilder> Cloner = Clone;
-
-            private static TBuilder Clone(EffStateMachine<TResult> builder)
+            public static TStateMachine Clone(EffStateMachine<TResult> effStateMachine, TStateMachine stateMachine)
             {
                 if (!s_isInitialized)
                 {
                     Initialize();
                 }
 
-                var clonedBuilder = new TBuilder();
-                // clone the state machine and point the `<>t__builder` field to the new builder instance.
-                var clonedStateMachine = (IAsyncStateMachine)s_memberwiseCloner!.Invoke(builder._asyncStateMachine, null);
-                s_smBuilder?.SetValue(clonedStateMachine, clonedBuilder);
-                clonedBuilder._asyncStateMachine = clonedStateMachine;
-                clonedBuilder._cloner = builder._cloner;
-                return clonedBuilder;
+                var clonedStateMachine = (TStateMachine)s_memberwiseCloner!.Invoke(stateMachine, null);
+                IEffMethodBuilder<TResult> newBuilder = new TBuilder();
+                newBuilder.SetEffStateMachine(effStateMachine);
+                s_smBuilder!.SetValue(clonedStateMachine, newBuilder);
+                return clonedStateMachine;
             }
 
             private static void Initialize()
@@ -83,5 +128,29 @@ namespace Nessos.Effects.Builders
                 s_isInitialized = true;
             }
         }
+    }
+
+    // Holds a heap-allocated copy of the state machine passed to the method builder.
+    // Can be thought as a factory for EffStateMachines.
+    internal sealed class DelayEff<TBuilder, TStateMachine, TResult> : DelayEff<TResult>
+        where TStateMachine : IAsyncStateMachine
+        where TBuilder : IEffMethodBuilder<TResult>, new()
+    {
+        private TStateMachine _stateMachine;
+
+        public DelayEff(in TStateMachine stateMachine)
+        {
+            _stateMachine = stateMachine;
+        }
+
+        public override EffStateMachine<TResult> CreateStateMachine()
+        {
+            return new EffStateMachine<TBuilder, TStateMachine, TResult>(in _stateMachine);
+        }
+    }
+
+    internal interface IEffMethodBuilder<TResult>
+    {
+        void SetEffStateMachine(EffStateMachine<TResult> stateMachine);
     }
 }

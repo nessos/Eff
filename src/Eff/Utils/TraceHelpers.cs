@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nessos.Effects.Builders;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
@@ -41,36 +42,42 @@ namespace Nessos.Effects.Utils
             return localVariablesInfo;
         }
 
-        public static (string name, object? value)[] GetParametersValues(object state)
+        public static (string name, object? value)[] GetParametersValues(EffStateMachine stateMachine)
         {
-            if (state is null)
+            if (stateMachine is null)
             {
-                throw new ArgumentNullException(nameof(state));
+                throw new ArgumentNullException(nameof(stateMachine));
             }
+
+            var state = stateMachine.GetState();
 
             var parametersInfo = s_parametersInfoCache.GetOrAdd(state.GetType(), _ => TraceHelpers.GetParametersInfo(state));
 
             return GetValues(parametersInfo, state);
         }
 
-        public static (string name, object? value)[] GetLocalVariablesValues(object state)
+        public static (string name, object? value)[] GetLocalVariablesValues(EffStateMachine stateMachine)
         {
-            if (state is null)
+            if (stateMachine is null)
             {
-                throw new ArgumentNullException(nameof(state));
+                throw new ArgumentNullException(nameof(stateMachine));
             }
+
+            var state = stateMachine.GetState();
 
             var localVariablesInfo = s_localVariablesInfoCache.GetOrAdd(state.GetType(), _ => TraceHelpers.GetLocalVariablesInfo(state));
 
             return GetValues(localVariablesInfo, state);
         }
 
-        public static string GetMethodName(object state)
+        public static string GetMethodName(EffStateMachine stateMachine)
         {
-            if (state is null)
+            if (stateMachine is null)
             {
-                throw new ArgumentNullException(nameof(state));
+                throw new ArgumentNullException(nameof(stateMachine));
             }
+
+            var state = stateMachine.GetState();
 
             var name = state.GetType().Name;
             if (name.StartsWith("<"))

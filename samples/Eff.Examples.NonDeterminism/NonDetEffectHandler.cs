@@ -20,7 +20,7 @@ namespace Nessos.Effects.Examples.NonDeterminism
                     case ExceptionEff<TResult> setException:
                         throw setException.Exception;
                     case DelayEff<TResult> delay:
-                        eff = delay.StateMachine.MoveNext();
+                        eff = delay.CreateStateMachine().MoveNext();
                         break;
 
                     case AwaitEff<TResult> awaitEff:

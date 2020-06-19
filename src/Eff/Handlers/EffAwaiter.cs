@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nessos.Effects.Builders;
+using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -14,7 +15,7 @@ namespace Nessos.Effects.Handlers
     {
         protected bool _hasResult;
         protected Exception? _exception;
-        protected object? _state;
+        protected EffStateMachine? _stateMachine;
 
         internal Awaiter() { }
 
@@ -55,7 +56,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Gets the state machine object associated with the awaiter.
         /// </summary>
-        public object? State => _state;
+        public EffStateMachine? State => _stateMachine;
 
         /// <summary>
         ///   Sets a result value for the awaiter.
@@ -84,7 +85,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Sets the state machine object associated with the awaiter.
         /// </summary>
-        internal void SetState(object state) => _state = state;
+        internal void SetState(EffStateMachine stateMachine) => _stateMachine = stateMachine;
 
         /// <summary>
         ///   Processes the awaiter using the provided effect handler.

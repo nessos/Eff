@@ -1,19 +1,21 @@
 ﻿using Nessos.Effects.Handlers;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Nessos.Effects.Builders
 {
     /// <summary>
     ///   Eff instance representing a delayed computation.
     /// </summary>
-    public sealed class DelayEff<TResult> : Eff<TResult>
+    public abstract class DelayEff<TResult> : Eff<TResult>
     {
-        internal DelayEff(EffStateMachine<TResult> stateMachine)
-        {
-            StateMachine = stateMachine;
-        }
+        internal DelayEff() { }
 
-        public EffStateMachine<TResult> StateMachine { get; }
+        /// <summary>
+        ///   Creates a state machine instance that can be evaluated.
+        /// </summary>
+        /// <returns></returns>
+        public abstract EffStateMachine<TResult> CreateStateMachine();
     }
 
     /// <summary>
@@ -43,10 +45,10 @@ namespace Nessos.Effects.Builders
     /// </summary>
     public sealed class ResultEff<TResult> : Eff<TResult>
     {
-        internal ResultEff(TResult result, object state)
+        internal ResultEff(TResult result, EffStateMachine<TResult> stateMachine)
         {
             Result = result;
-            State = state;
+            StateMachine = stateMachine;
         }
 
         /// <summary>
@@ -57,7 +59,7 @@ namespace Nessos.Effects.Builders
         /// <summary>
         ///  The current state object of the machine.
         /// </summary>
-        public object State { get; }
+        public EffStateMachine<TResult> StateMachine { get; }
     }
 
     /// <summary>
@@ -66,10 +68,10 @@ namespace Nessos.Effects.Builders
     /// <typeparam name="TResult"></typeparam>
     public sealed class ExceptionEff<TResult> : Eff<TResult>
     {
-        internal ExceptionEff(Exception exception, object state)
+        internal ExceptionEff(Exception exception, EffStateMachine<TResult> stateMachine)
         {
             Exception = exception;
-            State = state;
+            StateMachine = stateMachine;
         }
 
         /// <summary>
@@ -80,6 +82,6 @@ namespace Nessos.Effects.Builders
         /// <summary>
         ///   The current state object of the machine.
         /// </summary>
-        public object State { get; }
+        public EffStateMachine<TResult> StateMachine { get; }
     }
 }
