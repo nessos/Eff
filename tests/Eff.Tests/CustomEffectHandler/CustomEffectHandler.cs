@@ -42,7 +42,7 @@ namespace Nessos.Effects.Tests
 
         public override async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
         {
-            var stateMachine = awaiter.StateMachine?.GetStateMachine()!;
+            var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine()!;
             CaptureStateParameters = stateMachine.GetParameterValues();
             CaptureStateLocalVariables = stateMachine.GetLocalVariableValues();
 
@@ -80,7 +80,7 @@ namespace Nessos.Effects.Tests
 
         public async ValueTask<ValueTuple> Log(Exception ex, Awaiter awaiter)
         {
-            var stateMachine = awaiter.StateMachine?.GetStateMachine()!;
+            var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine()!;
             var log =
                 new ExceptionLog
                 {
@@ -109,7 +109,7 @@ namespace Nessos.Effects.Tests
 
         public async ValueTask<ValueTuple> Log(object? result, Awaiter awaiter)
         {
-            var stateMachine = awaiter.StateMachine?.GetStateMachine()!;
+            var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine()!;
             var log =
                 new ResultLog
                 {

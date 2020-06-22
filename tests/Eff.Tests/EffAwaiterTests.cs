@@ -127,5 +127,23 @@ namespace Nessos.Effects.Tests
             Assert.True(awaiter.CallerFilePath?.Length > 0);
             Assert.True(awaiter.CallerLineNumber > 0);
         }
+
+        [Fact]
+        public static void StateMachine_GetAsyncStateMachine_ShouldReturnCopies()
+        {
+            async Eff<int> Test()
+            {
+                return await Task.FromResult(42).AsEff();
+            }
+
+            var stateMachine = Test().GetAwaiter();
+
+            var copy1 = stateMachine.GetAsyncStateMachine();
+            var copy2 = stateMachine.GetAsyncStateMachine();
+
+            Assert.NotNull(copy1);
+            Assert.NotNull(copy2);
+            Assert.NotSame(copy1, copy2);
+        }
     }
 }

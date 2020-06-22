@@ -51,7 +51,7 @@ namespace Nessos.Effects.Builders
             else
             {
                 // state machine is an object, use reflection to create a shallow copy
-                _stateMachine = ReflectionHelpers.Clone(this, stateMachine);
+                _stateMachine = ReflectionHelpers.Clone(stateMachine, this);
             }
         }
 
@@ -72,7 +72,19 @@ namespace Nessos.Effects.Builders
             throw new NotSupportedException();
         }
 
-        public override IAsyncStateMachine? GetStateMachine() => _stateMachine;
+        public override IAsyncStateMachine? GetAsyncStateMachine()
+        {
+            if (null != (object?)default(TStateMachine)) // JIT optimization magic
+            {
+                IAsyncStateMachine replica = _stateMachine;
+                replica.SetStateMachine(null);
+                return replica;
+            }
+            else
+            {
+                return ReflectionHelpers.Clone(_stateMachine);
+            }
+        }
 
         private static class ReflectionHelpers
         {
@@ -84,7 +96,7 @@ namespace Nessos.Effects.Builders
             ///   Provides a reflection-driven workaround for cloning class state machines.
             ///   Should only be needed in Debug builds.
             /// </summary>
-            public static TStateMachine Clone(EffStateMachine<TResult> effStateMachine, TStateMachine stateMachine)
+            public static TStateMachine Clone(TStateMachine stateMachine, EffStateMachine<TResult> effStateMachine)
             {
                 if (!s_isInitialized)
                 {
@@ -100,6 +112,18 @@ namespace Nessos.Effects.Builders
                 // Store a copy of the new method builder in the cloned state machine
                 s_smBuilder!.SetValue(clonedStateMachine, newBuilder);
                 return clonedStateMachine;
+            }
+
+            public static TStateMachine Clone(TStateMachine stateMachine)
+            {
+                if (!s_isInitialized)
+                {
+                    Debug.Assert(typeof(TBuilder).IsValueType && !typeof(TStateMachine).IsValueType);
+                    Initialize();
+                }
+
+                // Create a memberwise clone of the heap allocated state machine
+                return (TStateMachine)s_memberwiseCloner!.Invoke(stateMachine, null);
             }
 
             private static void Initialize()

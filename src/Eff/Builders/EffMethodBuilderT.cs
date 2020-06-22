@@ -11,7 +11,7 @@ namespace Nessos.Effects.Builders
     /// </summary>
     public struct EffMethodBuilder<TResult> : IEffMethodBuilder<TResult>
     {
-        private EffStateMachine<TResult>? _effAwaiter;
+        private EffStateMachine<TResult>? _effStateMachine;
 
         public static EffMethodBuilder<TResult> Create()
         {
@@ -27,7 +27,7 @@ namespace Nessos.Effects.Builders
 
         public void SetStateMachine(IAsyncStateMachine stateMachine)
         {
-            _effAwaiter = (EffStateMachine<TResult>)stateMachine;
+            _effStateMachine = (EffStateMachine<TResult>)stateMachine;
         }
 
         void IEffMethodBuilder<TResult>.SetStateMachine(EffStateMachine<TResult> stateMachine)
@@ -35,27 +35,27 @@ namespace Nessos.Effects.Builders
             // hijacks the IAsyncStateMachine.SetStateMachine mechanism,
             // in order to pass the state machine instance to the builder.
             // Only used when evaluating async methods from release builds.
-            _effAwaiter = stateMachine;
+            _effStateMachine = stateMachine;
         }
 
         public void SetResult(TResult result)
         {
-            Debug.Assert(_effAwaiter != null);
-            _effAwaiter!.BuilderSetResult(result);
+            Debug.Assert(_effStateMachine != null);
+            _effStateMachine!.BuilderSetResult(result);
         }
 
         public void SetException(Exception exception)
         {
-            Debug.Assert(_effAwaiter != null);
-            _effAwaiter!.BuilderSetException(exception);
+            Debug.Assert(_effStateMachine != null);
+            _effStateMachine!.BuilderSetException(exception);
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
             where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
-            Debug.Assert(_effAwaiter != null);
-            _effAwaiter!.BuilderSetAwaiter(awaiter);
+            Debug.Assert(_effStateMachine != null);
+            _effStateMachine!.BuilderSetAwaiter(awaiter);
         }
 
 
@@ -64,8 +64,8 @@ namespace Nessos.Effects.Builders
             where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
-            Debug.Assert(_effAwaiter != null);
-            _effAwaiter!.BuilderSetAwaiter(awaiter);
+            Debug.Assert(_effStateMachine != null);
+            _effStateMachine!.BuilderSetAwaiter(awaiter);
         }
     }
 }

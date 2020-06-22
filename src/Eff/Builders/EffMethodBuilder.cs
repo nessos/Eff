@@ -11,7 +11,7 @@ namespace Nessos.Effects.Builders
     /// </summary>
     public struct EffMethodBuilder : IEffMethodBuilder<Unit>
     {
-        private EffStateMachine<Unit>? _stateMachine;
+        private EffStateMachine<Unit>? _effStateMachine;
 
         public static EffMethodBuilder Create()
         {
@@ -30,32 +30,32 @@ namespace Nessos.Effects.Builders
             // hijacks the IAsyncStateMachine.SetStateMachine mechanism
             // in order to pass the eff state machine instance to the builder
             // only used when evaluating async methods from release builds.
-            _stateMachine = (EffStateMachine<Unit>)stateMachine;
+            _effStateMachine = (EffStateMachine<Unit>)stateMachine;
         }
 
         void IEffMethodBuilder<Unit>.SetStateMachine(EffStateMachine<Unit> stateMachine)
         {
-            _stateMachine = stateMachine;
+            _effStateMachine = stateMachine;
         }
 
         public void SetResult()
         {
-            Debug.Assert(_stateMachine != null);
-            _stateMachine!.BuilderSetResult(Unit.Value);
+            Debug.Assert(_effStateMachine != null);
+            _effStateMachine!.BuilderSetResult(Unit.Value);
         }
 
         public void SetException(Exception exception)
         {
-            Debug.Assert(_stateMachine != null);
-            _stateMachine!.BuilderSetException(exception);
+            Debug.Assert(_effStateMachine != null);
+            _effStateMachine!.BuilderSetException(exception);
         }
 
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
             where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
-            Debug.Assert(_stateMachine != null);
-            _stateMachine!.BuilderSetAwaiter(awaiter);
+            Debug.Assert(_effStateMachine != null);
+            _effStateMachine!.BuilderSetAwaiter(awaiter);
         }
 
         [SecuritySafeCritical]
@@ -63,8 +63,8 @@ namespace Nessos.Effects.Builders
             where TAwaiter : Awaiter
             where TStateMachine : IAsyncStateMachine
         {
-            Debug.Assert(_stateMachine != null);
-            _stateMachine!.BuilderSetAwaiter(awaiter);
+            Debug.Assert(_effStateMachine != null);
+            _effStateMachine!.BuilderSetAwaiter(awaiter);
         }
     }
 }

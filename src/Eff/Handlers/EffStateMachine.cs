@@ -10,9 +10,24 @@ namespace Nessos.Effects.Handlers
     /// </summary>
     public enum StateMachinePosition
     {
+        /// <summary>
+        ///   The state machine has not been run yet.
+        /// </summary>
         NotStarted = 0,
+
+        /// <summary>
+        ///   The state machine has completed with a Result value.
+        /// </summary>
         Result = 1,
+
+        /// <summary>
+        ///   The state machine has completed with an Exception value.
+        /// </summary>
         Exception = 2,
+
+        /// <summary>
+        ///   The state machine is suspended, pending an <see cref="Awaiter"/> value.
+        /// </summary>
         Await = 3,
     }
 
@@ -32,9 +47,9 @@ namespace Nessos.Effects.Handlers
         public abstract void MoveNext();
 
         /// <summary>
-        ///   Gets a heap allocated version of the underlying compiler-generated state machine, for metadata use.
+        ///   Gets a heap allocated copy of the underlying compiler-generated state machine, for tracing metadata use.
         /// </summary>
-        public abstract IAsyncStateMachine? GetStateMachine();
+        public abstract IAsyncStateMachine? GetAsyncStateMachine();
     }
 
     /// <summary>
@@ -63,9 +78,9 @@ namespace Nessos.Effects.Handlers
         public abstract EffStateMachine<TResult> Clone();
 
         /// <summary>
-        ///   Gets a heap allocated version of the underlying compiler-generated state machine, for metadata use.
+        ///   Gets a heap allocated copy of the underlying compiler-generated state machine, for tracing metadata use.
         /// </summary>
-        public abstract IAsyncStateMachine? GetStateMachine();
+        public abstract IAsyncStateMachine? GetAsyncStateMachine();
 
         /// <summary>
         ///   For use by EffMethodBuilder

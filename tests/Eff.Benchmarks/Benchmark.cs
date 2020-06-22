@@ -77,7 +77,6 @@ namespace Nessos.Effects.Benchmarks
                 static async Task<int> Square(int x) => await Echo(x) * await Echo(x);
                 static async Task<T> Echo<T>(T x) => x;
             }
-
         }
 
         private static class EffFlow
