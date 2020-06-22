@@ -55,7 +55,6 @@ namespace Nessos.Effects.Examples.NonDeterminism
                         {
                             awaiter.SetResult(result);
                             await ContinueStateMachine(clone: true);
-                            awaiter.Clear();
                         }
 
                         break;
@@ -75,18 +74,17 @@ namespace Nessos.Effects.Examples.NonDeterminism
                     error = e;
                 }
 
-                if (error is null)
+                if (values != null)
                 {
-                    foreach (var result in values!)
+                    foreach (var result in values)
                     {
                         stateMachine.SetResult(result);
                         await ContinueStateMachine(clone: true);
-                        stateMachine.Clear();
                     }
                 }
                 else
                 {
-                    stateMachine.SetException(error);
+                    stateMachine.SetException(error!);
                     await ContinueStateMachine();
                 }
             }

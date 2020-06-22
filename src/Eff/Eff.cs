@@ -94,7 +94,7 @@ namespace Nessos.Effects
         public new async Task<TResult> Run(IEffectHandler handler)
         {
             var stateMachine = GetAwaiter();
-            await handler.Handle(stateMachine);
+            await handler.Handle(stateMachine).ConfigureAwait(false);
             return stateMachine.Result;
         }
 
