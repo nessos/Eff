@@ -76,9 +76,7 @@ namespace Nessos.Effects.Builders
         {
             if (null != (object?)default(TStateMachine)) // JIT optimization magic
             {
-                IAsyncStateMachine replica = _stateMachine;
-                replica.SetStateMachine(null);
-                return replica;
+                return _stateMachine;
             }
             else
             {
