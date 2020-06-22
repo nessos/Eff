@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nessos.Effects.Handlers;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -20,19 +21,19 @@ namespace Nessos.Effects.Builders
             _stateMachine = stateMachine;
         }
 
-        public override EffEvaluator<TResult> GetEvaluator()
+        public override EffStateMachine<TResult> GetAwaiter()
         {
-            return new StateMachineEffEvaluator<TBuilder, TStateMachine, TResult>(in _stateMachine);
+            return new EffStateMachine<TBuilder, TStateMachine, TResult>(in _stateMachine);
         }
     }
 
-    internal sealed class StateMachineEffEvaluator<TBuilder, TStateMachine, TResult> : EffEvaluator<TResult>, IAsyncStateMachine
+    internal sealed class EffStateMachine<TBuilder, TStateMachine, TResult> : EffStateMachine<TResult>, IAsyncStateMachine
         where TStateMachine : IAsyncStateMachine
         where TBuilder : IEffMethodBuilder<TResult>, new()
     {
         private TStateMachine _stateMachine;
 
-        public StateMachineEffEvaluator(in TStateMachine stateMachine)
+        public EffStateMachine(in TStateMachine stateMachine)
         {
             // Debug builds of async methods will generally produce class state machines,
             // while Release builds generate struct machines.
@@ -45,7 +46,7 @@ namespace Nessos.Effects.Builders
             {
                 // state machine is a struct, will be copied
                 _stateMachine = stateMachine;
-                _stateMachine.SetStateMachine(this); // pass the evaluator to the underlying method builder
+                _stateMachine.SetStateMachine(this); // pass the eff state machine instance to the underlying method builder
             }
             else
             {
@@ -56,9 +57,9 @@ namespace Nessos.Effects.Builders
 
         public override void MoveNext() => _stateMachine.MoveNext();
 
-        public override EffEvaluator<TResult> Clone()
+        public override EffStateMachine<TResult> Clone()
         {
-            return new StateMachineEffEvaluator<TBuilder, TStateMachine, TResult>(in _stateMachine);
+            return new EffStateMachine<TBuilder, TStateMachine, TResult>(in _stateMachine);
         }
 
         void IAsyncStateMachine.MoveNext()
@@ -83,7 +84,7 @@ namespace Nessos.Effects.Builders
             ///   Provides a reflection-driven workaround for cloning class state machines.
             ///   Should only be needed in Debug builds.
             /// </summary>
-            public static TStateMachine Clone(EffEvaluator<TResult> evaluator, TStateMachine stateMachine)
+            public static TStateMachine Clone(EffStateMachine<TResult> effStateMachine, TStateMachine stateMachine)
             {
                 if (!s_isInitialized)
                 {
@@ -93,9 +94,9 @@ namespace Nessos.Effects.Builders
 
                 // Create a memberwise clone of the heap allocated state machine
                 var clonedStateMachine = (TStateMachine)s_memberwiseCloner!.Invoke(stateMachine, null);
-                // Create a new method builder copy and initialize it with our evaluator
+                // Create a new method builder copy and initialize it with our eff state machine
                 var newBuilder = new TBuilder();
-                newBuilder.SetEvaluator(evaluator);
+                newBuilder.SetStateMachine(effStateMachine);
                 // Store a copy of the new method builder in the cloned state machine
                 s_smBuilder!.SetValue(clonedStateMachine, newBuilder);
                 return clonedStateMachine;
@@ -117,6 +118,6 @@ namespace Nessos.Effects.Builders
     // Abstracts EffMethodBuilder types
     internal interface IEffMethodBuilder<TResult>
     {
-        void SetEvaluator(EffEvaluator<TResult> evaluator);
+        void SetStateMachine(EffStateMachine<TResult> stateMachine);
     }
 }

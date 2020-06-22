@@ -9,7 +9,7 @@ namespace Nessos.Effects.Examples.RecordReplay
         public Exception? Exception { get; set; }
         public object? Value { get; set; }
 
-        public static RecordedResult FromAwaiter(Awaiter awaiter)
+        public static RecordedResult FromAwaiter<TResult>(Awaiter<TResult> awaiter)
         {
             return (awaiter.Exception is Exception e) ?
                 new RecordedResult() { Exception = e } :

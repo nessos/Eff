@@ -19,53 +19,34 @@ namespace Nessos.Effects.Handlers
             awaiter.SetResult(result);
         }
 
-        public virtual async Task Handle<TResult>(EffAwaiter<TResult> awaiter)
+        public virtual async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
-            var result = await Handle(awaiter.Eff).ConfigureAwait(false);
-            awaiter.SetResult(result);
-        }
-
-        public virtual async Task<TResult> Handle<TResult>(Eff<TResult> eff)
-        {
-            if (eff is null)
-            {
-                throw new ArgumentNullException(nameof(eff));
-            }
-
-            var evaluator = eff.GetEvaluator();
-
             while (true)
             {
-                evaluator.MoveNext();
+                stateMachine.MoveNext();
 
-                switch (evaluator.Position)
+                switch (stateMachine.Position)
                 {
-                    case EffEvaluatorPosition.Result:
-                        return evaluator.Result!;
-                    case EffEvaluatorPosition.Exception:
-                        ExceptionDispatchInfo.Capture(evaluator.Exception!).Throw();
-                        return default!;
-                    case EffEvaluatorPosition.Await:
-                        var awaiter = evaluator.Awaiter!;
+                    case StateMachinePosition.Result:
+                    case StateMachinePosition.Exception:
+                        Debug.Assert(stateMachine.IsCompleted);
+                        return;
+
+                    case StateMachinePosition.Await:
+                        var awaiter = stateMachine.Awaiter!;
                         try
                         {
                             await awaiter.Accept(this).ConfigureAwait(false);
                         }
                         catch (Exception ex)
                         {
-                            // clear any existing results and surface the current exception
-                            if (awaiter.IsCompleted)
-                            {
-                                awaiter.Clear();
-                            }
-
                             awaiter.SetException(ex);
                         }
                         break;
 
                     default:
-                        Debug.Fail($"Unrecognized evaluator state {evaluator.Position}.");
-                        throw new Exception($"Internal error: unrecognized evaluator state {evaluator.Position}.");
+                        Debug.Fail($"Unrecognized state machine position {stateMachine.Position}.");
+                        throw new Exception($"Internal error: unrecognized state machine position {stateMachine.Position}.");
                 }
             }
         }

@@ -17,7 +17,6 @@ namespace Nessos.Effects.Tests
             Assert.False(awaiter.IsCompleted);
 
             Assert.Throws<InvalidOperationException>(() => awaiter.Result);
-            Assert.Throws<InvalidOperationException>(() => ((Awaiter)awaiter).Result);
             Assert.Null(awaiter.Exception);
         }
 
@@ -33,7 +32,6 @@ namespace Nessos.Effects.Tests
             Assert.True(awaiter.IsCompleted);
 
             Assert.Equal(42, awaiter.Result);
-            Assert.Equal(42, ((Awaiter)awaiter).Result);
             Assert.Null(awaiter.Exception);
         }
 
@@ -50,49 +48,30 @@ namespace Nessos.Effects.Tests
             Assert.True(awaiter.IsCompleted);
 
             Assert.Throws<DivideByZeroException>(() => awaiter.Result);
-            Assert.Throws<DivideByZeroException>(() => ((Awaiter)awaiter).Result);
             Assert.Equal(exn, awaiter.Exception);
         }
 
         [Fact]
-        public static void ValueCompleteAwaiter_SettingNewResult_ShouldThrowInvalidOperationException()
+        public static void ValueCompleteAwaiter_SettingNewResult_ShouldSucceed()
         {
             var awaiter = new TaskAwaiter<int>(new ValueTask<int>());
+            awaiter.SetResult(-1);
 
+            // Attempt to set new value
             awaiter.SetResult(42);
+            Assert.Equal(42, awaiter.Result);
+        }
 
-            // Attempt to set new values
-            Assert.Throws<InvalidOperationException>(() => awaiter.SetResult(-1));
-            Assert.Throws<InvalidOperationException>(() => awaiter.SetException(new Exception()));
+        [Fact]
+        public static void ExceptionCompleteAwaiter_SettingNewResult_ShouldSucceed()
+        {
+            var awaiter = new TaskAwaiter<int>(new ValueTask<int>());
+            awaiter.SetException(new DivideByZeroException());
 
-            // Validate postconditions
-            Assert.True(awaiter.HasResult);
-            Assert.False(awaiter.HasException);
-            Assert.True(awaiter.IsCompleted);
-
+            // Attempt to set new value
+            awaiter.SetResult(42);
             Assert.Equal(42, awaiter.Result);
             Assert.Null(awaiter.Exception);
-        }
-
-        [Fact]
-        public static void ExceptionCompleteAwaiter_SettingNewResult_ShouldThrowInvalidOperationException()
-        {
-            var awaiter = new TaskAwaiter<int>(new ValueTask<int>());
-
-            var exn = new DivideByZeroException();
-            awaiter.SetException(exn);
-
-            // Attempt to set new values
-            Assert.Throws<InvalidOperationException>(() => awaiter.SetResult(-1));
-            Assert.Throws<InvalidOperationException>(() => awaiter.SetException(new Exception()));
-
-            // Validate postconditions
-            Assert.False(awaiter.HasResult);
-            Assert.True(awaiter.HasException);
-            Assert.True(awaiter.IsCompleted);
-
-            Assert.Throws<DivideByZeroException>(() => awaiter.Result);
-            Assert.Equal(exn, awaiter.Exception);
         }
 
         [Fact]

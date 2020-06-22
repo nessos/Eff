@@ -1,10 +1,10 @@
 ﻿#pragma warning disable 1998
 
+using Nessos.Effects.Handlers;
+using Nessos.Effects.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Nessos.Effects.Handlers;
-using Nessos.Effects.Utils;
 
 namespace Nessos.Effects.Tests
 {
@@ -42,7 +42,7 @@ namespace Nessos.Effects.Tests
 
         public override async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
         {
-            var stateMachine = awaiter.AwaitingEvaluator?.GetStateMachine()!;
+            var stateMachine = awaiter.StateMachine?.GetStateMachine()!;
             CaptureStateParameters = stateMachine.GetParameterValues();
             CaptureStateLocalVariables = stateMachine.GetLocalVariableValues();
 
@@ -60,24 +60,27 @@ namespace Nessos.Effects.Tests
 
         }
 
-        public override async Task Handle<TResult>(EffAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
-            try
+            await base.Handle(stateMachine);
+            if (stateMachine.StateMachine != null)
             {
-                var result = await effect.Eff.Run(this);
-                effect.SetResult(result);
-                await Log(result, effect);
-            }
-            catch (Exception ex)
-            {
-                await Log(ex, effect);
-                throw;
+                switch (stateMachine.Position)
+                {
+                    case StateMachinePosition.Result:
+                        await Log(stateMachine.Result, stateMachine);
+                        break;
+
+                    case StateMachinePosition.Exception:
+                        await Log(stateMachine.Exception!, stateMachine);
+                        break;
+                }
             }
         }
 
         public async ValueTask<ValueTuple> Log(Exception ex, Awaiter awaiter)
         {
-            var stateMachine = awaiter.AwaitingEvaluator?.GetStateMachine()!;
+            var stateMachine = awaiter.StateMachine?.GetStateMachine()!;
             var log =
                 new ExceptionLog
                 {
@@ -106,7 +109,7 @@ namespace Nessos.Effects.Tests
 
         public async ValueTask<ValueTuple> Log(object? result, Awaiter awaiter)
         {
-            var stateMachine = awaiter.AwaitingEvaluator?.GetStateMachine()!;
+            var stateMachine = awaiter.StateMachine?.GetStateMachine()!;
             var log =
                 new ResultLog
                 {

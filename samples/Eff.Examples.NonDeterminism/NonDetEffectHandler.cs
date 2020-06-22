@@ -1,49 +1,47 @@
 ﻿#pragma warning disable 1998
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Nessos.Effects.Builders;
 using Nessos.Effects.Handlers;
 
 namespace Nessos.Effects.Examples.NonDeterminism
 {
     public static class NonDetEffectHandler
     {
-        public static Task<List<TResult>> Run<TResult>(Eff<TResult> eff) => Run(eff.GetEvaluator());
+        public static Task<List<TResult>> Run<TResult>(Eff<TResult> eff) => Run(eff.GetAwaiter());
 
-        private static async Task<List<TResult>> Run<TResult>(EffEvaluator<TResult> evaluator)
+        private static async Task<List<TResult>> Run<TResult>(EffStateMachine<TResult> stateMachine)
         {
             while (true)
             {
-                evaluator.MoveNext();
+                stateMachine.MoveNext();
 
-                switch (evaluator.Position)
+                switch (stateMachine.Position)
                 {
-                    case EffEvaluatorPosition.Result:
-                        return new List<TResult> { evaluator.Result };
-                    case EffEvaluatorPosition.Exception:
-                        throw evaluator.Exception!;
+                    case StateMachinePosition.Result:
+                        return new List<TResult> { stateMachine.Result };
+                    case StateMachinePosition.Exception:
+                        throw stateMachine.Exception!;
 
-                    case EffEvaluatorPosition.Await:
-                        var awaiter = evaluator.Awaiter!;
-                        var handler = new NonDetEffectHandlerImpl<TResult>(evaluator);
+                    case StateMachinePosition.Await:
+                        var awaiter = stateMachine.Awaiter!;
+                        var handler = new NonDetEffectHandlerImpl<TResult>(stateMachine);
                         await awaiter.Accept(handler);
                         return handler.Results;
 
                     default:
-                        throw new Exception($"Invalid evaluator state {evaluator.Position}.");
+                        throw new Exception($"Invalid state machine position {stateMachine.Position}.");
                 }
             }
         }
 
         private class NonDetEffectHandlerImpl<TResult> : IEffectHandler
         {
-            private readonly EffEvaluator<TResult> _evaluator;
+            private readonly EffStateMachine<TResult> _stateMachine;
 
-            public NonDetEffectHandlerImpl(EffEvaluator<TResult> evaluator)
+            public NonDetEffectHandlerImpl(EffStateMachine<TResult> stateMachine)
             {
-                _evaluator = evaluator;
+                _stateMachine = stateMachine;
             }
 
             public List<TResult> Results { get; } = new List<TResult>();
@@ -56,7 +54,7 @@ namespace Nessos.Effects.Examples.NonDeterminism
                         foreach (var result in nde.Choices)
                         {
                             awaiter.SetResult(result);
-                            await ExecuteEvaluator(useClonedEvaluator: true);
+                            await ContinueStateMachine(clone: true);
                             awaiter.Clear();
                         }
 
@@ -64,13 +62,13 @@ namespace Nessos.Effects.Examples.NonDeterminism
                 }
             }
 
-            public async Task Handle<TValue>(EffAwaiter<TValue> awaiter)
+            public async Task Handle<TValue>(EffStateMachine<TValue> stateMachine)
             {
                 List<TValue>? values = null;
                 Exception? error = null;
                 try
                 {
-                    values = await NonDetEffectHandler.Run(awaiter.Eff);
+                    values = await NonDetEffectHandler.Run(stateMachine);
                 }
                 catch (Exception e)
                 {
@@ -81,15 +79,15 @@ namespace Nessos.Effects.Examples.NonDeterminism
                 {
                     foreach (var result in values!)
                     {
-                        awaiter.SetResult(result);
-                        await ExecuteEvaluator(useClonedEvaluator: true);
-                        awaiter.Clear();
+                        stateMachine.SetResult(result);
+                        await ContinueStateMachine(clone: true);
+                        stateMachine.Clear();
                     }
                 }
                 else
                 {
-                    awaiter.SetException(error);
-                    await ExecuteEvaluator();
+                    stateMachine.SetException(error);
+                    await ContinueStateMachine();
                 }
             }
 
@@ -105,22 +103,17 @@ namespace Nessos.Effects.Examples.NonDeterminism
                     awaiter.SetException(e);
                 }
 
-                await ExecuteEvaluator();
-            }
-
-            public Task<TValue> Handle<TValue>(Eff<TValue> _)
-            {
-                throw new NotSupportedException();
+                await ContinueStateMachine();
             }
 
             /// <summary>
             ///   Executes the state machine to completion, using non-deterministic semantics,
             ///   appending any results to the handler state.
             /// </summary>
-            private async Task ExecuteEvaluator(bool useClonedEvaluator = false)
+            private async Task ContinueStateMachine(bool clone = false)
             {
-                var evaluator = useClonedEvaluator ? _evaluator.Clone() : _evaluator;
-                var results = await NonDetEffectHandler.Run(evaluator);
+                var stateMachine = clone ? _stateMachine.Clone() : _stateMachine;
+                var results = await NonDetEffectHandler.Run(stateMachine);
                 Results.AddRange(results);
             }
         }

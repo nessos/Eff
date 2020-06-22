@@ -1,7 +1,5 @@
-﻿using System;
+﻿using Nessos.Effects.Handlers;
 using System.Runtime.CompilerServices;
-using Nessos.Effects.Builders;
-using Nessos.Effects.Handlers;
 
 namespace Nessos.Effects
 {
@@ -19,7 +17,7 @@ namespace Nessos.Effects
     /// <typeparam name="TResult">Return type of the abstract effect.</typeparam>
     public abstract class Effect<TResult>
     {
-        public Awaiter<TResult> GetAwaiter() => new EffectAwaiter<TResult>(this);
+        public EffectAwaiter<TResult> GetAwaiter() => new EffectAwaiter<TResult>(this);
 
         /// <summary>
         ///   Configures an EffAwaiter instance with supplied parameters.
@@ -28,7 +26,7 @@ namespace Nessos.Effects
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public Awaiter<TResult> ConfigureAwait(
+        public EffectAwaiter<TResult> ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",
             [CallerFilePath] string callerFilePath = "",
             [CallerLineNumber] int callerLineNumber = 0)

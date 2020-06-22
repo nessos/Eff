@@ -1,5 +1,4 @@
-﻿using Nessos.Effects.Builders;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -9,14 +8,10 @@ using System.Threading.Tasks;
 namespace Nessos.Effects.Handlers
 {
     /// <summary>
-    ///   Awaiter class for Eff computations.
+    ///   Base awaiter class for Eff awaitables.
     /// </summary>
     public abstract class Awaiter : ICriticalNotifyCompletion
     {
-        protected bool _hasResult;
-        protected Exception? _exception;
-        protected EffEvaluator? _evaluator;
-
         internal Awaiter() { }
 
         /// <summary>
@@ -31,12 +26,23 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Returns true if the awaiter has been completed with a result value.
         /// </summary>
-        public bool HasResult => _hasResult;
+        public bool HasResult { get; internal set; }
+
+        /// <summary>
+        ///   Gets the exception result for the awaiter.
+        /// </summary>
+        public Exception? Exception { get; internal set; }
+
+        /// <summary>
+        ///   Gets a state machine awaiting on the current awaiter instance.
+        /// </summary>
+        [DisallowNull]
+        public IEffStateMachine? StateMachine { get; internal set; }
 
         /// <summary>
         ///   Returns true if the awaiter has been completed with an exception value.
         /// </summary>
-        public bool HasException => !(_exception is null);
+        public bool HasException => !(Exception is null);
 
         /// <summary>
         ///   Returns true if the awaiter has been completed with either a result or an exception.
@@ -44,48 +50,9 @@ namespace Nessos.Effects.Handlers
         public bool IsCompleted => HasResult || HasException;
 
         /// <summary>
-        ///   Gets either the result value or throws the exception that have been stored in the awaiter.
-        /// </summary>
-        public object? Result => GetResultUntyped();
-
-        /// <summary>
-        ///   Gets the exception result for the awaiter.
-        /// </summary>
-        public Exception? Exception => _exception;
-
-        /// <summary>
-        ///   Gets the evaluator instance associated with the awaiter.
-        /// </summary>
-        public EffEvaluator? AwaitingEvaluator => _evaluator;
-
-        /// <summary>
-        ///   Sets a result value for the awaiter.
-        /// </summary>
-        public abstract void SetResult(object? value);
-
-        /// <summary>
         ///   Sets an exception value for the awaiter.
         /// </summary>
-        public void SetException(Exception exception)
-        {
-            if (exception is null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (IsCompleted)
-            {
-                throw new InvalidOperationException("EffAwaiter has already been completed.");
-            }
-
-            _exception = exception;
-        }
-
-
-        /// <summary>
-        ///   Sets the evaluator instance associated with the awaiter.
-        /// </summary>
-        internal void SetAwaitingEvaluator(EffEvaluator evaluator) => _evaluator = evaluator;
+        public abstract void SetException(Exception exception);
 
         /// <summary>
         ///   Processes the awaiter using the provided effect handler.
@@ -126,27 +93,24 @@ namespace Nessos.Effects.Handlers
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void GetResult()
         {
-            if (!(_exception is null))
+            if (!(Exception is null))
             {
-                ExceptionDispatchInfo.Capture(_exception).Throw();
-                throw _exception;
+                ExceptionDispatchInfo.Capture(Exception).Throw();
+                throw Exception;
             }
 
-            if (!_hasResult)
+            if (!HasResult)
             {
-                throw new InvalidOperationException("EffAwaiter has not been completed.");
+                throw new InvalidOperationException($"Awaiter of type {Id} has not been completed.");
             }
         }
-
-        // workaround for no covariant return types
-        protected abstract object? GetResultUntyped();
 
         void INotifyCompletion.OnCompleted(Action continuation) => throw new NotSupportedException("Eff awaitables should only be awaited in Eff methods.");
         void ICriticalNotifyCompletion.UnsafeOnCompleted(Action continuation) => throw new NotSupportedException("Eff awaitables should only be awaited in Eff methods.");
     }
 
     /// <summary>
-    ///   Awaiter class for Eff computations.
+    ///   Base awaiter class for Eff awaitables.
     /// </summary>
     public abstract class Awaiter<TResult> : Awaiter
     {
@@ -156,18 +120,18 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Gets either the result value or throws the exception that have been stored in the awaiter.
         /// </summary>
-        public new TResult Result
+        public TResult Result
         {
             get
             {
-                if (!(_exception is null))
+                if (!(Exception is null))
                 {
-                    ExceptionDispatchInfo.Capture(_exception).Throw();
-                    throw _exception;
+                    ExceptionDispatchInfo.Capture(Exception).Throw();
+                    throw Exception;
                 }
 
                 
-                if (!_hasResult)
+                if (!HasResult)
                 {
                     throw new InvalidOperationException($"Awaiter of type {Id} has not been completed.");
                 }
@@ -181,13 +145,21 @@ namespace Nessos.Effects.Handlers
         /// </summary>
         public void SetResult(TResult value)
         {
-            if (IsCompleted)
+            Exception = null;
+            _result = value;
+            HasResult = true;
+        }
+
+        public sealed override void SetException(Exception exception)
+        {
+            if (exception is null)
             {
-                throw new InvalidOperationException("EffAwaiter has already been completed.");
+                throw new ArgumentNullException(nameof(exception));
             }
 
-            _result = value;
-            _hasResult = true;
+            HasResult = false;
+            _result = default;
+            Exception = exception;
         }
 
         /// <summary>
@@ -219,35 +191,12 @@ namespace Nessos.Effects.Handlers
             return this;
         }
 
-        public override void SetResult(object? value)
-        {
-            SetResult((TResult)value!);
-        }
-
-        protected override object? GetResultUntyped() => Result;
-
         public override void Clear()
         {
             _result = default;
-            _hasResult = false;
-            _exception = null;
+            HasResult = false;
+            Exception = null;
         }
-    }
-
-    /// <summary>
-    ///   Awaiter for nested Eff computations.
-    /// </summary>
-    public class EffAwaiter<TResult> : Awaiter<TResult>
-    {
-        public EffAwaiter(Eff<TResult> eff)
-        {
-            Eff = eff;
-        }
-
-        public Eff<TResult> Eff { get; }
-
-        public override string Id => Eff.GetType().Name;
-        public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
 
     /// <summary>
@@ -262,6 +211,12 @@ namespace Nessos.Effects.Handlers
 
         public Effect<TResult> Effect { get; }
 
+        /// <summary>
+        ///   For use by EffMethodBuilder
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public new TResult GetResult() => Result;
+
         public override string Id => Effect.GetType().Name;
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
@@ -275,6 +230,12 @@ namespace Nessos.Effects.Handlers
         {
             Task = task;
         }
+
+        /// <summary>
+        ///   For use by EffMethodBuilder
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public new TResult GetResult() => Result;
 
         public ValueTask<TResult> Task { get; }
 

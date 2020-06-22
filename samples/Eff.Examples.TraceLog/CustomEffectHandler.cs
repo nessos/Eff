@@ -8,29 +8,31 @@ namespace Nessos.Effects.Examples.TraceLog
 {
     public class CustomEffectHandler : EffectHandler
     {
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
 
         }
 
-        public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
         {            
-            var result = await effect.Task;
-            effect.SetResult(result);
-            await Log(result, effect);
+            var result = await awaiter.Task;
+            awaiter.SetResult(result);
+            await Log(result, awaiter);
         }
 
-        public override async Task Handle<TResult>(EffAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
-            var result = await effect.Eff.Run(this);
-            effect.SetResult(result);
-            await Log(result, effect);
+            await base.Handle(stateMachine);
+            if (stateMachine.HasResult)
+            {
+                await Log(stateMachine.Result, stateMachine);
+            }
         }
 
         public List<ResultLog> TraceLogs = new List<ResultLog>();
         public async Task Log(object? result, Awaiter awaiter)
         {
-            var stateMachine = awaiter.AwaitingEvaluator?.GetStateMachine()!;
+            var stateMachine = awaiter.StateMachine?.GetStateMachine()!;
             var log =
                 new ResultLog
                 {
