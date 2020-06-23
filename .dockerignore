@@ -255,3 +255,5 @@
 **/BenchmarkDotNet.Artifacts/
 
 **/artifacts/
+
+**/coverage.json

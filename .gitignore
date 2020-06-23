@@ -261,3 +261,4 @@ BenchmarkDotNet.Artifacts/
 TestResults/
 
 /artifacts/
+coverage.json
