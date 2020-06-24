@@ -2,125 +2,118 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Nessos.Effects.Builders;
 using Nessos.Effects.Handlers;
 
 namespace Nessos.Effects.Examples.NonDeterminism
 {
     public static class NonDetEffectHandler
     {
-        public static async Task<List<TResult>> Run<TResult>(Eff<TResult> eff)
+        public static Task<List<TResult>> Run<TResult>(Eff<TResult> eff) => Run(eff.GetAwaiter());
+
+        private static async Task<List<TResult>> Run<TResult>(EffStateMachine<TResult> stateMachine)
         {
             while (true)
             {
-                switch (eff)
-                {
-                    case ResultEff<TResult> setResult:
-                        return new List<TResult> { setResult.Result };
-                    case ExceptionEff<TResult> setException:
-                        throw setException.Exception;
-                    case DelayEff<TResult> delay:
-                        eff = delay.StateMachine.MoveNext();
-                        break;
+                stateMachine.MoveNext();
 
-                    case AwaitEff<TResult> awaitEff:
-                        var handler = new NonDetEffectHandler<TResult>(awaitEff.StateMachine);
-                        await awaitEff.Awaiter.Accept(handler);
+                switch (stateMachine.Position)
+                {
+                    case StateMachinePosition.Result:
+                        return new List<TResult> { stateMachine.Result };
+                    case StateMachinePosition.Exception:
+                        throw stateMachine.Exception!;
+
+                    case StateMachinePosition.Await:
+                        var awaiter = stateMachine.Awaiter!;
+                        var handler = new NonDetEffectHandlerImpl<TResult>(stateMachine);
+                        await awaiter.Accept(handler);
                         return handler.Results;
 
                     default:
-                        throw new NotSupportedException($"{eff.GetType().Name}");
+                        throw new Exception($"Invalid state machine position {stateMachine.Position}.");
                 }
             }
         }
-    }
 
-    public class NonDetEffectHandler<TResult> : IEffectHandler
-    {
-        private readonly EffStateMachine<TResult> _stateMachine;
-
-        public NonDetEffectHandler(EffStateMachine<TResult> stateMachine)
+        private class NonDetEffectHandlerImpl<TResult> : IEffectHandler
         {
-            _stateMachine = stateMachine;
-        }
+            private readonly EffStateMachine<TResult> _stateMachine;
 
-        public List<TResult> Results { get; } = new List<TResult>();
-
-        public async Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
-        {
-            switch (awaiter.Effect)
+            public NonDetEffectHandlerImpl(EffStateMachine<TResult> stateMachine)
             {
-                case NonDetEffect<TValue> nde:
-                    foreach (var result in nde.Choices)
-                    {
-                        awaiter.SetResult(result);
-                        await ExecuteStateMachine(useClonedStateMachine: true);
-                        awaiter.Clear();
-                    }
-
-                    break;
-            }
-        }
-
-        public async Task Handle<TValue>(EffAwaiter<TValue> awaiter)
-        {
-            List<TValue>? values = null;
-            Exception? error = null;
-            try
-            {
-                values = await NonDetEffectHandler.Run(awaiter.Eff);
-            }
-            catch (Exception e)
-            {
-                error = e;
+                _stateMachine = stateMachine;
             }
 
-            if (error is null)
+            public List<TResult> Results { get; } = new List<TResult>();
+
+            public async Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
             {
-                foreach (var result in values!)
+                switch (awaiter.Effect)
                 {
-                    awaiter.SetResult(result);
-                    await ExecuteStateMachine(useClonedStateMachine: true);
-                    awaiter.Clear();
+                    case NonDetEffect<TValue> nde:
+                        foreach (var result in nde.Choices)
+                        {
+                            awaiter.SetResult(result);
+                            await ContinueStateMachine(clone: true);
+                        }
+
+                        break;
                 }
             }
-            else
+
+            public async Task Handle<TValue>(EffStateMachine<TValue> stateMachine)
             {
-                awaiter.SetException(error);
-                await ExecuteStateMachine();
-            }
-        }
+                List<TValue>? values = null;
+                Exception? error = null;
+                try
+                {
+                    values = await NonDetEffectHandler.Run(stateMachine);
+                }
+                catch (Exception e)
+                {
+                    error = e;
+                }
 
-        public async Task Handle<TValue>(TaskAwaiter<TValue> awaiter)
-        {
-            try
+                if (values != null)
+                {
+                    foreach (var result in values)
+                    {
+                        stateMachine.SetResult(result);
+                        await ContinueStateMachine(clone: true);
+                    }
+                }
+                else
+                {
+                    stateMachine.SetException(error!);
+                    await ContinueStateMachine();
+                }
+            }
+
+            public async Task Handle<TValue>(TaskAwaiter<TValue> awaiter)
             {
-                var result = await awaiter.Task;
-                awaiter.SetResult(result);
+                try
+                {
+                    var result = await awaiter.Task;
+                    awaiter.SetResult(result);
+                }
+                catch (Exception e)
+                {
+                    awaiter.SetException(e);
+                }
+
+                await ContinueStateMachine();
             }
-            catch (Exception e)
+
+            /// <summary>
+            ///   Executes the state machine to completion, using non-deterministic semantics,
+            ///   appending any results to the handler state.
+            /// </summary>
+            private async Task ContinueStateMachine(bool clone = false)
             {
-                awaiter.SetException(e);
+                var stateMachine = clone ? _stateMachine.Clone() : _stateMachine;
+                var results = await NonDetEffectHandler.Run(stateMachine);
+                Results.AddRange(results);
             }
-
-            await ExecuteStateMachine();
-        }
-
-        public Task<TValue> Handle<TValue>(Eff<TValue> _)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <summary>
-        ///   Executes the state machine to completion, using non-deterministic semantics,
-        ///   appending any results to the handler state.
-        /// </summary>
-        private async Task ExecuteStateMachine(bool useClonedStateMachine = false)
-        {
-            var stateMachine = useClonedStateMachine ? _stateMachine.Clone() : _stateMachine;
-            var next = stateMachine.MoveNext();
-            var results = await NonDetEffectHandler.Run(next);
-            Results.AddRange(results);
         }
     }
 }

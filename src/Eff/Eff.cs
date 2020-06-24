@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
-using Nessos.Effects.Builders;
+﻿using Nessos.Effects.Builders;
 using Nessos.Effects.Handlers;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Nessos.Effects
 {
@@ -70,33 +69,36 @@ namespace Nessos.Effects
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public new Awaiter<TResult> ConfigureAwait(
+        public new EffStateMachine<TResult> ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",
             [CallerFilePath] string callerFilePath = "",
             [CallerLineNumber] int callerLineNumber = 0)
         {
-            return new EffAwaiter<TResult>(this) 
-            { 
-                CallerMemberName = callerMemberName, 
-                CallerFilePath = callerFilePath, 
-                CallerLineNumber = callerLineNumber 
-            };
+            var awaiter = GetAwaiter();
+            awaiter.CallerMemberName = callerMemberName;
+            awaiter.CallerFilePath = callerFilePath;
+            awaiter.CallerLineNumber = callerLineNumber;
+            return awaiter;
         }
 
         /// <summary>
         ///   Implements the awaitable/awaiter pattern for Eff
         /// </summary>
-        public new Awaiter<TResult> GetAwaiter() => new EffAwaiter<TResult>(this);
+        public new abstract EffStateMachine<TResult> GetAwaiter();
 
         /// <summary>
         ///   Runs supplied Eff computation using provided effect handler.
         /// </summary>
         /// <param name="handler">Effect handler to be used in execution.</param>
         /// <returns></returns>
-        public new Task<TResult> Run(IEffectHandler handler) => handler.Handle(this);
+        public new async Task<TResult> Run(IEffectHandler handler)
+        {
+            var stateMachine = GetAwaiter();
+            await handler.Handle(stateMachine).ConfigureAwait(false);
+            return stateMachine.Result;
+        }
 
-
-        protected override Task RunCore(IEffectHandler handler) => handler.Handle(this);
+        protected override Task RunCore(IEffectHandler handler) => Run(handler);
         protected override Awaiter GetAwaiterCore() => GetAwaiter();
     }
 }

@@ -11,70 +11,49 @@ namespace Nessos.Effects.Handlers
     /// </summary>
     public abstract class EffectHandler : IEffectHandler
     {
-        /// <summary>
-        ///   If set to true, will use cloned copies of Eff state machines.
-        ///   Can be used to ensure thread safety of individual Eff instances.
-        /// </summary>
-        public virtual bool UseClonedStateMachines { get; set; } = false;
-
         public abstract Task Handle<TResult>(EffectAwaiter<TResult> awaiter);
        
         public virtual async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
         {
-            var result = await awaiter.Task;
-            awaiter.SetResult(result);
+            try
+            {
+                var result = await awaiter.Task.ConfigureAwait(false);
+                awaiter.SetResult(result);
+            }
+            catch (Exception e)
+            {
+                awaiter.SetException(e);
+            }
         }
 
-        public virtual async Task Handle<TResult>(EffAwaiter<TResult> awaiter)
-        {
-            var result = await Handle(awaiter.Eff);
-            awaiter.SetResult(result);
-        }
-
-        public virtual async Task<TResult> Handle<TResult>(Eff<TResult> eff)
+        public virtual async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             while (true)
             {
-                switch (eff)
+                stateMachine.MoveNext();
+
+                switch (stateMachine.Position)
                 {
-                    case null:
-                        throw new ArgumentNullException(nameof(eff));
+                    case StateMachinePosition.Result:
+                    case StateMachinePosition.Exception:
+                        Debug.Assert(stateMachine.IsCompleted);
+                        return;
 
-                    case ResultEff<TResult> setResultEff:
-                        return setResultEff.Result;
-
-                    case ExceptionEff<TResult> setExceptionEff:
-                        ExceptionDispatchInfo.Capture(setExceptionEff.Exception).Throw();
-                        return default!;
-
-                    case DelayEff<TResult> delayEff:
-                        var stateMachine = UseClonedStateMachines ? delayEff.StateMachine.Clone() : delayEff.StateMachine;
-                        eff = stateMachine.MoveNext();
-                        break;
-
-                    case AwaitEff<TResult> awaitEff:
-                        var awaiter = awaitEff.Awaiter;
+                    case StateMachinePosition.Await:
+                        var awaiter = stateMachine.Awaiter!;
                         try
                         {
-                            await awaiter.Accept(this);
+                            await awaiter.Accept(this).ConfigureAwait(false);
                         }
                         catch (Exception ex)
                         {
-                            // clear any existing results and surface the current exception
-                            if (awaiter.IsCompleted)
-                            {
-                                awaiter.Clear();
-                            }
-
                             awaiter.SetException(ex);
                         }
-
-                        eff = awaitEff.StateMachine.MoveNext();
                         break;
 
                     default:
-                        Debug.Fail("Unrecognized Eff type.");
-                        throw new Exception($"Internal error: unrecognized Eff type {eff.GetType().Name}.");
+                        Debug.Fail($"Unrecognized state machine position {stateMachine.Position}.");
+                        throw new Exception($"Internal error: unrecognized state machine position {stateMachine.Position}.");
                 }
             }
         }

@@ -50,7 +50,7 @@ namespace Nessos.Effects.Tests
             }
 
             var eff = Foo();
-            var handler = new DefaultEffectHandler() { UseClonedStateMachines = true };
+            var handler = Handler;
 
             Assert.Equal(0, counter);
             await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => Task.Run(() => eff.Run(handler))));
@@ -58,7 +58,7 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public static async Task EffUntyped_CloningHandler_ShouldBeThreadSafe()
+        public async Task EffUntyped_CloningHandler_ShouldBeThreadSafe()
         {
             int counter = 0;
 
@@ -72,7 +72,7 @@ namespace Nessos.Effects.Tests
             }
 
             var eff = Foo();
-            var handler = new DefaultEffectHandler() { UseClonedStateMachines = true };
+            var handler = Handler;
 
             Assert.Equal(0, counter);
             await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => Task.Run(() => eff.Run(handler))));

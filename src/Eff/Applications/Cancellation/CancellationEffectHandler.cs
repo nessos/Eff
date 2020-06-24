@@ -40,16 +40,10 @@ namespace Nessos.Effects.Cancellation
             return base.Handle(awaiter);
         }
 
-        public override Task Handle<TResult>(EffAwaiter<TResult> awaiter)
+        public override Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             Token.ThrowIfCancellationRequested();
-            return base.Handle(awaiter);
-        }
-
-        public override Task<TResult> Handle<TResult>(Eff<TResult> eff)
-        {
-            Token.ThrowIfCancellationRequested();
-            return base.Handle(eff);
+            return base.Handle(stateMachine);
         }
     }
 }

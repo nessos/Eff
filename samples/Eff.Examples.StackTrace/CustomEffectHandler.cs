@@ -9,38 +9,35 @@ namespace Nessos.Effects.Examples.StackTrace
 {
     public class CustomEffectHandler : EffectHandler
     {
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> effect) { }
-
-        public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
-            try
+
+        }
+
+        public override async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
+        {
+            await base.Handle(awaiter);
+
+            if (awaiter.Exception is Exception e)
             {
-                var result = await effect.Task;
-                effect.SetResult(result);
-            }
-            catch (Exception ex)
-            {
-                await Log(ex, effect);
-                throw;
+                await Log(e, awaiter);
             }
         }
 
-        public override async Task Handle<TResult>(EffAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
-            try
+            await base.Handle(stateMachine);
+
+            if (stateMachine.Exception is Exception ex)
             {
-                var result = await effect.Eff.Run(this);
-                effect.SetResult(result);
-            }
-            catch (Exception ex)
-            {
-                await Log(ex, effect);
-                throw;
+                await Log(ex, stateMachine);
             }
         }
 
         public async Task Log(Exception ex, Awaiter awaiter)
         {
+            var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine()!;
+
             var log =
                 new ExceptionLog
                 {
@@ -48,8 +45,8 @@ namespace Nessos.Effects.Examples.StackTrace
                     CallerLineNumber = awaiter.CallerLineNumber,
                     CallerMemberName = awaiter.CallerMemberName,
                     Exception = ex,
-                    Parameters = TraceHelpers.GetParametersValues(awaiter.State!),
-                    LocalVariables = TraceHelpers.GetLocalVariablesValues(awaiter.State!),
+                    Parameters = stateMachine.GetParameterValues(),
+                    LocalVariables = stateMachine.GetLocalVariableValues(),
                 };
             if (!ex.Data.Contains("StackTraceLog"))
             {

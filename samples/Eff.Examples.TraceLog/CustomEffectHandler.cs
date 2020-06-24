@@ -8,37 +8,44 @@ namespace Nessos.Effects.Examples.TraceLog
 {
     public class CustomEffectHandler : EffectHandler
     {
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
 
         }
 
-        public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
-        {            
-            var result = await effect.Task;
-            effect.SetResult(result);
-            await Log(result, effect);
+        public override async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
+        {
+            await base.Handle(awaiter);
+
+            if (awaiter.HasResult)
+            {
+                await Log(awaiter.Result, awaiter);
+            }
         }
 
-        public override async Task Handle<TResult>(EffAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
-            var result = await effect.Eff.Run(this);
-            effect.SetResult(result);
-            await Log(result, effect);
+            await base.Handle(stateMachine);
+
+            if (stateMachine.HasResult)
+            {
+                await Log(stateMachine.Result, stateMachine);
+            }
         }
 
         public List<ResultLog> TraceLogs = new List<ResultLog>();
-        public async Task Log(object? result, Awaiter effect)
+        public async Task Log(object? result, Awaiter awaiter)
         {
+            var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine()!;
             var log =
                 new ResultLog
                 {
-                    CallerFilePath = effect.CallerFilePath,
-                    CallerLineNumber = effect.CallerLineNumber,
-                    CallerMemberName = effect.CallerMemberName,
                     Result = result,
-                    Parameters = TraceHelpers.GetParametersValues(effect.State!),
-                    LocalVariables = TraceHelpers.GetLocalVariablesValues(effect.State!),
+                    CallerFilePath = awaiter.CallerFilePath,
+                    CallerLineNumber = awaiter.CallerLineNumber,
+                    CallerMemberName = awaiter.CallerMemberName,
+                    Parameters = stateMachine.GetParameterValues(),
+                    LocalVariables = stateMachine.GetLocalVariableValues(),
                 };
 
             TraceLogs.Add(log);
