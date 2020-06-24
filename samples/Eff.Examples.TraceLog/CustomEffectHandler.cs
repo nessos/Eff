@@ -14,15 +14,19 @@ namespace Nessos.Effects.Examples.TraceLog
         }
 
         public override async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
-        {            
-            var result = await awaiter.Task;
-            awaiter.SetResult(result);
-            await Log(result, awaiter);
+        {
+            await base.Handle(awaiter);
+
+            if (awaiter.HasResult)
+            {
+                await Log(awaiter.Result, awaiter);
+            }
         }
 
         public override async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             await base.Handle(stateMachine);
+
             if (stateMachine.HasResult)
             {
                 await Log(stateMachine.Result, stateMachine);
@@ -36,10 +40,10 @@ namespace Nessos.Effects.Examples.TraceLog
             var log =
                 new ResultLog
                 {
+                    Result = result,
                     CallerFilePath = awaiter.CallerFilePath,
                     CallerLineNumber = awaiter.CallerLineNumber,
                     CallerMemberName = awaiter.CallerMemberName,
-                    Result = result,
                     Parameters = stateMachine.GetParameterValues(),
                     LocalVariables = stateMachine.GetLocalVariableValues(),
                 };

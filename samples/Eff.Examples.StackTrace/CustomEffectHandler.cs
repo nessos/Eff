@@ -9,19 +9,18 @@ namespace Nessos.Effects.Examples.StackTrace
 {
     public class CustomEffectHandler : EffectHandler
     {
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> effect) { }
-
-        public override async Task Handle<TResult>(TaskAwaiter<TResult> effect)
+        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
-            try
+
+        }
+
+        public override async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
+        {
+            await base.Handle(awaiter);
+
+            if (awaiter.Exception is Exception e)
             {
-                var result = await effect.Task;
-                effect.SetResult(result);
-            }
-            catch (Exception ex)
-            {
-                await Log(ex, effect);
-                throw;
+                await Log(e, awaiter);
             }
         }
 

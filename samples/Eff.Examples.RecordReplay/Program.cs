@@ -8,8 +8,8 @@ namespace Nessos.Effects.Examples.RecordReplay
     {
         static async Eff<(DateTime date, int random)> Foo()
         {
-            var now = await IO.Do(_ => DateTime.UtcNow).ConfigureAwait();
-            var rnd = await IO<Random>.Do(rnd => rnd.Next(0, 10)).ConfigureAwait();
+            var now = await IO.Do(_ => DateTime.UtcNow);
+            var rnd = await IO<Random>.Do(rnd => rnd.Next(0, 10));
 
             return (now, rnd);
         }

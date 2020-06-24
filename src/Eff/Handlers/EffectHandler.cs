@@ -15,8 +15,15 @@ namespace Nessos.Effects.Handlers
        
         public virtual async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
         {
-            var result = await awaiter.Task.ConfigureAwait(false);
-            awaiter.SetResult(result);
+            try
+            {
+                var result = await awaiter.Task.ConfigureAwait(false);
+                awaiter.SetResult(result);
+            }
+            catch (Exception e)
+            {
+                awaiter.SetException(e);
+            }
         }
 
         public virtual async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
