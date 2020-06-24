@@ -6,27 +6,28 @@ namespace Nessos.Effects.Examples.RecordReplay
 {
     class Program
     {
-        static async Eff<(DateTime date, int random)> Foo()
+        static async Eff Test()
         {
-            var now = await IO.Do(_ => DateTime.UtcNow);
-            var rnd = await IO<Random>.Do(rnd => rnd.Next(0, 10));
+            for (int i = 0; i < 10; i++)
+            {
+                int n = await IO<Random>.Do(rnd => rnd.Next(0, 100));
+                Console.Write($"{n} ");
+            }
 
-            return (now, rnd);
+            Console.WriteLine();
         }
 
         static async Task Main()
         {
+            Console.WriteLine("Recording computation");
             var container = new Container() { new Random() };
-            var handler = new RecordEffectHandler(container);
-            var result = await Foo().Run(handler);
-            var replayLog = handler.GetReplayLog();
-            Console.WriteLine($"Recorded: {result}");
+            var recordHandler = new RecordEffectHandler(container);
+            await Test().Run(recordHandler);
+            var replayLog = recordHandler.GetReplayLog();
 
-            await Task.Delay(1000);
-
-            var _handler = new ReplayEffectHandler(replayLog);
-            result = await Foo().Run(_handler);
-            Console.WriteLine($"Replayed: {result}");
+            Console.WriteLine("Replaying computation");
+            var replayHandler = new ReplayEffectHandler(replayLog);
+            await Test().Run(replayHandler);
         }
     }
 }

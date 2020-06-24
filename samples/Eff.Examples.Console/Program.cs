@@ -4,7 +4,7 @@ namespace Nessos.Effects.Examples.Console
 {
     partial class Program
     {
-        static async Eff Foo()
+        static async Eff Test()
         {
             await ConsoleEffect.Print("Enter your name: ");
             await ConsoleEffect.Print($"Hello, { await ConsoleEffect.Read()}!\n");
@@ -12,7 +12,7 @@ namespace Nessos.Effects.Examples.Console
 
         static async Task Main()
         {
-            await Foo().Run(new ConsoleEffectHandler());
+            await Test().Run(new ConsoleEffectHandler());
         }
     }
 }

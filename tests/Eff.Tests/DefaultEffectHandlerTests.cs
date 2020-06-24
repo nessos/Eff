@@ -38,7 +38,7 @@ namespace Nessos.Effects.Tests
         {
             int counter = 0;
 
-            async Eff<int> Foo()
+            async Eff<int> Test()
             {
                 for (int i = 0; i < 10; i++)
                 {
@@ -49,7 +49,7 @@ namespace Nessos.Effects.Tests
                 return 42;
             }
 
-            var eff = Foo();
+            var eff = Test();
             var handler = Handler;
 
             Assert.Equal(0, counter);

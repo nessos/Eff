@@ -36,7 +36,13 @@ namespace Nessos.Effects.Examples.TraceLog
         public List<ResultLog> TraceLogs = new List<ResultLog>();
         public async Task Log(object? result, Awaiter awaiter)
         {
-            var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine()!;
+            var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine();
+
+            if (stateMachine is null)
+            {
+                return;
+            }
+
             var log =
                 new ResultLog
                 {

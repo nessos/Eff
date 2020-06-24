@@ -7,7 +7,7 @@ namespace Nessos.Effects.Examples.CancellationToken
 {
     class Program
     {
-        static async Eff Foo()
+        static async Eff Test()
         {
             while (true)
             {
@@ -23,7 +23,7 @@ namespace Nessos.Effects.Examples.CancellationToken
             var handler = new CancellationEffectHandler(cts.Token);
             try
             {
-                await Foo().Run(handler);
+                await Test().Run(handler);
             }
             catch (Exception ex)
             {

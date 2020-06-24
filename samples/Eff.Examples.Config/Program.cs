@@ -6,7 +6,7 @@ namespace Nessos.Effects.Examples.Config
 {
     class Program
     {
-        public static async Eff<string> Foo()
+        public static async Eff<string> Test()
         {
             var value1 = await ConfigEffect.Get("Setting1");
             var value2 = await ConfigEffect.Get("Setting2");
@@ -17,7 +17,7 @@ namespace Nessos.Effects.Examples.Config
         static async Task Main()
         {
             var handler = new ConfigurationManagerEffectHandler();
-            var result = await Foo().Run(handler);
+            var result = await Test().Run(handler);
             Console.WriteLine(result);
         }
     }
