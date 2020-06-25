@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Nessos.Effects.Handlers;
+using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Security;
-using Nessos.Effects.Handlers;
 
 namespace Nessos.Effects.Builders
 {
@@ -13,13 +12,12 @@ namespace Nessos.Effects.Builders
     {
         private EffStateMachine<Unit>? _effStateMachine;
 
-        public static EffMethodBuilder Create()
-        {
-            return new EffMethodBuilder();
-        }
+        public static EffMethodBuilder Create() => default;
 
         public Eff? Task { get; private set; }
 
+        [DebuggerStepThrough]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
         {
             Task = new StateMachineEff<EffMethodBuilder, TStateMachine, Unit>(in stateMachine);
@@ -50,17 +48,18 @@ namespace Nessos.Effects.Builders
             _effStateMachine!.BuilderSetException(exception);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
-            where TAwaiter : Awaiter
+            where TAwaiter : EffAwaiter
             where TStateMachine : IAsyncStateMachine
         {
             Debug.Assert(_effStateMachine != null);
             _effStateMachine!.BuilderSetAwaiter(awaiter);
         }
 
-        [SecuritySafeCritical]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
-            where TAwaiter : Awaiter
+            where TAwaiter : EffAwaiter
             where TStateMachine : IAsyncStateMachine
         {
             Debug.Assert(_effStateMachine != null);

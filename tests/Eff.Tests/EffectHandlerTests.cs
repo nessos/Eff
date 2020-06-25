@@ -394,7 +394,7 @@ namespace Nessos.Effects.Tests
             await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler));
         }
 
-        public class AwaiterThatThrows<T> : Awaiter<T>
+        public class AwaiterThatThrows<T> : EffAwaiter<T>
         {
             public override string Id => throw new NotImplementedException();
 

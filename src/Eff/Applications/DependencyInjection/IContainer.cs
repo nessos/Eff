@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Nessos.Effects.DependencyInjection
+﻿namespace Nessos.Effects.DependencyInjection
 {
     /// <summary>
     ///   Generic dependency resolver abstraction.

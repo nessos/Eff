@@ -10,9 +10,9 @@ namespace Nessos.Effects.Handlers
     /// <summary>
     ///   Base awaiter class for Eff awaitables.
     /// </summary>
-    public abstract class Awaiter : ICriticalNotifyCompletion
+    public abstract class EffAwaiter : ICriticalNotifyCompletion
     {
-        internal Awaiter() { }
+        internal EffAwaiter() { }
 
         /// <summary>
         ///   Awaiter identifier for debugging purposes.
@@ -71,7 +71,7 @@ namespace Nessos.Effects.Handlers
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public Awaiter ConfigureAwait(
+        public EffAwaiter ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",
             [CallerFilePath] string callerFilePath = "",
             [CallerLineNumber] int callerLineNumber = 0)
@@ -85,18 +85,19 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   For use by EffMethodBuilder
         /// </summary>
-        public Awaiter GetAwaiter() => this;
+        public EffAwaiter GetAwaiter() => this;
 
         /// <summary>
         ///   For use by EffMethodBuilder
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void GetResult()
         {
             if (!(Exception is null))
             {
                 ExceptionDispatchInfo.Capture(Exception).Throw();
-                throw Exception;
+                return;
             }
 
             if (!HasResult)
@@ -112,7 +113,7 @@ namespace Nessos.Effects.Handlers
     /// <summary>
     ///   Base awaiter class for Eff awaitables.
     /// </summary>
-    public abstract class Awaiter<TResult> : Awaiter
+    public abstract class EffAwaiter<TResult> : EffAwaiter
     {
         [AllowNull]
         private TResult _result = default;
@@ -120,25 +121,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Gets either the result value or throws the exception that have been stored in the awaiter.
         /// </summary>
-        public TResult Result
-        {
-            get
-            {
-                if (!(Exception is null))
-                {
-                    ExceptionDispatchInfo.Capture(Exception).Throw();
-                    throw Exception;
-                }
-
-                
-                if (!HasResult)
-                {
-                    throw new InvalidOperationException($"Awaiter of type {Id} has not been completed.");
-                }
-
-                return _result;
-            }
-        }
+        public TResult Result => GetResult();
 
         /// <summary>
         ///   Sets a result value for the awaiter.
@@ -166,12 +149,27 @@ namespace Nessos.Effects.Handlers
         ///   For use by EffMethodBuilder
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public new TResult GetResult() => Result;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public new TResult GetResult()
+        {
+            if (!(Exception is null))
+            {
+                ExceptionDispatchInfo.Capture(Exception).Throw();
+                return default!;
+            }
+
+            if (!HasResult)
+            {
+                throw new InvalidOperationException($"Awaiter of type {Id} has not been completed.");
+            }
+
+            return _result;
+        }
 
         /// <summary>
         ///   For use by EffMethodBuilder
         /// </summary>
-        public new Awaiter<TResult> GetAwaiter() => this;
+        public new EffAwaiter<TResult> GetAwaiter() => this;
 
         /// <summary>
         ///   Configures the EffAwaiter instance with supplied parameters.
@@ -180,7 +178,7 @@ namespace Nessos.Effects.Handlers
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public new Awaiter<TResult> ConfigureAwait(
+        public new EffAwaiter<TResult> ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",
             [CallerFilePath] string callerFilePath = "",
             [CallerLineNumber] int callerLineNumber = 0)
@@ -202,7 +200,7 @@ namespace Nessos.Effects.Handlers
     /// <summary>
     ///   Awaiter for abstract Effects.
     /// </summary>
-    public class EffectAwaiter<TResult> : Awaiter<TResult>
+    public class EffectAwaiter<TResult> : EffAwaiter<TResult>
     {
         public EffectAwaiter(Effect<TResult> effect)
         {
@@ -211,12 +209,6 @@ namespace Nessos.Effects.Handlers
 
         public Effect<TResult> Effect { get; }
 
-        /// <summary>
-        ///   For use by EffMethodBuilder
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public new TResult GetResult() => Result;
-
         public override string Id => Effect.GetType().Name;
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
@@ -224,18 +216,12 @@ namespace Nessos.Effects.Handlers
     /// <summary>
     ///   Awaiter adapter for TPL tasks.
     /// </summary>
-    public class TaskAwaiter<TResult> : Awaiter<TResult>
+    public class TaskAwaiter<TResult> : EffAwaiter<TResult>
     {
         public TaskAwaiter(ValueTask<TResult> task)
         {
             Task = task;
         }
-
-        /// <summary>
-        ///   For use by EffMethodBuilder
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public new TResult GetResult() => Result;
 
         public ValueTask<TResult> Task { get; }
 

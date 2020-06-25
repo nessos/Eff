@@ -78,7 +78,7 @@ namespace Nessos.Effects.Tests
             }
         }
 
-        public async ValueTask<ValueTuple> Log(Exception ex, Awaiter awaiter)
+        public async ValueTask<ValueTuple> Log(Exception ex, EffAwaiter awaiter)
         {
             var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine()!;
             var log =
@@ -107,7 +107,7 @@ namespace Nessos.Effects.Tests
             return ValueTuple.Create();
         }
 
-        public async ValueTask<ValueTuple> Log(object? result, Awaiter awaiter)
+        public async ValueTask<ValueTuple> Log(object? result, EffAwaiter awaiter)
         {
             var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine()!;
             var log =

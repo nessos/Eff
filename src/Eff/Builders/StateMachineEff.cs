@@ -21,7 +21,7 @@ namespace Nessos.Effects.Builders
             _stateMachine = stateMachine;
         }
 
-        public override EffStateMachine<TResult> GetAwaiter()
+        public override EffStateMachine<TResult> GetStateMachine()
         {
             return new EffStateMachine<TBuilder, TStateMachine, TResult>(in _stateMachine);
         }

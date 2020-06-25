@@ -1,6 +1,6 @@
+using Nessos.Effects.Handlers;
 using System;
 using System.Threading.Tasks;
-using Nessos.Effects.Handlers;
 
 namespace Nessos.Effects.DependencyInjection
 {

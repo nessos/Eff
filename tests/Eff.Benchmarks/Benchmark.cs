@@ -21,48 +21,11 @@ namespace Nessos.Effects.Benchmarks
             _handler = new DefaultEffectHandler();
         }
 
-        [Benchmark(Description = "Managed Methods", Baseline = true)]
-        public void ManagedMethods() => ManagedFlow.SumOfOddSquares(_data);
-
-        [Benchmark(Description = "ValueTask Builder")]
-        public async ValueTask ValueTaskBuilder() => await ValueTaskFlow.SumOfOddSquares(_data);
-
-        [Benchmark(Description = "Task Builder")]
+        [Benchmark(Description = "Task Builder", Baseline = true)]
         public Task TaskBuilder() => TaskFlow.SumOfOddSquares(_data);
 
         [Benchmark(Description = "Eff Builder")]
         public Task EffBuilder() => EffFlow.SumOfOddSquares(_data).Run(_handler);
-
-        private static class ManagedFlow
-        {
-            public static int SumOfOddSquares(int[] inputs)
-            {
-                int sum = 0;
-                foreach (var i in inputs) 
-                    if (i % 2 == 1) sum += Square(i);
-
-                return sum;
-
-                static int Square(int x) => Echo(x) * Echo(x);
-                static T Echo<T>(T x) => x;
-            }
-        }
-
-        private static class ValueTaskFlow
-        {
-            public static async ValueTask<int> SumOfOddSquares(int[] inputs)
-            {
-                int sum = 0;
-                foreach (var i in inputs)
-                    if (i % 2 == 1) sum += await Square(i);
-
-                return sum;
-
-                static async ValueTask<int> Square(int x) => await Echo(x) * await Echo(x);
-                static async ValueTask<T> Echo<T>(T x) => x;
-            }
-
-        }
 
         private static class TaskFlow
         {

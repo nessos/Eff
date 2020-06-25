@@ -7,7 +7,7 @@ namespace Nessos.Effects.Examples.Maybe
 {
     public static class MaybeEffectHandler
     {
-        public static Task<Maybe<TResult>> Run<TResult>(Eff<TResult> eff) => Run(eff.GetAwaiter());
+        public static Task<Maybe<TResult>> Run<TResult>(Eff<TResult> eff) => Run(eff.GetStateMachine());
 
         private static async Task<Maybe<TResult>> Run<TResult>(EffStateMachine<TResult> stateMachine)
         {

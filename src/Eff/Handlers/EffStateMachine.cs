@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -26,7 +25,7 @@ namespace Nessos.Effects.Handlers
         Exception = 2,
 
         /// <summary>
-        ///   The state machine is suspended, pending an <see cref="Awaiter"/> value.
+        ///   The state machine is suspended, pending an <see cref="EffAwaiter"/> value.
         /// </summary>
         Await = 3,
     }
@@ -55,7 +54,7 @@ namespace Nessos.Effects.Handlers
     /// <summary>
     ///   Represents an eff state machine awaiter.
     /// </summary>
-    public abstract class EffStateMachine<TResult> : Awaiter<TResult>, IEffStateMachine
+    public abstract class EffStateMachine<TResult> : EffAwaiter<TResult>, IEffStateMachine
     {
         /// <summary>
         ///   Gets the current position of the state machine.
@@ -65,7 +64,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Gets the awaiter instance, if state machine is in in awaited state.
         /// </summary>
-        public Awaiter? Awaiter { get; protected set; }
+        public EffAwaiter? Awaiter { get; protected set; }
 
         /// <summary>
         ///   Advances the state machine to its next stage.
@@ -81,12 +80,6 @@ namespace Nessos.Effects.Handlers
         ///   Gets a heap allocated copy of the underlying compiler-generated state machine, for tracing metadata use.
         /// </summary>
         public abstract IAsyncStateMachine? GetAsyncStateMachine();
-
-        /// <summary>
-        ///   For use by EffMethodBuilder
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public new TResult GetResult() => Result;
 
         public override string Id => nameof(EffStateMachine<TResult>);
 
@@ -106,7 +99,7 @@ namespace Nessos.Effects.Handlers
             Position = StateMachinePosition.Exception;
         }
 
-        internal void BuilderSetAwaiter(Awaiter awaiter)
+        internal void BuilderSetAwaiter(EffAwaiter awaiter)
         {
             awaiter.StateMachine = this;
             Awaiter = awaiter;

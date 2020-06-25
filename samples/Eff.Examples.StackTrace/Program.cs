@@ -18,8 +18,8 @@ namespace Nessos.Effects.Examples.StackTrace
 
         static async Eff<int> Foo(int x)
         {
-            var y = await Baz(x);
-            var z = await Bar(x);
+            var y = await Baz(x).ConfigureAwait();
+            var z = await Bar(x).ConfigureAwait();
             return y + z;
         }
 
@@ -33,6 +33,7 @@ namespace Nessos.Effects.Examples.StackTrace
             catch (Exception ex)
             {
                 Console.WriteLine(ex.StackTraceLog());
+                Console.WriteLine(ex);
             }
         }
     }

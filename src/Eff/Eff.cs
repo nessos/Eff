@@ -22,7 +22,7 @@ namespace Nessos.Effects
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public Awaiter ConfigureAwait(
+        public EffAwaiter ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",
             [CallerFilePath] string callerFilePath = "",
             [CallerLineNumber] int callerLineNumber = 0)
@@ -37,7 +37,7 @@ namespace Nessos.Effects
         /// <summary>
         ///   Implements the awaitable/awaiter pattern for Eff.
         /// </summary>
-        public Awaiter GetAwaiter() => GetAwaiterCore();
+        public EffAwaiter GetAwaiter() => GetAwaiterCore();
 
         /// <summary>
         ///   Runs supplied Eff computation using provided effect handler.
@@ -48,7 +48,7 @@ namespace Nessos.Effects
         // Helper methods for exposing untyped variants of Run and GetAwaiter methods
         // Can be removed once Covariant return types are brought to C#.
         protected abstract Task RunCore(IEffectHandler handler);
-        protected abstract Awaiter GetAwaiterCore();
+        protected abstract EffAwaiter GetAwaiterCore();
     }
 
     /// <summary>
@@ -60,7 +60,10 @@ namespace Nessos.Effects
     [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
     public abstract class Eff<TResult> : Eff
     {
-        internal Eff() { }
+        /// <summary>
+        ///   Gets a new state machine instance for executing the eff computation.
+        /// </summary>
+        public abstract EffStateMachine<TResult> GetStateMachine();
 
         /// <summary>
         ///   Configures an EffAwaiter instance with supplied parameters.
@@ -69,12 +72,12 @@ namespace Nessos.Effects
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
-        public new EffStateMachine<TResult> ConfigureAwait(
+        public new EffAwaiter<TResult> ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",
             [CallerFilePath] string callerFilePath = "",
             [CallerLineNumber] int callerLineNumber = 0)
         {
-            var awaiter = GetAwaiter();
+            var awaiter = GetStateMachine();
             awaiter.CallerMemberName = callerMemberName;
             awaiter.CallerFilePath = callerFilePath;
             awaiter.CallerLineNumber = callerLineNumber;
@@ -84,7 +87,7 @@ namespace Nessos.Effects
         /// <summary>
         ///   Implements the awaitable/awaiter pattern for Eff
         /// </summary>
-        public new abstract EffStateMachine<TResult> GetAwaiter();
+        public new EffAwaiter<TResult> GetAwaiter() => GetStateMachine();
 
         /// <summary>
         ///   Runs supplied Eff computation using provided effect handler.
@@ -93,12 +96,12 @@ namespace Nessos.Effects
         /// <returns></returns>
         public new async Task<TResult> Run(IEffectHandler handler)
         {
-            var stateMachine = GetAwaiter();
+            var stateMachine = GetStateMachine();
             await handler.Handle(stateMachine).ConfigureAwait(false);
-            return stateMachine.Result;
+            return stateMachine.GetResult();
         }
 
-        protected override Task RunCore(IEffectHandler handler) => Run(handler);
-        protected override Awaiter GetAwaiterCore() => GetAwaiter();
+        protected sealed override Task RunCore(IEffectHandler handler) => Run(handler);
+        protected sealed override EffAwaiter GetAwaiterCore() => GetStateMachine();
     }
 }

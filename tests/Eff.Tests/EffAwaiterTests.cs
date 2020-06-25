@@ -136,7 +136,7 @@ namespace Nessos.Effects.Tests
                 return await Task.FromResult(42).AsEff();
             }
 
-            var stateMachine = Test().GetAwaiter();
+            var stateMachine = Test().GetStateMachine();
 
             var copy1 = stateMachine.GetAsyncStateMachine();
             var copy2 = stateMachine.GetAsyncStateMachine();

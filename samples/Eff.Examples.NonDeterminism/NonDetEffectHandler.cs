@@ -8,7 +8,7 @@ namespace Nessos.Effects.Examples.NonDeterminism
 {
     public static class NonDetEffectHandler
     {
-        public static Task<List<TResult>> Run<TResult>(Eff<TResult> eff) => Run(eff.GetAwaiter());
+        public static Task<List<TResult>> Run<TResult>(Eff<TResult> eff) => Run(eff.GetStateMachine());
 
         private static async Task<List<TResult>> Run<TResult>(EffStateMachine<TResult> stateMachine)
         {

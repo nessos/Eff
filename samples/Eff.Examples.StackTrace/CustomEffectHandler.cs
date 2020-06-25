@@ -34,7 +34,7 @@ namespace Nessos.Effects.Examples.StackTrace
             }
         }
 
-        public async Task Log(Exception ex, Awaiter awaiter)
+        public async Task Log(Exception ex, EffAwaiter awaiter)
         {
             var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine();
 

@@ -1,7 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Nessos.Effects.Handlers;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Nessos.Effects.Builders;
-using Nessos.Effects.Handlers;
 
 namespace Nessos.Effects
 {
@@ -14,7 +13,7 @@ namespace Nessos.Effects
         /// <param name="callerMemberName"></param>
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
-        public static Awaiter<TResult> AsEff<TResult>(this Task<TResult> task,
+        public static EffAwaiter<TResult> AsEff<TResult>(this Task<TResult> task,
                                             [CallerMemberName] string callerMemberName = "",
                                             [CallerFilePath] string callerFilePath = "",
                                             [CallerLineNumber] int callerLineNumber = 0)
@@ -34,7 +33,7 @@ namespace Nessos.Effects
         /// <param name="callerMemberName"></param>
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
-        public static Awaiter AsEff(this Task task,
+        public static EffAwaiter AsEff(this Task task,
                                             [CallerMemberName] string callerMemberName = "",
                                             [CallerFilePath] string callerFilePath = "",
                                             [CallerLineNumber] int callerLineNumber = 0)
@@ -55,7 +54,7 @@ namespace Nessos.Effects
         /// <param name="callerMemberName"></param>
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
-        public static Awaiter<TResult> AsEff<TResult>(this ValueTask<TResult> task,
+        public static EffAwaiter<TResult> AsEff<TResult>(this ValueTask<TResult> task,
                                     [CallerMemberName] string callerMemberName = "",
                                     [CallerFilePath] string callerFilePath = "",
                                     [CallerLineNumber] int callerLineNumber = 0)
@@ -75,7 +74,7 @@ namespace Nessos.Effects
         /// <param name="callerMemberName"></param>
         /// <param name="callerFilePath"></param>
         /// <param name="callerLineNumber"></param>
-        public static Awaiter AsEff(this ValueTask task,
+        public static EffAwaiter AsEff(this ValueTask task,
                                     [CallerMemberName] string callerMemberName = "",
                                     [CallerFilePath] string callerFilePath = "",
                                     [CallerLineNumber] int callerLineNumber = 0)
