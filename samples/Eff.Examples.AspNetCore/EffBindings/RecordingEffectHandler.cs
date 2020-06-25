@@ -35,7 +35,6 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
             }
             catch (Exception e)
             {
-                awaiter.Clear();
                 awaiter.SetException(e);
             }
 

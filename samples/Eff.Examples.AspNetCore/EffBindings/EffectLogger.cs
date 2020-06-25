@@ -46,7 +46,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
         /// <summary>
         ///   Captures a completed Eff awaiter instance into a serialized PersistedEffect value.
         /// </summary>
-        public static PersistedEffect FromCompletedAwaiter<TResult>(Awaiter<TResult> awaiter)
+        public static PersistedEffect FromCompletedAwaiter<TResult>(EffAwaiter<TResult> awaiter)
         {
             if (!awaiter.IsCompleted)
             {
@@ -73,7 +73,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
         ///<summary>
         ///  Hydrates an incomplete awaiter instance with the persisted result.
         ///</summary>
-        public void WriteToAwaiter<TResult>(Awaiter<TResult> awaiter)
+        public void WriteToAwaiter<TResult>(EffAwaiter<TResult> awaiter)
         {
             if (awaiter.IsCompleted)
             {
