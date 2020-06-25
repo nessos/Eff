@@ -10,7 +10,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
     /// <summary>
     ///   An effect handler that runs an effectful computation using a simplistic replay log.
     /// </summary>
-    public class ReplayEffectHandler : EffectHandler, IMvcEffectHandler
+    public class ReplayEffectHandler : EffectHandler, IDisposableEffectHandler
     {
         private int _pos = 0;
         private readonly ImmutableArray<PersistedEffect> _replayResults;
@@ -41,7 +41,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
     ///   - Provide a replay effect handler if the incoming request has a valid Eff-Replay-Token header.
     ///   - Fall back to the regular dependency injection/recording effect handler otherwise.
     /// </summary>
-    public class RecordReplayEffectHandlerFactory : IMvcEffectHandlerFactory
+    public class RecordReplayEffectHandlerFactory : IEffectHandlerFactory
     {
         private readonly RecordingEffectHandlerFactory _recordingHandlerFactory;
         private readonly EffectLogger _effectLogStore;
@@ -52,7 +52,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
             _effectLogStore = provider.GetRequiredService<EffectLogger>();
         }
 
-        public IMvcEffectHandler Create(ControllerContext ctx)
+        public IDisposableEffectHandler Create(ControllerContext ctx)
         {
             if (ctx.HttpContext.Request.GetReplayTokenHeader() is string replayToken &&
                 _effectLogStore.TryGetLogById(replayToken, out var replayLog))

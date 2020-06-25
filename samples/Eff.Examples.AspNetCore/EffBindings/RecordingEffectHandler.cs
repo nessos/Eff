@@ -15,7 +15,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
     ///   1. Provides effectful dependecy injection by wrapping an IServiceProvider instance.
     ///   2. Logs the results of effectful operations for future replay.
     /// </summary>
-    public class RecordingEffectHandler : DependencyEffectHandler, IMvcEffectHandler
+    public class RecordingEffectHandler : DependencyEffectHandler, IDisposableEffectHandler
     {
         private readonly List<PersistedEffect> _results = new List<PersistedEffect>();
         private readonly EffectLogger _store;
@@ -53,7 +53,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
         public async ValueTask DisposeAsync() => Commit();
     }
 
-    public class RecordingEffectHandlerFactory : IMvcEffectHandlerFactory
+    public class RecordingEffectHandlerFactory : IEffectHandlerFactory
     {
         private readonly ServiceProviderEffContext _effCtx;
         private readonly EffectLogger _store;
@@ -64,7 +64,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
             _store = serviceProvider.GetRequiredService<EffectLogger>();
         }
 
-        public IMvcEffectHandler Create(ControllerContext ctx)
+        public IDisposableEffectHandler Create(ControllerContext ctx)
         {
             return new RecordingEffectHandler(_effCtx, ctx.HttpContext.Response, _store);
         }

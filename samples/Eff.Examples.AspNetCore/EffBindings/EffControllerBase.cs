@@ -8,9 +8,9 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
     [TypeFilter(typeof(EffExceptionFilter))]
     public abstract class EffControllerBase : ControllerBase
     {
-        protected IMvcEffectHandlerFactory EffectHandlerFactory { get; }
+        protected IEffectHandlerFactory EffectHandlerFactory { get; }
 
-        protected EffControllerBase(IMvcEffectHandlerFactory factory)
+        protected EffControllerBase(IEffectHandlerFactory factory)
         {
             EffectHandlerFactory = factory;
         }

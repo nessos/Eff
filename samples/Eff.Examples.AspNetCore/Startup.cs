@@ -23,7 +23,7 @@ namespace Nessos.Effects.Examples.AspNetCore
             services
                 .AddSingleton<IUserService>(_ => new InMemoryUserService())
                 .AddSingleton<EffectLogger>(_ => new EffectLogger())
-                .AddScoped<IMvcEffectHandlerFactory>(provider => new RecordReplayEffectHandlerFactory(provider));
+                .AddScoped<IEffectHandlerFactory>(provider => new RecordReplayEffectHandlerFactory(provider));
 
             services
                 .AddLogging(logging => logging.AddConsole())

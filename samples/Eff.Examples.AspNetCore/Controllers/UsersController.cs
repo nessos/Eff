@@ -9,7 +9,7 @@ namespace Nessos.Effects.Examples.AspNetCore.Controllers
     [Route("api/users")]
     public class UsersController : EffControllerBase
     {
-        public UsersController(IMvcEffectHandlerFactory handlerFactory) : base(handlerFactory)
+        public UsersController(IEffectHandlerFactory handlerFactory) : base(handlerFactory)
         {
 
         }

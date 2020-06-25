@@ -7,7 +7,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
     /// <summary>
     ///   An effect handler that must be disposed at the end of an MVC controller lifetime.
     /// </summary>
-    public interface IMvcEffectHandler : IEffectHandler, IAsyncDisposable
+    public interface IDisposableEffectHandler : IEffectHandler, IAsyncDisposable
     {
 
     }
@@ -15,8 +15,8 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
     /// <summary>
     ///   Abstract factory for constructing MVC effect handlers.
     /// </summary>
-    public interface IMvcEffectHandlerFactory
+    public interface IEffectHandlerFactory
     {
-        IMvcEffectHandler Create(ControllerContext ctx); 
+        IDisposableEffectHandler Create(ControllerContext ctx); 
     }
 }
