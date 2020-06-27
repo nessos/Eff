@@ -19,8 +19,19 @@ namespace Nessos.Effects.Handlers
         /// </summary>
         public abstract string Id { get; }
 
+        /// <summary>
+        ///   Gets or sets the method or property name of the caller to the method.
+        /// </summary>
         public string CallerMemberName { get; set; } = "";
+
+        /// <summary>
+        ///   Gets or sets the full path of the source file that contains the caller.
+        /// </summary>
         public string CallerFilePath { get; set; } = "";
+
+        /// <summary>
+        ///   Gets or sets the line number at the source file at which the method is called.
+        /// </summary>
         public int CallerLineNumber { get; set; } = 0;
 
         /// <summary>
@@ -91,7 +102,7 @@ namespace Nessos.Effects.Handlers
         ///   For use by EffMethodBuilder
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] // for stacktrace formatting purposes
         public void GetResult()
         {
             if (!(Exception is null))
@@ -102,7 +113,7 @@ namespace Nessos.Effects.Handlers
 
             if (!HasResult)
             {
-                throw new InvalidOperationException($"Awaiter of type {Id} has not been completed.");
+                throw new InvalidOperationException($"{nameof(EffAwaiter)} of type {Id} has not been completed.");
             }
         }
 
@@ -149,7 +160,7 @@ namespace Nessos.Effects.Handlers
         ///   For use by EffMethodBuilder
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] // for stacktrace formatting purposes
         public new TResult GetResult()
         {
             if (!(Exception is null))
