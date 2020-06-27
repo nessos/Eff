@@ -18,9 +18,9 @@ namespace Nessos.Effects
         /// <summary>
         ///   Configures an EffAwaiter instance with supplied parameters.
         /// </summary>
-        /// <param name="callerMemberName"></param>
-        /// <param name="callerFilePath"></param>
-        /// <param name="callerLineNumber"></param>
+        /// <param name="callerMemberName">The method or property name of the caller to the method.</param>
+        /// <param name="callerFilePath">The full path of the source file that contains the caller.</param>
+        /// <param name="callerLineNumber">The line number at the source file at which the method is called.</param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
         public EffAwaiter ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",
@@ -68,9 +68,9 @@ namespace Nessos.Effects
         /// <summary>
         ///   Configures an EffAwaiter instance with supplied parameters.
         /// </summary>
-        /// <param name="callerMemberName"></param>
-        /// <param name="callerFilePath"></param>
-        /// <param name="callerLineNumber"></param>
+        /// <param name="callerMemberName">The method or property name of the caller to the method.</param>
+        /// <param name="callerFilePath">The full path of the source file that contains the caller.</param>
+        /// <param name="callerLineNumber">The line number at the source file at which the method is called.</param>
         /// <returns>An EffAwaiter instance with callsite metadata.</returns>
         public new EffAwaiter<TResult> ConfigureAwait(
             [CallerMemberName] string callerMemberName = "",

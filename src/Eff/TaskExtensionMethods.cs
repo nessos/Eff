@@ -9,10 +9,9 @@ namespace Nessos.Effects
         /// <summary>
         ///   Configures task instance as an Eff awaiter.
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="callerMemberName"></param>
-        /// <param name="callerFilePath"></param>
-        /// <param name="callerLineNumber"></param>
+        /// <param name="callerMemberName">The method or property name of the caller to the method.</param>
+        /// <param name="callerFilePath">The full path of the source file that contains the caller.</param>
+        /// <param name="callerLineNumber">The line number at the source file at which the method is called.</param>
         public static EffAwaiter<TResult> AsEff<TResult>(this Task<TResult> task,
                                             [CallerMemberName] string callerMemberName = "",
                                             [CallerFilePath] string callerFilePath = "",
@@ -29,10 +28,9 @@ namespace Nessos.Effects
         /// <summary>
         ///   Configures task instance as an Eff awaiter.
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="callerMemberName"></param>
-        /// <param name="callerFilePath"></param>
-        /// <param name="callerLineNumber"></param>
+        /// <param name="callerMemberName">The method or property name of the caller to the method.</param>
+        /// <param name="callerFilePath">The full path of the source file that contains the caller.</param>
+        /// <param name="callerLineNumber">The line number at the source file at which the method is called.</param>
         public static EffAwaiter AsEff(this Task task,
                                             [CallerMemberName] string callerMemberName = "",
                                             [CallerFilePath] string callerFilePath = "",
@@ -50,10 +48,9 @@ namespace Nessos.Effects
         /// <summary>
         ///   Configures task instance as an Eff awaiter.
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="callerMemberName"></param>
-        /// <param name="callerFilePath"></param>
-        /// <param name="callerLineNumber"></param>
+        /// <param name="callerMemberName">The method or property name of the caller to the method.</param>
+        /// <param name="callerFilePath">The full path of the source file that contains the caller.</param>
+        /// <param name="callerLineNumber">The line number at the source file at which the method is called.</param>
         public static EffAwaiter<TResult> AsEff<TResult>(this ValueTask<TResult> task,
                                     [CallerMemberName] string callerMemberName = "",
                                     [CallerFilePath] string callerFilePath = "",
@@ -70,10 +67,9 @@ namespace Nessos.Effects
         /// <summary>
         ///   Configures task instance as an Eff awaiter.
         /// </summary>
-        /// <param name="task"></param>
-        /// <param name="callerMemberName"></param>
-        /// <param name="callerFilePath"></param>
-        /// <param name="callerLineNumber"></param>
+        /// <param name="callerMemberName">The method or property name of the caller to the method.</param>
+        /// <param name="callerFilePath">The full path of the source file that contains the caller.</param>
+        /// <param name="callerLineNumber">The line number at the source file at which the method is called.</param>
         public static EffAwaiter AsEff(this ValueTask task,
                                     [CallerMemberName] string callerMemberName = "",
                                     [CallerFilePath] string callerFilePath = "",
