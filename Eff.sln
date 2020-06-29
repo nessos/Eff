@@ -36,12 +36,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.dockerignore = .dockerignore
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		.travis.yml = .travis.yml
 		Directory.Build.props = Directory.Build.props
-		docker-build.sh = docker-build.sh
 		Dockerfile = Dockerfile
 		LICENSE = LICENSE
 		Makefile = Makefile
-		nuget-push.sh = nuget-push.sh
 		README.md = README.md
 	EndProjectSection
 EndProject

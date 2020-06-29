@@ -21,8 +21,8 @@ pack: test
 	dotnet pack -c Release -o $(ARTIFACT_PATH)
 
 push:
-	for nupkg in $(ARTIFACTS_FOLDER)/*.nupkg; do \
-		dotnet nuget push -s $(NUGET_SOURCE) -k $(NUGET_API_KEY) --skip-duplicate $$nupkg \
+	for nupkg in $(ARTIFACT_PATH)/*.nupkg; do \
+		dotnet nuget push -s $(NUGET_SOURCE) -k $(NUGET_API_KEY) --skip-duplicate $$nupkg; \
 	done
 
 docker-build: clean
