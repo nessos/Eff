@@ -12,6 +12,9 @@ namespace Nessos.Effects.Handlers
             Effect = effect;
         }
 
+        /// <summary>
+        ///   Gets the abstract effect that is being awaited.
+        /// </summary>
         public Effect<TResult> Effect { get; }
 
         public override string Id => Effect.GetType().Name;
