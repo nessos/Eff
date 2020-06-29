@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <RootNamespace>Nessos.Effects</RootNamespace>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <Description>Programming with effects and handlers in C#</Description>
     <LangVersion>8.0</LangVersion>
     <IsPackable>true</IsPackable>

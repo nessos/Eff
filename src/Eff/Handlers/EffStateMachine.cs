@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Nessos.Effects.Utils;
+using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Nessos.Effects.Handlers
 {
     /// <summary>
-    ///   Gets the position 
+    ///   Gets the position of an <see cref="EffStateMachine{TResult}" instance. />
     /// </summary>
     public enum StateMachinePosition
     {
@@ -25,9 +26,14 @@ namespace Nessos.Effects.Handlers
         Exception = 2,
 
         /// <summary>
+        ///   The state machine is suspended, pending an asynchronous operation.
+        /// </summary>
+        TaskAwaiter = 3,
+
+        /// <summary>
         ///   The state machine is suspended, pending an <see cref="EffAwaiter"/> value.
         /// </summary>
-        Await = 3,
+        EffAwaiter = 4,
     }
 
     /// <summary>
@@ -48,7 +54,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Gets a heap allocated copy of the underlying compiler-generated state machine, for tracing metadata use.
         /// </summary>
-        public abstract IAsyncStateMachine? GetAsyncStateMachine();
+        public abstract IAsyncStateMachine GetAsyncStateMachine();
     }
 
     /// <summary>
@@ -56,15 +62,34 @@ namespace Nessos.Effects.Handlers
     /// </summary>
     public abstract class EffStateMachine<TResult> : EffAwaiter<TResult>, IEffStateMachine
     {
+        internal EffStateMachine()
+        {
+
+        }
+
         /// <summary>
         ///   Gets the current position of the state machine.
         /// </summary>
         public StateMachinePosition Position { get; protected set; } = StateMachinePosition.NotStarted;
 
         /// <summary>
-        ///   Gets the awaiter instance, if state machine is in in awaited state.
+        ///   Gets the awaiter instance, if state machine is in the <see cref="StateMachinePosition.EffAwaiter"/> state.
         /// </summary>
-        public EffAwaiter? Awaiter { get; protected set; }
+        /// <remarks>
+        ///   Indicates that the state machine is awaiting an Eff operation, 
+        ///   which must be completed by an effect handler before resuming.
+        /// </remarks>
+        public EffAwaiter? EffAwaiter { get; protected set; }
+
+        /// <summary>
+        ///   Gets the task instance, if state machine is in the <see cref="StateMachinePosition.TaskAwaiter"/> state.
+        /// </summary>
+        /// <remarks>
+        ///   Indicates that the state machine is awaiting an asynchronous operation, such as a Task or ValueTask.
+        ///   The returned <see cref="ValueTask" /> will complete once the underlying awaiter has also completed,
+        ///   but it does not return any value or exception, since that will be captured by the underlying state machine.
+        /// </remarks>
+        public ValueTask? TaskAwaiter { get; protected set; }
 
         /// <summary>
         ///   Advances the state machine to its next stage.
@@ -79,7 +104,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Gets a heap allocated copy of the underlying compiler-generated state machine, for tracing metadata use.
         /// </summary>
-        public abstract IAsyncStateMachine? GetAsyncStateMachine();
+        public abstract IAsyncStateMachine GetAsyncStateMachine();
 
         public override string Id => nameof(EffStateMachine<TResult>);
 
@@ -90,20 +115,57 @@ namespace Nessos.Effects.Handlers
         internal void BuilderSetResult(TResult result)
         {
             SetResult(result);
+            TaskAwaiter = null;
+            EffAwaiter = null;
             Position = StateMachinePosition.Result;
         }
 
         internal void BuilderSetException(Exception e)
         {
             SetException(e);
+            TaskAwaiter = null;
+            EffAwaiter = null;
             Position = StateMachinePosition.Exception;
         }
 
-        internal void BuilderSetAwaiter(EffAwaiter awaiter)
+        internal void BuilderSetAwaiter<TAwaiter>(ref TAwaiter awaiter)
+            where TAwaiter : INotifyCompletion
         {
-            awaiter.StateMachine = this;
-            Awaiter = awaiter;
-            Position = StateMachinePosition.Await;
+            if (null == (object?)default(TAwaiter) && awaiter is EffAwaiter effAwaiter)
+            {
+                effAwaiter.AwaitingStateMachine = this;
+                TaskAwaiter = null;
+                EffAwaiter = effAwaiter;
+                Position = StateMachinePosition.EffAwaiter;
+            }
+            else
+            {
+                var promise = new ValueTaskPromise();
+                awaiter.OnCompleted(promise.SetCompleted);
+                TaskAwaiter = promise.Task;
+                EffAwaiter = null;
+                Position = StateMachinePosition.TaskAwaiter;
+            }
+        }
+
+        internal void UnsafeBuilderSetAwaiter<TAwaiter>(ref TAwaiter awaiter)
+            where TAwaiter : ICriticalNotifyCompletion
+        {
+            if (null == (object?)default(TAwaiter) && awaiter is EffAwaiter effAwaiter)
+            {
+                effAwaiter.AwaitingStateMachine = this;
+                TaskAwaiter = null;
+                EffAwaiter = effAwaiter;
+                Position = StateMachinePosition.EffAwaiter;
+            }
+            else
+            {
+                var promise = new ValueTaskPromise();
+                awaiter.UnsafeOnCompleted(promise.SetCompleted);
+                TaskAwaiter = promise.Task;
+                EffAwaiter = null;
+                Position = StateMachinePosition.TaskAwaiter;
+            }
         }
     }
 }

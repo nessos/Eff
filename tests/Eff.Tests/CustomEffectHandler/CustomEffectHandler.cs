@@ -40,47 +40,32 @@ namespace Nessos.Effects.Tests
         public (string name, object? value)[]? CaptureStateParameters { private set; get; }
         public (string name, object? value)[]? CaptureStateLocalVariables { private set; get; }
 
-        public override async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
-        {
-            var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine()!;
-            CaptureStateParameters = stateMachine.GetParameterValues();
-            CaptureStateLocalVariables = stateMachine.GetLocalVariableValues();
-
-            try
-            {
-                var result = await awaiter.Task;
-                awaiter.SetResult(result);
-                await Log(result, awaiter);
-            }
-            catch (Exception ex)
-            {
-                await Log(ex, awaiter);
-                throw;
-            }
-
-        }
-
         public override async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             await base.Handle(stateMachine);
-            if (stateMachine.StateMachine != null)
+
+            var awaitingStateMachine = stateMachine.AwaitingStateMachine?.GetAsyncStateMachine();
+            if (awaitingStateMachine != null)
             {
+                CaptureStateParameters = awaitingStateMachine.GetParameterValues();
+                CaptureStateLocalVariables = awaitingStateMachine.GetLocalVariableValues();
+
                 switch (stateMachine.Position)
                 {
                     case StateMachinePosition.Result:
-                        await Log(stateMachine.Result, stateMachine);
+                        Log(stateMachine.Result, stateMachine);
                         break;
 
                     case StateMachinePosition.Exception:
-                        await Log(stateMachine.Exception!, stateMachine);
+                        Log(stateMachine.Exception!, stateMachine);
                         break;
                 }
             }
         }
 
-        public async ValueTask<ValueTuple> Log(Exception ex, EffAwaiter awaiter)
+        public void Log(Exception ex, EffAwaiter awaiter)
         {
-            var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine()!;
+            var stateMachine = awaiter.AwaitingStateMachine?.GetAsyncStateMachine()!;
             var log =
                 new ExceptionLog
                 {
@@ -98,18 +83,14 @@ namespace Nessos.Effects.Tests
                 var queue = new Queue<ExceptionLog>();
                 queue.Enqueue(log);
                 ex.Data["StackTraceLog"] = queue;
-
-                return ValueTuple.Create();
             }
 
             ((Queue<ExceptionLog>)ex.Data["StackTraceLog"]!).Enqueue(log);
-
-            return ValueTuple.Create();
         }
 
-        public async ValueTask<ValueTuple> Log(object? result, EffAwaiter awaiter)
+        public void Log(object? result, EffAwaiter awaiter)
         {
-            var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine()!;
+            var stateMachine = awaiter.AwaitingStateMachine?.GetAsyncStateMachine()!;
             var log =
                 new ResultLog
                 {
@@ -121,7 +102,6 @@ namespace Nessos.Effects.Tests
                     LocalVariables = stateMachine.GetLocalVariableValues(),
                 };
             TraceLogs.Add(log);
-            return ValueTuple.Create();
         }
     }
 }

@@ -72,7 +72,7 @@ namespace Nessos.Effects.Builders
             throw new NotSupportedException();
         }
 
-        public override IAsyncStateMachine? GetAsyncStateMachine()
+        public override IAsyncStateMachine GetAsyncStateMachine()
         {
             if (null != (object?)default(TStateMachine)) // JIT optimization magic
             {

@@ -1,7 +1,5 @@
 ﻿using Nessos.Effects.Handlers;
 using System;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -210,7 +208,7 @@ namespace Nessos.Effects.Tests
         {
             async Eff<int> Test(int x)
             {
-                var y = await TaskMethod().AsEff();
+                var y = await TaskMethod();
                 return y + 1;
 
                 async Task<int> TaskMethod()
@@ -229,7 +227,7 @@ namespace Nessos.Effects.Tests
             int counter = 0;
             async Eff Test(int x)
             {
-                await TaskMethod().AsEff();
+                await TaskMethod();
                 counter++;
 
                 async Task TaskMethod()
@@ -263,8 +261,8 @@ namespace Nessos.Effects.Tests
 
                 async Eff<int> Nested(int x)
                 {
-                    await Task.Delay(50).AsEff();
-                    var y = await Task.FromResult(x + 1).AsEff();
+                    await Task.Delay(50);
+                    var y = await Task.FromResult(x + 1);
                     return y;
                 }
             }
@@ -284,8 +282,8 @@ namespace Nessos.Effects.Tests
 
                 async Eff Nested(int x)
                 {
-                    await Task.Delay(50).AsEff();
-                    var y = await Task.FromResult(x + 1).AsEff();
+                    await Task.Delay(50);
+                    var y = await Task.FromResult(x + 1);
                     counter += y;
                 }
             }
@@ -299,13 +297,13 @@ namespace Nessos.Effects.Tests
         {
             async Eff<int> Test(int x)
             {
-                await Task.Delay(1000).AsEff();
+                await Task.Delay(1000);
                 var y = await Nested(x);
                 return y + 1;
 
                 async Eff<int> Nested(int x)
                 {
-                    var y = await Task.FromResult(x + 1).AsEff();
+                    var y = await Task.FromResult(x + 1);
                     return y;
                 }
             }
@@ -320,13 +318,13 @@ namespace Nessos.Effects.Tests
 
             async Eff Test(int x)
             {
-                await Task.Delay(1000).AsEff();
+                await Task.Delay(1000);
                 await Nested(x);
                 counter++;
 
                 async Eff Nested(int x)
                 {
-                    var y = await Task.FromResult(x + 1).AsEff();
+                    var y = await Task.FromResult(x + 1);
                     counter += y;
                 }
             }
@@ -423,6 +421,53 @@ namespace Nessos.Effects.Tests
 
             await Assert.ThrowsAsync<NotImplementedException>(() => Test().Run(Handler));
             Assert.True(isFinallyBlockExecuted);
+        }
+
+        [Fact]
+        public async Task CompletedEff_ShouldComplete()
+        {
+            await Eff.CompletedEff.Run(Handler);
+        }
+
+        [Fact]
+        public async Task FromResult_ShouldReturnResult()
+        {
+            var eff = Eff.FromResult(42);
+            Assert.Equal(42, await eff.Run(Handler));
+        }
+
+        [Fact]
+        public async Task FromFunc_Typed_HappyPath()
+        {
+            int counter = 0;
+            var eff = Eff.FromFunc(async () => ++counter);
+            Assert.Equal(0, counter);
+            Assert.Equal(1, await eff.Run(Handler));
+            Assert.Equal(1, counter);
+        }
+
+        [Fact]
+        public async Task FromFunc_Typed_Exception()
+        {
+            var eff = Eff.FromFunc<int>(async () => throw new DivideByZeroException());
+            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler));
+        }
+
+        [Fact]
+        public async Task FromFunc_Untyped_HappyPath()
+        {
+            int counter = 0;
+            var eff = Eff.FromFunc(async () => { counter++; });
+            Assert.Equal(0, counter);
+            await eff.Run(Handler);
+            Assert.Equal(1, counter);
+        }
+
+        [Fact]
+        public async Task FromFunc_Untyped_Exception()
+        {
+            var eff = Eff.FromFunc(async () => { throw new DivideByZeroException(); });
+            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler));
         }
     }
 }

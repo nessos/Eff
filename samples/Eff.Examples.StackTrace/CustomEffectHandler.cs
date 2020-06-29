@@ -14,16 +14,6 @@ namespace Nessos.Effects.Examples.StackTrace
 
         }
 
-        public override async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
-        {
-            await base.Handle(awaiter);
-
-            if (awaiter.Exception is Exception e)
-            {
-                await Log(e, awaiter);
-            }
-        }
-
         public override async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             await base.Handle(stateMachine);
@@ -36,8 +26,7 @@ namespace Nessos.Effects.Examples.StackTrace
 
         public async Task Log(Exception ex, EffAwaiter awaiter)
         {
-            var stateMachine = awaiter.StateMachine?.GetAsyncStateMachine();
-
+            var stateMachine = awaiter.AwaitingStateMachine?.GetAsyncStateMachine();
             if (stateMachine is null)
             {
                 return;

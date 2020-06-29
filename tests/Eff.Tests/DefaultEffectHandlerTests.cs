@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,7 +36,7 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public async Task EffTyped_CloningHandler_ShouldBeThreadSafe()
+        public async Task EffTyped_ShouldBeThreadSafe()
         {
             int counter = 0;
 
@@ -45,7 +44,7 @@ namespace Nessos.Effects.Tests
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    await Task.Delay(1).AsEff();
+                    await Task.Delay(1);
                     Interlocked.Increment(ref counter);
                 }
 
@@ -61,7 +60,7 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public async Task EffUntyped_CloningHandler_ShouldBeThreadSafe()
+        public async Task EffUntyped_ShouldBeThreadSafe()
         {
             int counter = 0;
 
@@ -69,7 +68,7 @@ namespace Nessos.Effects.Tests
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    await Task.Delay(1).AsEff();
+                    await Task.Delay(1);
                     Interlocked.Increment(ref counter);
                 }
             }

@@ -22,8 +22,12 @@ namespace Nessos.Effects.Examples.Maybe
                     case StateMachinePosition.Exception:
                         throw stateMachine.Exception!;
 
-                    case StateMachinePosition.Await:
-                        var awaiter = stateMachine.Awaiter!;
+                    case StateMachinePosition.TaskAwaiter:
+                        await stateMachine.TaskAwaiter!.Value;
+                        break;
+
+                    case StateMachinePosition.EffAwaiter:
+                        var awaiter = stateMachine.EffAwaiter!;
                         var handler = new MaybeEffectHandlerImpl<TResult>(stateMachine);
                         await awaiter.Accept(handler);
                         return handler.Result;
@@ -73,12 +77,6 @@ namespace Nessos.Effects.Examples.Maybe
                 {
                     await ContinueStateMachine();
                 }
-            }
-
-            public async Task Handle<TValue>(TaskAwaiter<TValue> awaiter)
-            {
-                awaiter.SetResult(await awaiter.Task);
-                await ContinueStateMachine();
             }
 
             /// <summary>

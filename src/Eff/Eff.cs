@@ -11,7 +11,7 @@ namespace Nessos.Effects
     ///   To start an Eff computation, an effect handler must by supplied using the Eff.Run() method.
     /// </summary>
     [AsyncMethodBuilder(typeof(EffMethodBuilder))]
-    public abstract class Eff
+    public abstract partial class Eff
     {
         internal Eff() { }
 

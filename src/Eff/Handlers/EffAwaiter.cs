@@ -48,7 +48,7 @@ namespace Nessos.Effects.Handlers
         ///   Gets a state machine awaiting on the current awaiter instance.
         /// </summary>
         [DisallowNull]
-        public IEffStateMachine? StateMachine { get; internal set; }
+        public IEffStateMachine? AwaitingStateMachine { get; internal set; }
 
         /// <summary>
         ///   Returns true if the awaiter has been completed with an exception value.
@@ -69,11 +69,6 @@ namespace Nessos.Effects.Handlers
         ///   Processes the awaiter using the provided effect handler.
         /// </summary>
         public abstract Task Accept(IEffectHandler handler);
-
-        /// <summary>
-        ///   Clears any results from the awaiter instance.
-        /// </summary>
-        public abstract void Clear();
 
         /// <summary>
         ///   Configures the EffAwaiter instance with supplied parameters.
@@ -105,9 +100,9 @@ namespace Nessos.Effects.Handlers
         [MethodImpl(MethodImplOptions.AggressiveInlining)] // for stacktrace formatting purposes
         public void GetResult()
         {
-            if (!(Exception is null))
+            if (Exception is Exception exn)
             {
-                ExceptionDispatchInfo.Capture(Exception).Throw();
+                ExceptionDispatchInfo.Capture(exn).Throw();
                 return;
             }
 
@@ -163,9 +158,9 @@ namespace Nessos.Effects.Handlers
         [MethodImpl(MethodImplOptions.AggressiveInlining)] // for stacktrace formatting purposes
         public new TResult GetResult()
         {
-            if (!(Exception is null))
+            if (Exception is Exception exn)
             {
-                ExceptionDispatchInfo.Capture(Exception).Throw();
+                ExceptionDispatchInfo.Capture(exn).Throw();
                 return default!;
             }
 
@@ -199,44 +194,5 @@ namespace Nessos.Effects.Handlers
             CallerLineNumber = callerLineNumber;
             return this;
         }
-
-        public override void Clear()
-        {
-            _result = default;
-            HasResult = false;
-            Exception = null;
-        }
-    }
-
-    /// <summary>
-    ///   Awaiter for abstract Effects.
-    /// </summary>
-    public class EffectAwaiter<TResult> : EffAwaiter<TResult>
-    {
-        public EffectAwaiter(Effect<TResult> effect)
-        {
-            Effect = effect;
-        }
-
-        public Effect<TResult> Effect { get; }
-
-        public override string Id => Effect.GetType().Name;
-        public override Task Accept(IEffectHandler handler) => handler.Handle(this);
-    }
-
-    /// <summary>
-    ///   Awaiter adapter for TPL tasks.
-    /// </summary>
-    public class TaskAwaiter<TResult> : EffAwaiter<TResult>
-    {
-        public TaskAwaiter(ValueTask<TResult> task)
-        {
-            Task = task;
-        }
-
-        public ValueTask<TResult> Task { get; }
-
-        public override string Id => nameof(TaskAwaiter);
-        public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
 }

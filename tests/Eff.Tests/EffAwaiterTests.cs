@@ -10,7 +10,7 @@ namespace Nessos.Effects.Tests
         [Fact]
         public static void IncompleteAwaiter_ShouldReportCorrectStatus()
         {
-            var awaiter = new TaskAwaiter<int>(new ValueTask<int>());
+            var awaiter = CreateEffAwaiter<int>();
 
             Assert.False(awaiter.HasResult);
             Assert.False(awaiter.HasException);
@@ -23,7 +23,7 @@ namespace Nessos.Effects.Tests
         [Fact]
         public static void ValueCompleteAwaiter_ShouldReportCorrectStatus()
         {
-            var awaiter = new TaskAwaiter<int>(new ValueTask<int>());
+            var awaiter = CreateEffAwaiter<int>();
 
             awaiter.SetResult(42);
 
@@ -38,7 +38,7 @@ namespace Nessos.Effects.Tests
         [Fact]
         public static void ExceptionCompleteAwaiter_ShouldReportCorrectStatus()
         {
-            var awaiter = new TaskAwaiter<int>(new ValueTask<int>());
+            var awaiter = CreateEffAwaiter<int>();
 
             var exn = new DivideByZeroException();
             awaiter.SetException(exn);
@@ -54,7 +54,7 @@ namespace Nessos.Effects.Tests
         [Fact]
         public static void ValueCompleteAwaiter_SettingNewResult_ShouldSucceed()
         {
-            var awaiter = new TaskAwaiter<int>(new ValueTask<int>());
+            var awaiter = CreateEffAwaiter<int>();
             awaiter.SetResult(-1);
 
             // Attempt to set new value
@@ -65,7 +65,7 @@ namespace Nessos.Effects.Tests
         [Fact]
         public static void ExceptionCompleteAwaiter_SettingNewResult_ShouldSucceed()
         {
-            var awaiter = new TaskAwaiter<int>(new ValueTask<int>());
+            var awaiter = CreateEffAwaiter<int>();
             awaiter.SetException(new DivideByZeroException());
 
             // Attempt to set new value
@@ -75,47 +75,9 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public static void ValueCompleteAwaiter_Clear_ShouldResetAwaiterState()
-        {
-            var awaiter = new TaskAwaiter<int>(new ValueTask<int>());
-
-            var exn = new DivideByZeroException();
-            awaiter.SetResult(42);
-
-            awaiter.Clear();
-
-            // Validate postconditions
-            Assert.False(awaiter.HasResult);
-            Assert.False(awaiter.HasException);
-            Assert.False(awaiter.IsCompleted);
-
-            Assert.Throws<InvalidOperationException>(() => awaiter.Result);
-            Assert.Null(awaiter.Exception);
-        }
-
-        [Fact]
-        public static void ExceptionCompleteAwaiter_Clear_ShouldResetAwaiterState()
-        {
-            var awaiter = new TaskAwaiter<int>(new ValueTask<int>());
-
-            var exn = new DivideByZeroException();
-            awaiter.SetException(exn);
-
-            awaiter.Clear();
-
-            // Validate postconditions
-            Assert.False(awaiter.HasResult);
-            Assert.False(awaiter.HasException);
-            Assert.False(awaiter.IsCompleted);
-
-            Assert.Throws<InvalidOperationException>(() => awaiter.Result);
-            Assert.Null(awaiter.Exception);
-        }
-
-        [Fact]
         public static void ConfigureAwait_ShouldAddCallerInfo()
         {
-            var awaiter = new TaskAwaiter<int>(new ValueTask<int>());
+            var awaiter = CreateEffAwaiter<int>();
 
             Assert.False(awaiter.CallerMemberName?.Length > 0);
             Assert.False(awaiter.CallerFilePath?.Length > 0);
@@ -133,7 +95,7 @@ namespace Nessos.Effects.Tests
         {
             async Eff<int> Test()
             {
-                return await Task.FromResult(42).AsEff();
+                return await Task.FromResult(42);
             }
 
             var stateMachine = Test().GetStateMachine();
@@ -141,9 +103,22 @@ namespace Nessos.Effects.Tests
             var copy1 = stateMachine.GetAsyncStateMachine();
             var copy2 = stateMachine.GetAsyncStateMachine();
 
-            Assert.NotNull(copy1);
-            Assert.NotNull(copy2);
             Assert.NotSame(copy1, copy2);
+        }
+
+        private static EffAwaiter<T> CreateEffAwaiter<T>()
+        {
+            var stateMachine = Test().GetStateMachine();
+            stateMachine.MoveNext();
+            Assert.Equal(StateMachinePosition.EffAwaiter, stateMachine.Position);
+            return (EffAwaiter<T>)stateMachine.EffAwaiter!;
+
+            static async Eff<T> Test() => await new TestEffect<T>();
+        }
+
+        private class TestEffect<T> : Effect<T>
+        {
+
         }
     }
 }
