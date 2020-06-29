@@ -34,7 +34,7 @@ namespace Nessos.Effects.Tests
         {
             async Eff<int> Test(int x)
             {
-                return await Task.Run(() => x + 1).AsEff();
+                return await Task.Run(() => x + 1);
             }
 
             var expected = new int[] { 42 };

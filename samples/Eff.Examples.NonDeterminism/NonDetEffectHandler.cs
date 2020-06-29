@@ -1,5 +1,4 @@
-﻿#pragma warning disable 1998
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nessos.Effects.Handlers;
@@ -23,8 +22,12 @@ namespace Nessos.Effects.Examples.NonDeterminism
                     case StateMachinePosition.Exception:
                         throw stateMachine.Exception!;
 
-                    case StateMachinePosition.Await:
-                        var awaiter = stateMachine.Awaiter!;
+                    case StateMachinePosition.TaskAwaitable:
+                        await stateMachine.TaskAwaitable!.Value;
+                        break;
+
+                    case StateMachinePosition.EffAwaiter:
+                        var awaiter = stateMachine.EffAwaiter!;
                         var handler = new NonDetEffectHandlerImpl<TResult>(stateMachine);
                         await awaiter.Accept(handler);
                         return handler.Results;
@@ -87,21 +90,6 @@ namespace Nessos.Effects.Examples.NonDeterminism
                     stateMachine.SetException(error!);
                     await ContinueStateMachine();
                 }
-            }
-
-            public async Task Handle<TValue>(TaskAwaiter<TValue> awaiter)
-            {
-                try
-                {
-                    var result = await awaiter.Task;
-                    awaiter.SetResult(result);
-                }
-                catch (Exception e)
-                {
-                    awaiter.SetException(e);
-                }
-
-                await ContinueStateMachine();
             }
 
             /// <summary>

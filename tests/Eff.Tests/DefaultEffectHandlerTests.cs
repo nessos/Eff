@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,7 +44,7 @@ namespace Nessos.Effects.Tests
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    await Task.Delay(1).AsEff();
+                    await Task.Delay(1);
                     Interlocked.Increment(ref counter);
                 }
 
@@ -69,7 +68,7 @@ namespace Nessos.Effects.Tests
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    await Task.Delay(1).AsEff();
+                    await Task.Delay(1);
                     Interlocked.Increment(ref counter);
                 }
             }

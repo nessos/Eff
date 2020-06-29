@@ -27,7 +27,7 @@ namespace Nessos.Effects.Tests
             {
                 while (await ShouldContinue())
                 {
-                    await Task.Delay(millisecondsDelay: 5).AsEff();
+                    await Task.Delay(millisecondsDelay: 5);
 
                 }
 
@@ -45,7 +45,7 @@ namespace Nessos.Effects.Tests
             async Eff Test()
             {
                 var token = await CancellationTokenEffect.Value;
-                await Task.Delay(60_000, token).AsEff();
+                await Task.Delay(60_000, token);
             }
 
             using var cts = new CancellationTokenSource(1_000);
@@ -64,7 +64,7 @@ namespace Nessos.Effects.Tests
                 {
                     while (await ShouldContinue())
                     {
-                        await Task.Delay(millisecondsDelay: 5).AsEff();
+                        await Task.Delay(millisecondsDelay: 5);
                     }
 
                     async Eff<bool> ShouldContinue() => true;

@@ -72,7 +72,7 @@ namespace Nessos.Effects.Tests
         {
             async Eff<int> Test(int x)
             {
-                var y = await Task.FromResult(1).AsEff();
+                var y = await Eff.FromResult(1);
                 return x + y;
             }
 
@@ -91,8 +91,8 @@ namespace Nessos.Effects.Tests
         {
             async Eff<int> Test(int x)
             {
-                var y = await Task.FromResult(1).AsEff();
-                await Task.Delay(10).AsEff();
+                var y = await Eff.FromResult(1);
+                await Eff.CompletedEff;
                 return x + y;
             }
 
@@ -141,8 +141,8 @@ namespace Nessos.Effects.Tests
         {
             async Eff<int> Test(int x)
             {
-                var y = await Task.FromResult(1).AsEff();
-                await Task.Delay(10).AsEff();
+                var y = await Eff.FromResult(1);
+                await Eff.CompletedEff;
                 return x + y;
             }
 

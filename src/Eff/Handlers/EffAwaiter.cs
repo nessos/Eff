@@ -48,7 +48,7 @@ namespace Nessos.Effects.Handlers
         ///   Gets a state machine awaiting on the current awaiter instance.
         /// </summary>
         [DisallowNull]
-        public IEffStateMachine? StateMachine { get; internal set; }
+        public IEffStateMachine? AwaitingStateMachine { get; internal set; }
 
         /// <summary>
         ///   Returns true if the awaiter has been completed with an exception value.
@@ -206,37 +206,5 @@ namespace Nessos.Effects.Handlers
             HasResult = false;
             Exception = null;
         }
-    }
-
-    /// <summary>
-    ///   Awaiter for abstract Effects.
-    /// </summary>
-    public class EffectAwaiter<TResult> : EffAwaiter<TResult>
-    {
-        public EffectAwaiter(Effect<TResult> effect)
-        {
-            Effect = effect;
-        }
-
-        public Effect<TResult> Effect { get; }
-
-        public override string Id => Effect.GetType().Name;
-        public override Task Accept(IEffectHandler handler) => handler.Handle(this);
-    }
-
-    /// <summary>
-    ///   Awaiter adapter for TPL tasks.
-    /// </summary>
-    public class TaskAwaiter<TResult> : EffAwaiter<TResult>
-    {
-        public TaskAwaiter(ValueTask<TResult> task)
-        {
-            Task = task;
-        }
-
-        public ValueTask<TResult> Task { get; }
-
-        public override string Id => nameof(TaskAwaiter);
-        public override Task Accept(IEffectHandler handler) => handler.Handle(this);
     }
 }

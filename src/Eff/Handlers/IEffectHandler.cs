@@ -13,11 +13,6 @@ namespace Nessos.Effects.Handlers
         Task Handle<TResult>(EffectAwaiter<TResult> awaiter);
 
         /// <summary>
-        ///   Handles TPL task awaiters.
-        /// </summary>
-        Task Handle<TResult>(TaskAwaiter<TResult> awaiter);
-
-        /// <summary>
         ///   Handles an eff state machine awaiter.
         /// </summary>
         Task Handle<TResult>(EffStateMachine<TResult> stateMachine);

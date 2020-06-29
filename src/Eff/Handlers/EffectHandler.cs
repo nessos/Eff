@@ -10,19 +10,6 @@ namespace Nessos.Effects.Handlers
     public abstract class EffectHandler : IEffectHandler
     {
         public abstract Task Handle<TResult>(EffectAwaiter<TResult> awaiter);
-       
-        public virtual async Task Handle<TResult>(TaskAwaiter<TResult> awaiter)
-        {
-            try
-            {
-                var result = await awaiter.Task.ConfigureAwait(false);
-                awaiter.SetResult(result);
-            }
-            catch (Exception e)
-            {
-                awaiter.SetException(e);
-            }
-        }
 
         public virtual async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
@@ -37,8 +24,12 @@ namespace Nessos.Effects.Handlers
                         Debug.Assert(stateMachine.IsCompleted);
                         return;
 
-                    case StateMachinePosition.Await:
-                        var awaiter = stateMachine.Awaiter!;
+                    case StateMachinePosition.TaskAwaitable:
+                        await stateMachine.TaskAwaitable!.Value.ConfigureAwait(false);
+                        break;
+
+                    case StateMachinePosition.EffAwaiter:
+                        var awaiter = stateMachine.EffAwaiter!;
                         try
                         {
                             await awaiter.Accept(this).ConfigureAwait(false);

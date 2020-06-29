@@ -50,20 +50,20 @@ namespace Nessos.Effects.Builders
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
-            where TAwaiter : EffAwaiter
+            where TAwaiter : INotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
             Debug.Assert(_effStateMachine != null);
-            _effStateMachine!.BuilderSetAwaiter(awaiter);
+            _effStateMachine!.BuilderSetAwaiter(ref awaiter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
-            where TAwaiter : EffAwaiter
+            where TAwaiter : ICriticalNotifyCompletion
             where TStateMachine : IAsyncStateMachine
         {
             Debug.Assert(_effStateMachine != null);
-            _effStateMachine!.BuilderSetAwaiter(awaiter);
+            _effStateMachine!.UnsafeBuilderSetAwaiter(ref awaiter);
         }
     }
 }
