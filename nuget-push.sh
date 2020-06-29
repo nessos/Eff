@@ -18,6 +18,6 @@ if [ ! -d $ARTIFACTS_FOLDER ]; then
 	exit 1
 fi
 
-for nupkg in $ARTIFACTS_FOLDER*nupkg; do
+for nupkg in $ARTIFACTS_FOLDER*.nupkg; do
 	dotnet nuget push -s $NUGET_SOURCE -k $NUGET_API_KEY --skip-duplicate $nupkg
 done
