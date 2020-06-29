@@ -105,9 +105,9 @@ namespace Nessos.Effects.Handlers
         [MethodImpl(MethodImplOptions.AggressiveInlining)] // for stacktrace formatting purposes
         public void GetResult()
         {
-            if (!(Exception is null))
+            if (Exception is Exception exn)
             {
-                ExceptionDispatchInfo.Capture(Exception).Throw();
+                ExceptionDispatchInfo.Capture(exn).Throw();
                 return;
             }
 
@@ -163,9 +163,9 @@ namespace Nessos.Effects.Handlers
         [MethodImpl(MethodImplOptions.AggressiveInlining)] // for stacktrace formatting purposes
         public new TResult GetResult()
         {
-            if (!(Exception is null))
+            if (Exception is Exception exn)
             {
-                ExceptionDispatchInfo.Capture(Exception).Throw();
+                ExceptionDispatchInfo.Capture(exn).Throw();
                 return default!;
             }
 
