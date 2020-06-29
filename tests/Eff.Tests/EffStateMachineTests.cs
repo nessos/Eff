@@ -133,22 +133,26 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public static async Task OnTaskAwaiter_Delay_ShouldAwaitForSufficientDuration()
+        public static async Task OnTaskAwaiter_Delay_ShouldReturnCorrectResult()
         {
             var stateMachine = Test().GetStateMachine();
-            var sw = Stopwatch.StartNew();
             stateMachine.MoveNext();
 
             Assert.NotNull(stateMachine.TaskAwaiter);
             await stateMachine.TaskAwaiter!.Value;
             stateMachine.MoveNext();
 
-            Assert.True(sw.ElapsedMilliseconds >= 1_000);
+            Assert.Equal(42, stateMachine.Result);
 
             async Eff<int> Test()
             {
-                await Task.Delay(1_000);
-                return 42;
+                return await TaskMethod();
+
+                async Task<int> TaskMethod()
+                {
+                    await Task.Delay(1000);
+                    return 42;
+                }
             }
         }
 
