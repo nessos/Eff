@@ -71,11 +71,6 @@ namespace Nessos.Effects.Handlers
         public abstract Task Accept(IEffectHandler handler);
 
         /// <summary>
-        ///   Clears any results from the awaiter instance.
-        /// </summary>
-        public abstract void Clear();
-
-        /// <summary>
         ///   Configures the EffAwaiter instance with supplied parameters.
         /// </summary>
         /// <param name="callerMemberName">The method or property name of the caller to the method.</param>
@@ -198,13 +193,6 @@ namespace Nessos.Effects.Handlers
             CallerFilePath = callerFilePath;
             CallerLineNumber = callerLineNumber;
             return this;
-        }
-
-        public override void Clear()
-        {
-            _result = default;
-            HasResult = false;
-            Exception = null;
         }
     }
 }

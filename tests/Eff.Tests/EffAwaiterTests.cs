@@ -75,44 +75,6 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public static void ValueCompleteAwaiter_Clear_ShouldResetAwaiterState()
-        {
-            var awaiter = CreateEffAwaiter<int>();
-
-            var exn = new DivideByZeroException();
-            awaiter.SetResult(42);
-
-            awaiter.Clear();
-
-            // Validate postconditions
-            Assert.False(awaiter.HasResult);
-            Assert.False(awaiter.HasException);
-            Assert.False(awaiter.IsCompleted);
-
-            Assert.Throws<InvalidOperationException>(() => awaiter.Result);
-            Assert.Null(awaiter.Exception);
-        }
-
-        [Fact]
-        public static void ExceptionCompleteAwaiter_Clear_ShouldResetAwaiterState()
-        {
-            var awaiter = CreateEffAwaiter<int>();
-
-            var exn = new DivideByZeroException();
-            awaiter.SetException(exn);
-
-            awaiter.Clear();
-
-            // Validate postconditions
-            Assert.False(awaiter.HasResult);
-            Assert.False(awaiter.HasException);
-            Assert.False(awaiter.IsCompleted);
-
-            Assert.Throws<InvalidOperationException>(() => awaiter.Result);
-            Assert.Null(awaiter.Exception);
-        }
-
-        [Fact]
         public static void ConfigureAwait_ShouldAddCallerInfo()
         {
             var awaiter = CreateEffAwaiter<int>();
