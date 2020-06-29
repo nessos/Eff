@@ -36,7 +36,7 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public async Task EffTyped_CloningHandler_ShouldBeThreadSafe()
+        public async Task EffTyped_ShouldBeThreadSafe()
         {
             int counter = 0;
 
@@ -60,7 +60,7 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public async Task EffUntyped_CloningHandler_ShouldBeThreadSafe()
+        public async Task EffUntyped_ShouldBeThreadSafe()
         {
             int counter = 0;
 

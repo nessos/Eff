@@ -24,8 +24,8 @@ namespace Nessos.Effects.Handlers
                         Debug.Assert(stateMachine.IsCompleted);
                         return;
 
-                    case StateMachinePosition.TaskAwaitable:
-                        await stateMachine.TaskAwaitable!.Value.ConfigureAwait(false);
+                    case StateMachinePosition.TaskAwaiter:
+                        await stateMachine.TaskAwaiter!.Value.ConfigureAwait(false);
                         break;
 
                     case StateMachinePosition.EffAwaiter:

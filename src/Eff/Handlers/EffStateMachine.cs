@@ -28,7 +28,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   The state machine is suspended, pending an asynchronous operation.
         /// </summary>
-        TaskAwaitable = 3,
+        TaskAwaiter = 3,
 
         /// <summary>
         ///   The state machine is suspended, pending an <see cref="EffAwaiter"/> value.
@@ -82,14 +82,14 @@ namespace Nessos.Effects.Handlers
         public EffAwaiter? EffAwaiter { get; protected set; }
 
         /// <summary>
-        ///   Gets the task instance, if state machine is in the <see cref="StateMachinePosition.TaskAwaitable"/> state.
+        ///   Gets the task instance, if state machine is in the <see cref="StateMachinePosition.TaskAwaiter"/> state.
         /// </summary>
         /// <remarks>
         ///   Indicates that the state machine is awaiting an asynchronous operation, such as a Task or ValueTask.
         ///   The returned <see cref="ValueTask" /> will complete once the underlying awaiter has also completed,
         ///   but it does not return any value or exception, since that will be captured by the underlying state machine.
         /// </remarks>
-        public ValueTask? TaskAwaitable { get; protected set; }
+        public ValueTask? TaskAwaiter { get; protected set; }
 
         /// <summary>
         ///   Advances the state machine to its next stage.
@@ -115,7 +115,7 @@ namespace Nessos.Effects.Handlers
         internal void BuilderSetResult(TResult result)
         {
             SetResult(result);
-            TaskAwaitable = null;
+            TaskAwaiter = null;
             EffAwaiter = null;
             Position = StateMachinePosition.Result;
         }
@@ -123,7 +123,7 @@ namespace Nessos.Effects.Handlers
         internal void BuilderSetException(Exception e)
         {
             SetException(e);
-            TaskAwaitable = null;
+            TaskAwaiter = null;
             EffAwaiter = null;
             Position = StateMachinePosition.Exception;
         }
@@ -134,7 +134,7 @@ namespace Nessos.Effects.Handlers
             if (null == (object?)default(TAwaiter) && awaiter is EffAwaiter effAwaiter)
             {
                 effAwaiter.AwaitingStateMachine = this;
-                TaskAwaitable = null;
+                TaskAwaiter = null;
                 EffAwaiter = effAwaiter;
                 Position = StateMachinePosition.EffAwaiter;
             }
@@ -142,9 +142,9 @@ namespace Nessos.Effects.Handlers
             {
                 var promise = new ValueTaskPromise();
                 awaiter.OnCompleted(promise.SetCompleted);
-                TaskAwaitable = promise.Task;
+                TaskAwaiter = promise.Task;
                 EffAwaiter = null;
-                Position = StateMachinePosition.TaskAwaitable;
+                Position = StateMachinePosition.TaskAwaiter;
             }
         }
 
@@ -154,7 +154,7 @@ namespace Nessos.Effects.Handlers
             if (null == (object?)default(TAwaiter) && awaiter is EffAwaiter effAwaiter)
             {
                 effAwaiter.AwaitingStateMachine = this;
-                TaskAwaitable = null;
+                TaskAwaiter = null;
                 EffAwaiter = effAwaiter;
                 Position = StateMachinePosition.EffAwaiter;
             }
@@ -162,9 +162,9 @@ namespace Nessos.Effects.Handlers
             {
                 var promise = new ValueTaskPromise();
                 awaiter.UnsafeOnCompleted(promise.SetCompleted);
-                TaskAwaitable = promise.Task;
+                TaskAwaiter = promise.Task;
                 EffAwaiter = null;
-                Position = StateMachinePosition.TaskAwaitable;
+                Position = StateMachinePosition.TaskAwaiter;
             }
         }
     }

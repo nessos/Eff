@@ -22,8 +22,8 @@ namespace Nessos.Effects.Examples.Maybe
                     case StateMachinePosition.Exception:
                         throw stateMachine.Exception!;
 
-                    case StateMachinePosition.TaskAwaitable:
-                        await stateMachine.TaskAwaitable!.Value;
+                    case StateMachinePosition.TaskAwaiter:
+                        await stateMachine.TaskAwaiter!.Value;
                         break;
 
                     case StateMachinePosition.EffAwaiter:

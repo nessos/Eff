@@ -18,7 +18,7 @@ namespace Nessos.Effects.Tests
             Assert.Equal(StateMachinePosition.NotStarted, stateMachine.Position);
             Assert.Null(stateMachine.Exception);
             Assert.Null(stateMachine.EffAwaiter);
-            Assert.Null(stateMachine.TaskAwaitable);
+            Assert.Null(stateMachine.TaskAwaiter);
             Assert.False(stateMachine.IsCompleted);
 
             async Eff<int> Test()
@@ -38,7 +38,7 @@ namespace Nessos.Effects.Tests
             Assert.Equal(42, stateMachine.Result);
             Assert.Null(stateMachine.Exception);
             Assert.Null(stateMachine.EffAwaiter);
-            Assert.Null(stateMachine.TaskAwaitable);
+            Assert.Null(stateMachine.TaskAwaiter);
             Assert.True(stateMachine.IsCompleted);
 
             async Eff<int> Test() => 42;
@@ -54,7 +54,7 @@ namespace Nessos.Effects.Tests
             Assert.Equal(StateMachinePosition.Exception, stateMachine.Position);
             Assert.Equal(exn, stateMachine.Exception);
             Assert.Null(stateMachine.EffAwaiter);
-            Assert.Null(stateMachine.TaskAwaitable);
+            Assert.Null(stateMachine.TaskAwaiter);
             Assert.True(stateMachine.IsCompleted);
 
             async Eff<int> Test() => throw exn;
@@ -69,7 +69,7 @@ namespace Nessos.Effects.Tests
             Assert.Equal(StateMachinePosition.EffAwaiter, stateMachine.Position);
             Assert.Null(stateMachine.Exception);
             Assert.IsAssignableFrom<EffStateMachine<int>>(stateMachine.EffAwaiter);
-            Assert.Null(stateMachine.TaskAwaitable);
+            Assert.Null(stateMachine.TaskAwaiter);
             Assert.False(stateMachine.IsCompleted);
 
             async Eff<int> Test()
@@ -87,7 +87,7 @@ namespace Nessos.Effects.Tests
             Assert.Equal(StateMachinePosition.EffAwaiter, stateMachine.Position);
             Assert.Null(stateMachine.Exception);
             Assert.IsAssignableFrom<EffectAwaiter<int>>(stateMachine.EffAwaiter);
-            Assert.Null(stateMachine.TaskAwaitable);
+            Assert.Null(stateMachine.TaskAwaiter);
             Assert.False(stateMachine.IsCompleted);
 
             async Eff<int> Test()
@@ -97,15 +97,15 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public static void OnTaskAwaitable_Position_ShouldReturnTask()
+        public static void OnTaskAwaiter_Position_ShouldReturnTask()
         {
             var stateMachine = Test().GetStateMachine();
             stateMachine.MoveNext();
 
-            Assert.Equal(StateMachinePosition.TaskAwaitable, stateMachine.Position);
+            Assert.Equal(StateMachinePosition.TaskAwaiter, stateMachine.Position);
             Assert.Null(stateMachine.Exception);
             Assert.Null(stateMachine.EffAwaiter);
-            Assert.NotNull(stateMachine.TaskAwaitable);
+            Assert.NotNull(stateMachine.TaskAwaiter);
             Assert.False(stateMachine.IsCompleted);
 
             async Eff<int> Test()
@@ -115,13 +115,13 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public static async Task OnTaskAwaitable_Completed_ShouldBeAbleToAdvanceStateMachine()
+        public static async Task OnTaskAwaiter_Completed_ShouldBeAbleToAdvanceStateMachine()
         {
             var stateMachine = Test().GetStateMachine();
             stateMachine.MoveNext();
 
-            Assert.NotNull(stateMachine.TaskAwaitable);
-            await stateMachine.TaskAwaitable!.Value;
+            Assert.NotNull(stateMachine.TaskAwaiter);
+            await stateMachine.TaskAwaiter!.Value;
             stateMachine.MoveNext();
             Assert.Equal(42, stateMachine.Result);
 
@@ -133,14 +133,14 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public static async Task OnTaskAwaitable_Delay_ShouldAwaitForSufficientDuration()
+        public static async Task OnTaskAwaiter_Delay_ShouldAwaitForSufficientDuration()
         {
             var stateMachine = Test().GetStateMachine();
             var sw = Stopwatch.StartNew();
             stateMachine.MoveNext();
 
-            Assert.NotNull(stateMachine.TaskAwaitable);
-            await stateMachine.TaskAwaitable!.Value;
+            Assert.NotNull(stateMachine.TaskAwaiter);
+            await stateMachine.TaskAwaiter!.Value;
             stateMachine.MoveNext();
 
             Assert.True(sw.ElapsedMilliseconds >= 1_000);
@@ -153,13 +153,13 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
-        public static async Task OnTaskAwaitable_CanSubscribeMultipleCallbacks()
+        public static async Task OnTaskAwaiter_CanSubscribeMultipleCallbacks()
         {
             var stateMachine = Test().GetStateMachine();
             stateMachine.MoveNext();
 
-            Assert.NotNull(stateMachine.TaskAwaitable);
-            var awaitTask = stateMachine.TaskAwaitable!.Value;
+            Assert.NotNull(stateMachine.TaskAwaiter);
+            var awaitTask = stateMachine.TaskAwaiter!.Value;
 
             int counter = 0;
 
