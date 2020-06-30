@@ -60,6 +60,11 @@ namespace Nessos.Effects
     [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
     public abstract class Eff<TResult> : Eff
     {
+        internal Eff()
+        {
+
+        }
+
         /// <summary>
         ///   Gets a new state machine instance for executing the eff computation.
         /// </summary>
