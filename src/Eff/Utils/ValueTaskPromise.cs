@@ -20,24 +20,31 @@ namespace Nessos.Effects.Utils
             public object? Scheduler;
         }
 
-        private volatile bool _isTaskCompleted = false;
+        private volatile int _isFirstContinuationQueued = 0;
+        private volatile int _isTaskCompleted = 0;
+        private volatile int _subscriptionsInProgress = 0;
         private ContinuationContext _firstContinuation = default;
         private ConcurrentQueue<ContinuationContext>? _additionalContinuations;
-        
-        private int _firstContinuationState = FCState_None;
-        private const int FCState_None = 0;
-        private const int FCState_WriteAcquired = 1;
-        private const int FCState_WriteCompleted = 2;
-        private const int FCState_ExecutionAcquired = 3;
 
         public ValueTask Task => new ValueTask(this, 0);
 
         // Signal task completion
         public void SetCompleted()
         {
-            _isTaskCompleted = true;
+            // First, mark task as completed or exit if already done.
+            if (Interlocked.CompareExchange(ref _isTaskCompleted, 1, 0) == 1)
+            {
+                return;
+            }
 
-            if (TryAcquireFirstContinuation())
+            // Spin until any pending continuation subscriptions have completed.
+            while (_subscriptionsInProgress > 0)
+            {
+                Thread.SpinWait(20);
+            }
+
+            // Now, execute all queued continuations.
+            if (_isFirstContinuationQueued == 1)
             {
                 ExecuteContinuation(in _firstContinuation, isAsyncExecution: true);
                 _firstContinuation = default;
@@ -50,74 +57,66 @@ namespace Nessos.Effects.Utils
                     ExecuteContinuation(in ctx, isAsyncExecution: true);
                 }
             }
-
-            bool TryAcquireFirstContinuation()
-            {
-                if (_firstContinuationState > FCState_None)
-                {
-                    while (_firstContinuationState == FCState_WriteAcquired)
-                    {
-                        // Races with first OnCompleted invocation, spin until completion has been signalled.
-                        Thread.SpinWait(20);
-                    }
-
-                    return Interlocked.CompareExchange(ref _firstContinuationState, FCState_ExecutionAcquired, FCState_WriteCompleted) == FCState_WriteCompleted;
-                }
-
-                return false;
-            }
         }
 
         // Handle continuations subscribed by awaiters
         void IValueTaskSource.OnCompleted(Action<object> continuation, object state, short _, ValueTaskSourceOnCompletedFlags flags)
         {
-            bool isFirstContinuation = Interlocked.CompareExchange(ref _firstContinuationState, FCState_WriteAcquired, FCState_None) == FCState_None;
-
             var ctx = new ContinuationContext { Continuation = continuation, State = state };
             CaptureThreadContext(ref ctx, flags);
 
-            if (_isTaskCompleted)
+            if (_isTaskCompleted == 1)
             {
-                // Task completed, execute the continuation immediately
-                if (isFirstContinuation)
-                {
-                    Volatile.Write(ref _firstContinuationState, FCState_ExecutionAcquired);
-                }
+                // Task completed, execute the continuation immediately.
+                ExecuteContinuation(in ctx, isAsyncExecution: false);
+                return;
+            }
 
+            // Coordinate with concurrent SetCompleted() calls:
+            // Increment the subscriptionsInProgress count and read the task state, in that order.
+            Interlocked.Increment(ref _subscriptionsInProgress);
+
+            if (_isTaskCompleted == 1)
+            {
+                // Task completed, execute the continuation immediately.
+                Interlocked.Decrement(ref _subscriptionsInProgress);
                 ExecuteContinuation(in ctx, isAsyncExecution: false);
             }
             else
             {
-                // Task not completed yet, store for future execution
-                if (isFirstContinuation)
+                // Enqueue the continuation for asynchronous execution.
+                if (Interlocked.CompareExchange(ref _isFirstContinuationQueued, 1, 0) == 0)
                 {
+                    // this is the first continuation, store directly to field.
                     _firstContinuation = ctx;
-                    Volatile.Write(ref _firstContinuationState, FCState_WriteCompleted);
                 }
                 else
                 {
-                    var contList = GetOrCreateAdditionalContinuationQueue();
-                    contList.Enqueue(ctx);
+                    // this is a secondary continuation, add to a heap allocated queue.
+                    var contQueue = GetOrCreateAdditionalContinuationQueue();
+                    contQueue.Enqueue(ctx);
                 }
+
+                Interlocked.Decrement(ref _subscriptionsInProgress);
             }
         }
 
-        ValueTaskSourceStatus IValueTaskSource.GetStatus(short token) => _isTaskCompleted ? ValueTaskSourceStatus.Succeeded : ValueTaskSourceStatus.Pending;
+        ValueTaskSourceStatus IValueTaskSource.GetStatus(short token) => (_isTaskCompleted == 1) ? ValueTaskSourceStatus.Succeeded : ValueTaskSourceStatus.Pending;
         void IValueTaskSource.GetResult(short token) { }
 
         private ConcurrentQueue<ContinuationContext> GetOrCreateAdditionalContinuationQueue()
         {
-            var contList = _additionalContinuations;
-            if (contList == null)
+            var contQueue = _additionalContinuations;
+            if (contQueue == null)
             {
-                contList = new ConcurrentQueue<ContinuationContext>();
-                if (Interlocked.CompareExchange(ref _additionalContinuations, contList, null) is ConcurrentQueue<ContinuationContext> existing)
+                contQueue = new ConcurrentQueue<ContinuationContext>();
+                if (Interlocked.CompareExchange(ref _additionalContinuations, contQueue, null) is ConcurrentQueue<ContinuationContext> existing)
                 {
-                    contList = existing;
+                    contQueue = existing;
                 }
             }
 
-            return contList;
+            return contQueue;
         }
 
         private static void CaptureThreadContext(ref ContinuationContext destination, ValueTaskSourceOnCompletedFlags flags)
