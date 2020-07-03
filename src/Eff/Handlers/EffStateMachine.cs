@@ -112,6 +112,7 @@ namespace Nessos.Effects.Handlers
 
         // Method builder helper methods
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void BuilderSetResult(TResult result)
         {
             SetResult(result);
@@ -120,6 +121,7 @@ namespace Nessos.Effects.Handlers
             Position = StateMachinePosition.Result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void BuilderSetException(Exception e)
         {
             SetException(e);
@@ -128,6 +130,7 @@ namespace Nessos.Effects.Handlers
             Position = StateMachinePosition.Exception;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void BuilderSetAwaiter<TAwaiter>(ref TAwaiter awaiter)
             where TAwaiter : INotifyCompletion
         {
@@ -148,6 +151,7 @@ namespace Nessos.Effects.Handlers
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void UnsafeBuilderSetAwaiter<TAwaiter>(ref TAwaiter awaiter)
             where TAwaiter : ICriticalNotifyCompletion
         {
