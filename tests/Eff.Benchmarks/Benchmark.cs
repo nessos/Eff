@@ -1,9 +1,8 @@
 ﻿#pragma warning disable 1998
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Nessos.Effects.Handlers;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Nessos.Effects.Benchmarks
 {
