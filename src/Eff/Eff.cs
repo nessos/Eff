@@ -40,14 +40,19 @@ namespace Nessos.Effects
         public EffAwaiter GetAwaiter() => GetAwaiterCore();
 
         /// <summary>
-        ///   Runs supplied Eff computation using provided effect handler.
+        ///    Executes the Eff computation using semantics from the provided effect handler.
         /// </summary>
-        /// <param name="handler">Effect handler to be used in execution.</param>
-        public Task Run(IEffectHandler handler) => RunCore(handler);
+        /// <param name="effectHandler">Effect handler to be used in execution.</param>
+        /// <returns>A task computing the result of the eff computation.</returns>
+        public async Task Run(IEffectHandler effectHandler)
+        {
+            var awaiter = GetAwaiterCore();
+            await awaiter.Accept(effectHandler).ConfigureAwait(false);
+            awaiter.GetResult();
+        }
         
-        // Helper methods for exposing untyped variants of Run and GetAwaiter methods
+        // Helper method for exposing untyped variants of Run and GetAwaiter methods
         // Can be removed once Covariant return types are brought to C#.
-        protected abstract Task RunCore(IEffectHandler handler);
         protected abstract EffAwaiter GetAwaiterCore();
     }
 
@@ -95,18 +100,17 @@ namespace Nessos.Effects
         public new EffAwaiter<TResult> GetAwaiter() => GetStateMachine();
 
         /// <summary>
-        ///   Runs supplied Eff computation using provided effect handler.
+        ///   Executes the Eff computation using semantics from the provided effect handler.
         /// </summary>
-        /// <param name="handler">Effect handler to be used in execution.</param>
-        /// <returns></returns>
-        public new async Task<TResult> Run(IEffectHandler handler)
+        /// <param name="effectHandler">Effect handler to be used in execution.</param>
+        /// <returns>A task computing the result of the eff computation.</returns>
+        public new async Task<TResult> Run(IEffectHandler effectHandler)
         {
             var stateMachine = GetStateMachine();
-            await handler.Handle(stateMachine).ConfigureAwait(false);
+            await effectHandler.Handle(stateMachine).ConfigureAwait(false);
             return stateMachine.GetResult();
         }
 
-        protected sealed override Task RunCore(IEffectHandler handler) => Run(handler);
         protected sealed override EffAwaiter GetAwaiterCore() => GetStateMachine();
     }
 }
