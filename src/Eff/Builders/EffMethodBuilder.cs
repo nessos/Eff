@@ -36,14 +36,12 @@ namespace Nessos.Effects.Builders
             _effStateMachine = stateMachine;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetResult()
         {
             Debug.Assert(_effStateMachine != null);
             _effStateMachine!.BuilderSetResult(Unit.Value);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetException(Exception exception)
         {
             Debug.Assert(_effStateMachine != null);
