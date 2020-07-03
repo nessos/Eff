@@ -20,9 +20,9 @@ namespace Nessos.Effects.Utils
             public object? Scheduler;
         }
 
-        private volatile int _isFirstContinuationQueued = 0;
         private volatile int _isTaskCompleted = 0;
         private volatile int _subscriptionsInProgress = 0;
+        private volatile int _isFirstContinuationQueued = 0;
         private ContinuationContext _firstContinuation = default;
         private ConcurrentQueue<ContinuationContext>? _additionalContinuations;
 
@@ -65,13 +65,6 @@ namespace Nessos.Effects.Utils
             var ctx = new ContinuationContext { Continuation = continuation, State = state };
             CaptureThreadContext(ref ctx, flags);
 
-            if (_isTaskCompleted == 1)
-            {
-                // Task completed, execute the continuation immediately.
-                ExecuteContinuation(in ctx, isAsyncExecution: false);
-                return;
-            }
-
             // Coordinate with concurrent SetCompleted() calls:
             // Increment the subscriptionsInProgress count and read the task state, in that order.
             Interlocked.Increment(ref _subscriptionsInProgress);
@@ -97,6 +90,7 @@ namespace Nessos.Effects.Utils
                     contQueue.Enqueue(ctx);
                 }
 
+                // signal that the continuation enqueue operation has completed
                 Interlocked.Decrement(ref _subscriptionsInProgress);
             }
         }
