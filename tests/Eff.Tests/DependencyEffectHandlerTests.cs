@@ -90,6 +90,14 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
+        public async Task DependencyEffect_Run_HappyPath()
+        {
+            var effect = IO.Do(ctx => (ctx.Resolve<int>(), ctx.Resolve<string>()));
+            var result = await effect.Run(Handler);
+            Assert.Equal((IntDependency, StringDependency), result);
+        }
+
+        [Fact]
         public async Task DependencyEffect_MissingDependency_ShouldThrowKeyNotFoundException()
         {
             async Eff Test()

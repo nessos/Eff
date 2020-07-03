@@ -25,6 +25,14 @@ namespace Nessos.Effects.Tests
         }
 
         [Fact]
+        public async Task Effect_Run_ShouldThrowNotSupportedException()
+        {
+            var effect = new TestEffect<int>();
+
+            await Assert.ThrowsAsync<NotSupportedException>(() => effect.Run(Handler));
+        }
+
+        [Fact]
         public async Task EffUntyped_AwaitEffect_ShouldThrowNotSupportedException()
         {
             async Eff Test()

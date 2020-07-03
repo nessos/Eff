@@ -1,5 +1,6 @@
 ﻿using Nessos.Effects.Handlers;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Nessos.Effects
 {
@@ -37,6 +38,18 @@ namespace Nessos.Effects
                 CallerLineNumber = callerLineNumber,
                 CallerFilePath = callerFilePath
             };
+        }
+
+        /// <summary>
+        ///   Executes the Effect using semantics from the provided effect handler.
+        /// </summary>
+        /// <param name="effectHandler">Effect handler to be used in execution.</param>
+        /// <returns>A task computing the result of the Effect.</returns>
+        public async Task<TResult> Run(IEffectHandler effectHandler)
+        {
+            var effectAwaiter = new EffectAwaiter<TResult>(this);
+            await effectHandler.Handle(effectAwaiter).ConfigureAwait(false);
+            return effectAwaiter.GetResult();
         }
     }
 }
