@@ -45,10 +45,9 @@ namespace Nessos.Effects.Handlers
         public Exception? Exception { get; internal set; }
 
         /// <summary>
-        ///   Gets a state machine awaiting on the current awaiter instance.
+        ///   Gets or sets a state machine awaiting on the current awaiter instance.
         /// </summary>
-        [DisallowNull]
-        public IEffStateMachine? AwaitingStateMachine { get; internal set; }
+        public IEffStateMachine? AwaitingStateMachine { get; set; }
 
         /// <summary>
         ///   Returns true if the awaiter has been completed with an exception value.

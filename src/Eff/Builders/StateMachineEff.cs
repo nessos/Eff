@@ -59,7 +59,34 @@ namespace Nessos.Effects.Builders
 
         public override EffStateMachine<TResult> Clone()
         {
-            return new EffStateMachine<TBuilder, TStateMachine, TResult>(in _stateMachine);
+            var clone = new EffStateMachine<TBuilder, TStateMachine, TResult>(in _stateMachine)
+            {
+                Position = Position,
+                Exception = Exception,
+                EffAwaiter = EffAwaiter,
+                TaskAwaiter = TaskAwaiter
+            };
+
+            if (HasResult)
+            {
+                clone.SetResult(Result);
+            }
+
+            // recursively clone any parent state machines awaiting on the current instance
+            if (AwaitingStateMachine is IEffStateMachine parent)
+            {
+                var clonedParent = parent.Clone();
+                clonedParent.UnsafeSetAwaiter(clone);
+                clone.AwaitingStateMachine = clonedParent;
+            }
+
+            return clone;
+        }
+
+        public override void UnsafeSetAwaiter(EffAwaiter awaiter)
+        {
+            ReflectionHelpers.SetAwaiter(ref _stateMachine, awaiter);
+            EffAwaiter = awaiter;
         }
 
         void IAsyncStateMachine.MoveNext()
@@ -86,9 +113,18 @@ namespace Nessos.Effects.Builders
 
         private static class ReflectionHelpers
         {
-            private static volatile bool s_isInitialized = false;
-            private static MethodInfo? s_memberwiseCloner;
-            private static FieldInfo? s_smBuilder;
+            private static readonly MethodInfo s_memberwiseCloner = typeof(TStateMachine)
+                    .GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            private static readonly FieldInfo? s_smBuilder = typeof(TStateMachine)
+                    .GetFields(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(f => f.FieldType == typeof(TBuilder))
+                    .FirstOrDefault();
+
+            private static readonly FieldInfo? s_smObject = typeof(TStateMachine)
+                    .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+                    .Where(f => f.FieldType == typeof(object))
+                    .FirstOrDefault();
 
             /// <summary>
             ///   Provides a reflection-driven workaround for cloning class state machines.
@@ -96,14 +132,10 @@ namespace Nessos.Effects.Builders
             /// </summary>
             public static TStateMachine Clone(TStateMachine stateMachine, EffStateMachine<TResult> effStateMachine)
             {
-                if (!s_isInitialized)
-                {
-                    Debug.Assert(typeof(TBuilder).IsValueType && !typeof(TStateMachine).IsValueType);
-                    Initialize();
-                }
+                Debug.Assert(s_smBuilder != null);
 
                 // Create a memberwise clone of the heap allocated state machine
-                var clonedStateMachine = (TStateMachine)s_memberwiseCloner!.Invoke(stateMachine, null);
+                var clonedStateMachine = (TStateMachine)s_memberwiseCloner.Invoke(stateMachine, null);
                 // Create a new method builder copy and initialize it with our eff state machine
                 var newBuilder = new TBuilder();
                 newBuilder.SetStateMachine(effStateMachine);
@@ -114,25 +146,26 @@ namespace Nessos.Effects.Builders
 
             public static TStateMachine Clone(TStateMachine stateMachine)
             {
-                if (!s_isInitialized)
-                {
-                    Debug.Assert(typeof(TBuilder).IsValueType && !typeof(TStateMachine).IsValueType);
-                    Initialize();
-                }
+                Debug.Assert(typeof(TBuilder).IsValueType && !typeof(TStateMachine).IsValueType);
 
                 // Create a memberwise clone of the heap allocated state machine
                 return (TStateMachine)s_memberwiseCloner!.Invoke(stateMachine, null);
             }
 
-            private static void Initialize()
+            public static void SetAwaiter(ref TStateMachine stateMachine, EffAwaiter awaiter)
             {
-                s_memberwiseCloner = typeof(TStateMachine).GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic);
-                s_smBuilder = typeof(TStateMachine)
-                    .GetFields(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(f => f.FieldType == typeof(TBuilder))
-                    .FirstOrDefault();
+                Debug.Assert(s_smObject != null);
 
-                s_isInitialized = true;
+                if (null != (object?)default(TStateMachine)) // JIT optimization magic
+                {
+                    IAsyncStateMachine boxedReplica = stateMachine;
+                    s_smObject!.SetValue(boxedReplica, awaiter);
+                    stateMachine = (TStateMachine)boxedReplica;
+                }
+                else
+                {
+                    s_smObject!.SetValue(stateMachine, awaiter);
+                }
             }
         }
     }
