@@ -6,7 +6,7 @@ namespace Nessos.Effects.Examples.Continuation
 {
     public static class ContinuationHandler
     {
-        public static async Task RunWithContinuations<T>(this Eff<T> eff, Func<T, Task> onSuccess, Func<Exception, Task>? onException = null)
+        public static async Task StartWithContinuations<T>(this Eff<T> eff, Func<T, Task> onSuccess, Func<Exception, Task>? onException = null)
         {
             var continuationHandler = new ContinuationHandler<T>(onSuccess, onException ?? (_ => Task.CompletedTask));
             var stateMachine = eff.GetStateMachine();
