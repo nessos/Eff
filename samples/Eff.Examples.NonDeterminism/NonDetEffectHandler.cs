@@ -88,6 +88,8 @@ namespace Nessos.Effects.Examples.NonDeterminism
         {
             if (Result.Exception != null)
             {
+                // another nondeterministic branch has completed with an exception,
+                // yield without executing the continuation.
                 return;
             }
 
