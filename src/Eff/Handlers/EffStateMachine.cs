@@ -52,22 +52,26 @@ namespace Nessos.Effects.Handlers
         void MoveNext();
 
         /// <summary>
-        ///   Gets a heap allocated copy of the underlying compiler-generated state machine, for tracing metadata use.
+        ///   Gets a heap allocated replica of the underlying compiler-generated state machine, for tracing metadata use.
         /// </summary>
         IAsyncStateMachine GetAsyncStateMachine();
 
         /// <summary>
         ///   Gets the parent state machine awaiting on the current state machine.
         /// </summary>
-        IEffStateMachine? AwaitingStateMachine { get; }
+        IEffStateMachine? AwaitingStateMachine { get; set; }
 
         /// <summary>
         ///   Creates a cloned copy of the state machine, in its current configuration.
         /// </summary>
+        /// <remarks>
+        ///   If the state machine contains an <see cref="AwaitingStateMachine"/> instance,
+        ///   it will also be cloned recursively.
+        /// </remarks>
         IEffStateMachine Clone();
 
         /// <summary>
-        ///   Updates the state machine with a fresh EffAwaiter instance.
+        ///   Configures the state machine with a fresh EffAwaiter instance.
         /// </summary>
         /// <param name="awaiter">The EffAwaiter instance to use.</param>
         /// <remarks>
@@ -124,10 +128,14 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Creates a cloned copy of the state machine, in its current configuration.
         /// </summary>
+        /// <remarks>
+        ///   If the state machine contains an <see cref="AwaitingStateMachine"/> instance,
+        ///   it will also be cloned recursively.
+        /// </remarks>
         public abstract EffStateMachine<TResult> Clone();
 
         /// <summary>
-        ///   Updates the state machine with a fresh EffAwaiter instance.
+        ///   Configures the state machine with a fresh EffAwaiter instance.
         /// </summary>
         /// <param name="awaiter">The EffAwaiter instance to use.</param>
         /// <remarks>
@@ -137,7 +145,7 @@ namespace Nessos.Effects.Handlers
         public abstract void UnsafeSetAwaiter(EffAwaiter awaiter);
 
         /// <summary>
-        ///   Gets a heap allocated copy of the underlying compiler-generated state machine, for tracing metadata use.
+        ///   Gets a heap allocated replica of the underlying compiler-generated state machine.
         /// </summary>
         public abstract IAsyncStateMachine GetAsyncStateMachine();
 
@@ -145,7 +153,12 @@ namespace Nessos.Effects.Handlers
 
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
 
-        IEffStateMachine? IEffStateMachine.AwaitingStateMachine => AwaitingStateMachine;
+        IEffStateMachine? IEffStateMachine.AwaitingStateMachine
+        {
+            get => AwaitingStateMachine;
+            set => AwaitingStateMachine = value;
+        }
+
         IEffStateMachine IEffStateMachine.Clone() => Clone();
 
         // Method builder helper methods
