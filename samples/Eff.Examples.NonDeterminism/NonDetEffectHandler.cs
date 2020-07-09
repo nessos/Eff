@@ -13,35 +13,34 @@ namespace Nessos.Effects.Examples.NonDeterminism
             var stateMachine = eff.GetStateMachine();
             var handler = new NonDetEffectHandler<TResult>();
             await handler.Handle(stateMachine);
-            return stateMachine.IsCompleted ?
-                new[] { stateMachine.Result } :
-                handler.Result.GetResults();
+            return handler.ResultHolder.GetResults();
         }
     }
 
     public class NonDetEffectHandler<TResult> : IEffectHandler
     {
+        private int _depth = 0;
         private bool _isContinuationCaptured = false;
 
-        public NonDetEffectHandler(NonDetResult? result = null)
+        public NonDetEffectHandler(NonDetResultHolder? result = null)
         {
-            Result = result ?? new NonDetResult();
+            ResultHolder = result ?? new NonDetResultHolder();
         }
 
-        public NonDetResult Result { get; }
+        public NonDetResultHolder ResultHolder { get; }
 
         public async Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
         {
             switch (awaiter.Effect)
             {
                 case NonDetEffect<TValue> nde:
-                    _isContinuationCaptured = true;
+                    _isContinuationCaptured = true; // abandon execution on the current evaluation stack
 
                     foreach (var result in nde.Choices)
                     {
                         var clonedAwaiter = CloneAwaiter(awaiter);
                         clonedAwaiter.SetResult(result);
-                        await ExecuteAwaiter(clonedAwaiter);
+                        await ExecuteAwaiterContinuation(clonedAwaiter);
                     }
 
                     break;
@@ -57,7 +56,18 @@ namespace Nessos.Effects.Examples.NonDeterminism
                 switch (stateMachine.Position)
                 {
                     case StateMachinePosition.Result:
+                        if (_depth == 0)
+                        {
+                            var rootStateMachine = (EffStateMachine<TResult>)(object)stateMachine;
+                            ResultHolder.Values.Add(rootStateMachine.Result);
+                        }
+                        return;
+
                     case StateMachinePosition.Exception:
+                        if (_depth == 0)
+                        {
+                            ResultHolder.Exception = stateMachine.Exception;
+                        }
                         return;
 
                     case StateMachinePosition.TaskAwaiter:
@@ -66,6 +76,7 @@ namespace Nessos.Effects.Examples.NonDeterminism
 
                     case StateMachinePosition.EffAwaiter:
                         var awaiter = stateMachine.EffAwaiter!;
+                        _depth++;
                         try
                         {
                             await awaiter.Accept(this);
@@ -74,6 +85,7 @@ namespace Nessos.Effects.Examples.NonDeterminism
                         {
                             awaiter.SetException(e);
                         }
+                        _depth--;
 
                         break;
 
@@ -84,38 +96,22 @@ namespace Nessos.Effects.Examples.NonDeterminism
         }
 
         // Executes the awaiter continuation using a fresh copy of the effect handler
-        private async Task ExecuteAwaiter<TValue>(EffAwaiter<TValue> awaiter)
+        private async Task ExecuteAwaiterContinuation<TValue>(EffAwaiter<TValue> awaiter)
         {
-            if (Result.Exception != null)
+            if (ResultHolder.Exception != null)
             {
-                // another nondeterministic branch has completed with an exception,
-                // yield without executing the continuation.
+                // another nondeterministic branch has completed with an exception, yield.
                 return;
             }
 
-            var handler = new NonDetEffectHandler<TResult>(Result);
-            IEffStateMachine effStateMachine = awaiter.AwaitingStateMachine!;
-            await effStateMachine.Accept(handler);
+            var handler = new NonDetEffectHandler<TResult>(ResultHolder) { _depth = _depth };
+            IEffStateMachine? effStateMachine = awaiter.AwaitingStateMachine;
 
-            while (effStateMachine.AwaitingStateMachine != null)
+            while (effStateMachine != null)
             {
-                effStateMachine = effStateMachine.AwaitingStateMachine;
+                handler._depth--;
                 await effStateMachine.Accept(handler);
-            }
-
-            if (handler._isContinuationCaptured)
-            {
-                return;
-            }
-
-            var rootStateMachine = (EffStateMachine<TResult>)effStateMachine;
-            if (rootStateMachine.Exception is Exception e)
-            {
-                Result.Exception = e;
-            }
-            else
-            {
-                Result.Values.Add(rootStateMachine.Result);
+                effStateMachine = effStateMachine.AwaitingStateMachine;
             }
         }
 
@@ -133,7 +129,7 @@ namespace Nessos.Effects.Examples.NonDeterminism
             return newAwaiter;
         }
 
-        public class NonDetResult
+        public class NonDetResultHolder
         {
             public List<TResult> Values { get; } = new List<TResult>();
             public Exception? Exception { get; set; }

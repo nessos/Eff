@@ -16,6 +16,7 @@ namespace Nessos.Effects.Examples.Continuation
 
     public class ContinuationHandler<TRootResult> : IEffectHandler
     {
+        private int _depth = 0;
         private bool _isContinuationCaptured = false;
         private readonly Func<TRootResult, Task> _onSuccess;
         private readonly Func<Exception, Task> _onException;
@@ -31,7 +32,7 @@ namespace Nessos.Effects.Examples.Continuation
             switch (awaiter.Effect)
             {
                 case CallCcEffect<TResult> callCC:
-                    _isContinuationCaptured = true;
+                    _isContinuationCaptured = true; // abandon execution on the current evaluation stack
                     await callCC.Body(r => OnSuccess(awaiter, r), e => OnException(awaiter, e));
                     break;
             }
@@ -46,7 +47,18 @@ namespace Nessos.Effects.Examples.Continuation
                 switch (stateMachine.Position)
                 {
                     case StateMachinePosition.Result:
+                        if (_depth == 0)
+                        {
+                            var rootStateMachine = (EffStateMachine<TRootResult>)(object)stateMachine;
+                            await _onSuccess(rootStateMachine.Result);
+                        }
+                        return;
+
                     case StateMachinePosition.Exception:
+                        if (_depth == 0)
+                        {
+                            await _onException(stateMachine.Exception!);
+                        }
                         return;
 
                     case StateMachinePosition.TaskAwaiter:
@@ -55,6 +67,7 @@ namespace Nessos.Effects.Examples.Continuation
 
                     case StateMachinePosition.EffAwaiter:
                         var awaiter = stateMachine.EffAwaiter!;
+                        _depth++;
                         try
                         {
                             await awaiter.Accept(this);
@@ -63,6 +76,7 @@ namespace Nessos.Effects.Examples.Continuation
                         {
                             awaiter.SetException(ex);
                         }
+                        _depth--;
                         break;
 
                     default:
@@ -87,29 +101,14 @@ namespace Nessos.Effects.Examples.Continuation
 
         private async Task ExecuteContinuation<TResult>(EffectAwaiter<TResult> awaiter)
         {
-            var handler = new ContinuationHandler<TRootResult>(_onSuccess, _onException);
-            IEffStateMachine effStateMachine = awaiter.AwaitingStateMachine!;
-            await effStateMachine.Accept(handler);
+            var handler = new ContinuationHandler<TRootResult>(_onSuccess, _onException) { _depth = _depth };
+            IEffStateMachine? effStateMachine = awaiter.AwaitingStateMachine;
 
-            while (effStateMachine.AwaitingStateMachine != null)
+            while (effStateMachine != null)
             {
-                effStateMachine = effStateMachine.AwaitingStateMachine;
+                handler._depth--;
                 await effStateMachine.Accept(handler);
-            }
-
-            if (handler._isContinuationCaptured)
-            {
-                return;
-            }
-
-            var rootStateMachine = (EffStateMachine<TRootResult>)effStateMachine;
-            if (rootStateMachine.Exception is Exception e)
-            {
-                await _onException(e);
-            }
-            else
-            {
-                await _onSuccess(rootStateMachine.Result);
+                effStateMachine = effStateMachine.AwaitingStateMachine;
             }
         }
 
