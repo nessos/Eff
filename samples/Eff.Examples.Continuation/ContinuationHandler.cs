@@ -6,6 +6,10 @@ namespace Nessos.Effects.Examples.Continuation
 {
     public static class ContinuationHandler
     {
+        /// <summary>
+        ///   Executes an Eff computation with a call/cc effect handler,
+        ///   using provided success and exception continuations.
+        /// </summary>
         public static async Task StartWithContinuations<T>(this Eff<T> eff, Func<T, Task> onSuccess, Func<Exception, Task>? onException = null)
         {
             var continuationHandler = new ContinuationHandler<T>(onSuccess, onException ?? (_ => Task.CompletedTask));

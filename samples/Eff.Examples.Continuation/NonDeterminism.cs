@@ -6,6 +6,9 @@ namespace Nessos.Effects.Examples.Continuation
 {
     public static class NonDeterminism
     {
+        /// <summary>
+        ///   Executes the current continuation nondeterministically using an array of values.
+        /// </summary>
         public static Effect<TResult> Choice<TResult>(params TResult[] values)
         {
             return Effects.CallCC<TResult>(async (k, _) =>
@@ -17,10 +20,13 @@ namespace Nessos.Effects.Examples.Continuation
             });
         }
 
+        /// <summary>
+        ///   Runs the provided eff computation and returns any nondeterministic results.
+        /// </summary>
         public static async Task<TResult[]> Run<TResult>(Eff<TResult> eff)
         {
             var results = new List<TResult>();
-            await eff.StartWithContinuations(async r => results.Add(r));
+            await eff.StartWithContinuations(async r => results.Add(r), async e => { });
             return results.ToArray();
         }
     }
