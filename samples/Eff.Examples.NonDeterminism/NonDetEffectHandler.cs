@@ -1,26 +1,74 @@
-﻿using System;
+﻿using Nessos.Effects.Handlers;
+using System;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
-using Nessos.Effects.Handlers;
 
 namespace Nessos.Effects.Examples.NonDeterminism
 {
     public static class NonDetEffectHandler
     {
-        public static Task<List<TResult>> Run<TResult>(Eff<TResult> eff) => Run(eff.GetStateMachine());
-
-        private static async Task<List<TResult>> Run<TResult>(EffStateMachine<TResult> stateMachine)
+        public static async Task<TResult[]> Run<TResult>(Eff<TResult> eff)
         {
-            while (true)
+            var stateMachine = eff.GetStateMachine();
+            var handler = new NonDetEffectHandler<TResult>();
+            await handler.Handle(stateMachine);
+            return handler.ResultHolder.GetResults();
+        }
+    }
+
+    public class NonDetEffectHandler<TResult> : IEffectHandler
+    {
+        private int _depth = 0;
+        private bool _isContinuationCaptured = false;
+
+        public NonDetEffectHandler(NonDetResultHolder? result = null)
+        {
+            ResultHolder = result ?? new NonDetResultHolder();
+        }
+
+        public NonDetResultHolder ResultHolder { get; }
+
+        public async Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
+        {
+            switch (awaiter.Effect)
+            {
+                case NonDetEffect<TValue> nde:
+                    _isContinuationCaptured = true; // abandon execution on the current evaluation stack
+
+                    foreach (var result in nde.Choices)
+                    {
+                        var clonedAwaiter = CloneAwaiter(awaiter);
+                        clonedAwaiter.SetResult(result);
+                        await ExecuteAwaiterContinuation(clonedAwaiter);
+                    }
+
+                    break;
+            }
+        }
+
+        public async Task Handle<TValue>(EffStateMachine<TValue> stateMachine)
+        {
+            while (!_isContinuationCaptured)
             {
                 stateMachine.MoveNext();
 
                 switch (stateMachine.Position)
                 {
                     case StateMachinePosition.Result:
-                        return new List<TResult> { stateMachine.Result };
+                        if (_depth == 0)
+                        {
+                            var rootStateMachine = (EffStateMachine<TResult>)(object)stateMachine;
+                            ResultHolder.Values.Add(rootStateMachine.Result);
+                        }
+                        return;
+
                     case StateMachinePosition.Exception:
-                        throw stateMachine.Exception!;
+                        if (_depth == 0)
+                        {
+                            ResultHolder.Exception = stateMachine.Exception;
+                        }
+                        return;
 
                     case StateMachinePosition.TaskAwaiter:
                         await stateMachine.TaskAwaiter!.Value;
@@ -28,9 +76,18 @@ namespace Nessos.Effects.Examples.NonDeterminism
 
                     case StateMachinePosition.EffAwaiter:
                         var awaiter = stateMachine.EffAwaiter!;
-                        var handler = new NonDetEffectHandlerImpl<TResult>(stateMachine);
-                        await awaiter.Accept(handler);
-                        return handler.Results;
+                        _depth++;
+                        try
+                        {
+                            await awaiter.Accept(this);
+                        }
+                        catch (Exception e)
+                        {
+                            awaiter.SetException(e);
+                        }
+                        _depth--;
+
+                        break;
 
                     default:
                         throw new Exception($"Invalid state machine position {stateMachine.Position}.");
@@ -38,69 +95,52 @@ namespace Nessos.Effects.Examples.NonDeterminism
             }
         }
 
-        private class NonDetEffectHandlerImpl<TResult> : IEffectHandler
+        // Executes the awaiter continuation using a fresh copy of the effect handler
+        private async Task ExecuteAwaiterContinuation<TValue>(EffAwaiter<TValue> awaiter)
         {
-            private readonly EffStateMachine<TResult> _stateMachine;
-
-            public NonDetEffectHandlerImpl(EffStateMachine<TResult> stateMachine)
+            if (ResultHolder.Exception != null)
             {
-                _stateMachine = stateMachine;
+                // another nondeterministic branch has completed with an exception, yield.
+                return;
             }
 
-            public List<TResult> Results { get; } = new List<TResult>();
+            var handler = new NonDetEffectHandler<TResult>(ResultHolder) { _depth = _depth };
+            IEffStateMachine? effStateMachine = awaiter.AwaitingStateMachine;
 
-            public async Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
+            while (effStateMachine != null)
             {
-                switch (awaiter.Effect)
-                {
-                    case NonDetEffect<TValue> nde:
-                        foreach (var result in nde.Choices)
-                        {
-                            awaiter.SetResult(result);
-                            await ContinueStateMachine(clone: true);
-                        }
+                handler._depth--;
+                await effStateMachine.Accept(handler);
+                effStateMachine = effStateMachine.AwaitingStateMachine;
+            }
+        }
 
-                        break;
-                }
+        private static EffectAwaiter<TValue> CloneAwaiter<TValue>(EffectAwaiter<TValue> awaiter)
+        {
+            var newAwaiter = new EffectAwaiter<TValue>(awaiter.Effect);
+
+            if (awaiter.AwaitingStateMachine is IEffStateMachine sm)
+            {
+                var clonedSm = sm.Clone();
+                clonedSm.UnsafeSetAwaiter(newAwaiter);
+                newAwaiter.AwaitingStateMachine = clonedSm;
             }
 
-            public async Task Handle<TValue>(EffStateMachine<TValue> stateMachine)
+            return newAwaiter;
+        }
+
+        public class NonDetResultHolder
+        {
+            public List<TResult> Values { get; } = new List<TResult>();
+            public Exception? Exception { get; set; }
+            public TResult[] GetResults()
             {
-                List<TValue>? values = null;
-                Exception? error = null;
-                try
+                if (Exception is Exception e)
                 {
-                    values = await NonDetEffectHandler.Run(stateMachine);
-                }
-                catch (Exception e)
-                {
-                    error = e;
+                    ExceptionDispatchInfo.Capture(e).Throw();
                 }
 
-                if (values != null)
-                {
-                    foreach (var result in values)
-                    {
-                        stateMachine.SetResult(result);
-                        await ContinueStateMachine(clone: true);
-                    }
-                }
-                else
-                {
-                    stateMachine.SetException(error!);
-                    await ContinueStateMachine();
-                }
-            }
-
-            /// <summary>
-            ///   Executes the state machine to completion, using non-deterministic semantics,
-            ///   appending any results to the handler state.
-            /// </summary>
-            private async Task ContinueStateMachine(bool clone = false)
-            {
-                var stateMachine = clone ? _stateMachine.Clone() : _stateMachine;
-                var results = await NonDetEffectHandler.Run(stateMachine);
-                Results.AddRange(results);
+                return Values.ToArray();
             }
         }
     }

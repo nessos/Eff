@@ -112,5 +112,7 @@ namespace Nessos.Effects
         }
 
         protected sealed override EffAwaiter GetAwaiterCore() => GetStateMachine();
+
+        public static implicit operator Eff<TResult>(Effect<TResult> effect) => Eff.FromEffect(effect);
     }
 }

@@ -7,35 +7,15 @@ namespace Nessos.Effects.Examples.Maybe
 {
     public static class MaybeEffectHandler
     {
-        public static Task<Maybe<TResult>> Run<TResult>(Eff<TResult> eff) => Run(eff.GetStateMachine());
-
-        private static async Task<Maybe<TResult>> Run<TResult>(EffStateMachine<TResult> stateMachine)
+        public static async Task<Maybe<TResult>> Run<TResult>(Eff<TResult> eff)
         {
-            while (true)
-            {
-                stateMachine.MoveNext();
+            var stateMachine = eff.GetStateMachine();
+            var handler = new MaybeEffectHandler<TResult>();
+            await handler.Handle(stateMachine);
 
-                switch (stateMachine.Position)
-                {
-                    case StateMachinePosition.Result:
-                        return Maybe<TResult>.Just(stateMachine.Result);
-                    case StateMachinePosition.Exception:
-                        throw stateMachine.Exception!;
-
-                    case StateMachinePosition.TaskAwaiter:
-                        await stateMachine.TaskAwaiter!.Value;
-                        break;
-
-                    case StateMachinePosition.EffAwaiter:
-                        var awaiter = stateMachine.EffAwaiter!;
-                        var handler = new MaybeEffectHandlerImpl<TResult>(stateMachine);
-                        await awaiter.Accept(handler);
-                        return handler.Result;
-
-                    default:
-                        throw new Exception($"Invalid state machine position {stateMachine.Position}.");
-                }
-            }
+            return stateMachine.IsCompleted ?
+                Maybe<TResult>.Just(stateMachine.GetResult()) :
+                Maybe<TResult>.Nothing;
         }
 
         public static Task<Maybe<Unit>> Run(Eff eff)
@@ -43,50 +23,57 @@ namespace Nessos.Effects.Examples.Maybe
             return Run(Helper());
 
             async Eff<Unit> Helper() { await eff; return Unit.Value; }
-        }
+        }   
+    }
 
-        private class MaybeEffectHandlerImpl<TResult> : IEffectHandler
+    public class MaybeEffectHandler<TResult> : IEffectHandler
+    {
+        private bool _breakExecution = false;
+
+        public async Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
         {
-            private readonly EffStateMachine<TResult> _stateMachine;
-
-            public MaybeEffectHandlerImpl(EffStateMachine<TResult> stateMachine)
+            switch (awaiter.Effect)
             {
-                _stateMachine = stateMachine;
-            }
+                case MaybeEffect<TValue> me:
+                    if (me.Result.HasValue)
+                    {
+                        awaiter.SetResult(me.Result.Value);
+                    }
+                    else
+                    {
+                        _breakExecution = true;
+                    }
 
-            public Maybe<TResult> Result { get; private set; } = Maybe<TResult>.Nothing;
-
-            public async Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
-            {
-                switch (awaiter.Effect)
-                {
-                    case MaybeEffect<TValue> me:
-                        if (me.Result.HasValue)
-                        {
-                            awaiter.SetResult(me.Result.Value);
-                            await ContinueStateMachine();
-                        }
-                        break;
-                }
-            }
-
-            public async Task Handle<TValue>(EffStateMachine<TValue> stateMachine)
-            {
-                var result = await MaybeEffectHandler.Run(stateMachine);
-                if (result.HasValue)
-                {
-                    await ContinueStateMachine();
-                }
-            }
-
-            /// <summary>
-            ///   Executes the state machine to completion using maybe semantics,
-            ///   appending any results to the handler state.
-            /// </summary>
-            private async Task ContinueStateMachine()
-            {
-                Result = await MaybeEffectHandler.Run(_stateMachine);
+                    break;
             }
         }
+
+        public async Task Handle<TValue>(EffStateMachine<TValue> stateMachine)
+        {
+            while (!_breakExecution)
+            {
+                stateMachine.MoveNext();
+
+                switch (stateMachine.Position)
+                {
+                    case StateMachinePosition.Result:
+                    case StateMachinePosition.Exception:
+                        return;
+
+                    case StateMachinePosition.TaskAwaiter:
+                        await stateMachine.TaskAwaiter!.Value;
+                        break;
+
+                    case StateMachinePosition.EffAwaiter:
+                        var awaiter = stateMachine.EffAwaiter!;
+                        await awaiter.Accept(this);
+                        break;
+
+                    default:
+                        throw new Exception($"Invalid state machine position {stateMachine.Position}.");
+                }
+            }
+        }
+
     }
 }

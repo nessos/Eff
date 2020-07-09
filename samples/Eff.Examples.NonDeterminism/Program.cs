@@ -5,7 +5,6 @@ namespace Nessos.Effects.Examples.NonDeterminism
 {
     class Program
     {
-
         static async Eff<(int, string, bool)> Test()
         {
             var x = await NonDetEffect.Choose(1, 2, 3);
