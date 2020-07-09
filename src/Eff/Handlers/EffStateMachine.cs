@@ -37,7 +37,7 @@ namespace Nessos.Effects.Handlers
     }
 
     /// <summary>
-    ///   Wraps Eff state machine
+    ///   Represents an eff state machine awaiter.
     /// </summary>
     public interface IEffStateMachine
     {
@@ -57,7 +57,7 @@ namespace Nessos.Effects.Handlers
         IAsyncStateMachine GetAsyncStateMachine();
 
         /// <summary>
-        ///   Gets the parent state machine awaiting on the current state machine.
+        ///   Gets or sets the parent state machine awaiting on the current state machine.
         /// </summary>
         IEffStateMachine? AwaitingStateMachine { get; set; }
 
