@@ -5,11 +5,14 @@ using System.Threading.Tasks;
 namespace Nessos.Effects.Cancellation
 {
     /// <summary>
-    ///   Defines an effect handler that automatically cancels Eff workflows based on a provided cancellation token.
+    ///   Defines an effect handler that automatically cancels Eff workflows based on the provided cancellation token.
     /// </summary>
     public class CancellationEffectHandler : EffectHandler
     {
-        protected CancellationToken Token { get; }
+        /// <summary>
+        ///   The cancellation token flowing through the Eff workflow.
+        /// </summary>
+        protected CancellationToken CancellationToken { get; }
 
         /// <summary>
         ///   Creates a cancellation effect handler using provided cancellation token.
@@ -17,17 +20,17 @@ namespace Nessos.Effects.Cancellation
         /// <param name="token"></param>
         public CancellationEffectHandler(CancellationToken token)
         {
-            Token = token;
+            CancellationToken = token;
         }
 
         public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
-            Token.ThrowIfCancellationRequested();
+            CancellationToken.ThrowIfCancellationRequested();
 
             switch (awaiter)
             {
-                case EffectAwaiter<CancellationToken> { Effect: CancellationTokenEffect.Effect _ } awter :
-                    awter.SetResult(Token);
+                case EffectAwaiter<CancellationToken> { Effect: CancellationTokenEffect _ } awter :
+                    awter.SetResult(CancellationToken);
                     break;
             };
 
@@ -36,7 +39,7 @@ namespace Nessos.Effects.Cancellation
 
         public override Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
-            Token.ThrowIfCancellationRequested();
+            CancellationToken.ThrowIfCancellationRequested();
             return base.Handle(stateMachine);
         }
     }

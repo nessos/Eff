@@ -2,16 +2,14 @@
 
 namespace Nessos.Effects.Cancellation
 {
-    public static class CancellationTokenEffect
+    /// <summary>
+    ///   An abstract effect returning a cancellation token.
+    /// </summary>
+    public class CancellationTokenEffect : Effect<CancellationToken>
     {
         /// <summary>
-        ///   Defines the cancellation token abstract effect.
+        ///   Gets the singleton cancellation token effect.
         /// </summary>
-        public static Effect<CancellationToken> Value { get; } = new Effect();
-
-        internal class Effect : Effect<CancellationToken>
-        {
-
-        }
+        public static Effect<CancellationToken> Value { get; } = new CancellationTokenEffect();
     }
 }

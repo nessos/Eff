@@ -5,19 +5,26 @@ using System.Threading.Tasks;
 namespace Nessos.Effects
 {
     /// <summary>
-    ///   Represents an abstract effect returning no result.
-    /// </summary>
-    public abstract class Effect : Effect<Unit>
-    {
-
-    }
-
-    /// <summary>
-    ///   Represents an abstract effect.
+    ///   Represents an abstract effect, which can be awaited inside <see cref="Eff"/> methods.
     /// </summary>
     /// <typeparam name="TResult">Return type of the abstract effect.</typeparam>
+    /// <remarks>
+    ///   <para>
+    ///     Eff users defining their own abstract effects must inherit from this class.
+    ///     <see cref="Effect{TResult}"/> instances are typically declarative, 
+    ///     containing no code or data guiding their evaluation semantics.
+    ///   </para>
+    ///   <para>
+    ///     The evaluation, side-effects and result of an abstract effect is controlled by
+    ///     the <see cref="IEffectHandler.Handle{TResult}(EffectAwaiter{TResult})"/> method in effect handlers.
+    ///   </para>
+    /// </remarks>
     public abstract class Effect<TResult>
     {
+        /// <summary>
+        ///   Gets an <see cref="EffectAwaiter{TResult}"/> instance containing this Effect.
+        /// </summary>
+        /// <returns></returns>
         public EffAwaiter<TResult> GetAwaiter() => new EffectAwaiter<TResult>(this);
 
         /// <summary>
@@ -51,5 +58,24 @@ namespace Nessos.Effects
             await effectHandler.Handle(effectAwaiter).ConfigureAwait(false);
             return effectAwaiter.GetResult();
         }
+    }
+
+    /// <summary>
+    ///   Represents an abstract effect, which can be awaited inside <see cref="Eff"/> methods.
+    /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///     Eff users defining their own abstract effects must inherit from this class.
+    ///     <see cref="Effect"/> instances are typically declarative, 
+    ///     containing no code or data guiding their evaluation semantics.
+    ///   </para>
+    ///   <para>
+    ///     The evaluation, side-effects and result of an abstract effect is controlled by
+    ///     the <see cref="IEffectHandler.Handle{TResult}(EffectAwaiter{TResult})"/> method in effect handlers.
+    ///   </para>
+    /// </remarks>
+    public abstract class Effect : Effect<Unit>
+    {
+
     }
 }

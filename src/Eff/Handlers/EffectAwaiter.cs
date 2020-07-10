@@ -3,8 +3,13 @@
 namespace Nessos.Effects.Handlers
 {
     /// <summary>
-    ///   Awaiter for abstract Effects.
+    ///   Provides an awaiter instance for <see cref="Effect{TResult}"/> instances.
     /// </summary>
+    /// <typeparam name="TResult">Result type of the awaited abstract effect.</typeparam>
+    /// <remarks>
+    ///   Implementers of handlers typically assign semantics to abstract effects 
+    ///   by setting a result (or exception) to effect awaiter instances.
+    /// </remarks>
     public class EffectAwaiter<TResult> : EffAwaiter<TResult>
     {
         public EffectAwaiter(Effect<TResult> effect)

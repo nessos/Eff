@@ -47,6 +47,7 @@ namespace Nessos.Effects.Utils
         /// </summary>
         /// <param name="stateMachine">The state machine to extract metadata from.</param>
         /// <returns>Key/value pairs containing all state machine parameter variables.</returns>
+        /// <exception cref="ArgumentNullException" />
         public static (string name, object? value)[] GetParameterValues(this IAsyncStateMachine stateMachine)
         {
             if (stateMachine is null)
@@ -64,6 +65,7 @@ namespace Nessos.Effects.Utils
         /// </summary>
         /// <param name="stateMachine">The state machine to extract metadata from.</param>
         /// <returns>Key/value pairs containing all state machine local variables.</returns>
+        /// <exception cref="ArgumentNullException" />
         public static (string name, object? value)[] GetLocalVariableValues(this IAsyncStateMachine stateMachine)
         {
             if (stateMachine is null)
@@ -81,6 +83,7 @@ namespace Nessos.Effects.Utils
         /// </summary>
         /// <param name="stateMachine">The state machine to extract metadata from.</param>
         /// <returns>The async method name.</returns>
+        /// <exception cref="ArgumentNullException" />
         public static string GetMethodName(this IAsyncStateMachine stateMachine)
         {
             if (stateMachine is null)

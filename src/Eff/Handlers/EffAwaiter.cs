@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 namespace Nessos.Effects.Handlers
 {
     /// <summary>
-    ///   Base awaiter class for Eff awaitables.
+    ///   Base awaiter class for Eff-style awaitables.
     /// </summary>
     public abstract class EffAwaiter : ICriticalNotifyCompletion
     {
         internal EffAwaiter() { }
 
         /// <summary>
-        ///   Awaiter identifier for debugging purposes.
+        ///   Gets an identifier for the particular awaiter instance.
         /// </summary>
         public abstract string Id { get; }
 
@@ -62,6 +62,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Sets an exception value for the awaiter.
         /// </summary>
+        /// <exception cref="ArgumentNullException" />
         public abstract void SetException(Exception exception);
 
         /// <summary>
@@ -88,13 +89,14 @@ namespace Nessos.Effects.Handlers
         }
 
         /// <summary>
-        ///   For use by EffMethodBuilder
+        ///   Gets the same <see cref="EffAwaiter" /> instance.
         /// </summary>
         public EffAwaiter GetAwaiter() => this;
 
         /// <summary>
-        ///   For use by EffMethodBuilder
+        ///   Gets the result of the awaiter, if completed.
         /// </summary>
+        /// <exception cref="InvalidOperationException" />
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)] // for stacktrace formatting purposes
         public void GetResult()
@@ -116,8 +118,9 @@ namespace Nessos.Effects.Handlers
     }
 
     /// <summary>
-    ///   Base awaiter class for Eff awaitables.
+    ///   Base awaiter class for Eff-style awaitables.
     /// </summary>
+    /// <typeparam name="TResult">Result type required by the awaiter.</typeparam>
     public abstract class EffAwaiter<TResult> : EffAwaiter
     {
         [AllowNull]
@@ -126,6 +129,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Gets either the result value or throws the exception that have been stored in the awaiter.
         /// </summary>
+        /// <exception cref="InvalidOperationException" />
         public TResult Result => GetResult();
 
         /// <summary>
@@ -151,8 +155,9 @@ namespace Nessos.Effects.Handlers
         }
 
         /// <summary>
-        ///   For use by EffMethodBuilder
+        ///   Gets the result of the awaiter, if completed.
         /// </summary>
+        /// <exception cref="InvalidOperationException" />
         [EditorBrowsable(EditorBrowsableState.Never)]
         [MethodImpl(MethodImplOptions.AggressiveInlining)] // for stacktrace formatting purposes
         public new TResult GetResult()
@@ -172,7 +177,7 @@ namespace Nessos.Effects.Handlers
         }
 
         /// <summary>
-        ///   For use by EffMethodBuilder
+        ///   Gets the same <see cref="EffAwaiter" /> instance.
         /// </summary>
         public new EffAwaiter<TResult> GetAwaiter() => this;
 

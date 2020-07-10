@@ -4,10 +4,14 @@ using System.Threading.Tasks;
 namespace Nessos.Effects.DependencyInjection
 {
     /// <summary>
-    ///   Represents an effect that performs an operation against a supplied dependency container
+    ///   Represents an effect that performs an operation against a supplied dependency container.
     /// </summary>
     public abstract class DependencyEffect<TResult> : Effect<TResult>
     {
+        /// <summary>
+        ///   Callback to be run against the provider contaner instance.
+        /// </summary>
+        /// <param name="container">Container to be supplied by the effect handler.</param>
         public abstract ValueTask<TResult> Handle(IContainer container);
     }
 

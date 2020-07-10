@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace Nessos.Effects.Handlers
 {
     /// <summary>
-    ///   Provides a base effect handler implementation using regular async method semantics.
+    ///   Provides an abstract effect handler implementation using regular async evaluation semantics.
     /// </summary>
     public abstract class EffectHandler : IEffectHandler
     {

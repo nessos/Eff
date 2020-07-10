@@ -37,19 +37,64 @@ namespace Nessos.Effects.Handlers
     }
 
     /// <summary>
-    ///   Represents an eff state machine awaiter.
+    ///   Exposes a state machine that can be used to evaluate an <see cref="Eff"/> computation.
     /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///     The state machine can be advanced by calling the <see cref="MoveNext"/> method.
+    ///     Depending on the state of the <see cref="Position"/> property, either of the
+    ///     <see cref="Exception"/>, <see cref="EffAwaiter"/> or <see cref="TaskAwaiter"/> 
+    ///     properties will be populated.
+    ///   </para>
+    ///   <para>
+    ///     The class doubles as an <see cref="EffAwaiter"/> for <see cref="Eff"/> types. 
+    ///   </para>
+    /// </remarks>
     public interface IEffStateMachine
     {
+        /// <summary>
+        ///   Advances the state machine to its next stage.
+        /// </summary>
+        /// <remarks>
+        ///   If current position is in either of the <see cref="StateMachinePosition.EffAwaiter"/> 
+        ///   or <see cref="StateMachinePosition.TaskAwaiter"/> states, the awaiters will have to completed before
+        ///   advancing the state machine state.
+        /// </remarks>
+        void MoveNext();
+
         /// <summary>
         ///   Gets the current position of the state machine.
         /// </summary>
         StateMachinePosition Position { get; }
 
         /// <summary>
-        ///   Advances the state machine to its next stage.
+        ///   Gets the result, if state machine is in the <see cref="StateMachinePosition.Result"/> state.
         /// </summary>
-        void MoveNext();
+        object? Result { get; }
+
+        /// <summary>
+        ///   Gets the exception result, if state machine is in the <see cref="StateMachinePosition.Exception"/> state.
+        /// </summary>
+        Exception? Exception { get; }
+
+        /// <summary>
+        ///   Gets the eff awaiter instance, if state machine is in the <see cref="StateMachinePosition.EffAwaiter"/> state.
+        /// </summary>
+        /// <remarks>
+        ///   Indicates that the state machine is awaiting an Eff operation, 
+        ///   which must be completed by an effect handler before resuming.
+        /// </remarks>
+        EffAwaiter? EffAwaiter { get; }
+
+        /// <summary>
+        ///   Gets the task awaiter instance, if state machine is in the <see cref="StateMachinePosition.TaskAwaiter"/> state.
+        /// </summary>
+        /// <remarks>
+        ///   Indicates that the state machine is awaiting an asynchronous operation, such as a Task or ValueTask.
+        ///   The returned <see cref="ValueTask" /> will complete once the underlying awaiter has also completed,
+        ///   but it does not return any value or exception, since that will be captured by the underlying state machine.
+        /// </remarks>
+        ValueTask? TaskAwaiter { get; }
 
         /// <summary>
         ///   Gets a heap allocated replica of the underlying compiler-generated state machine, for tracing metadata use.
@@ -87,8 +132,18 @@ namespace Nessos.Effects.Handlers
     }
 
     /// <summary>
-    ///   Represents an eff state machine awaiter.
+    ///   Exposes a state machine that can be used to evaluate an Eff computation.
     /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///     The state machine can be advanced by calling the <see cref="MoveNext"/> method.
+    ///     Depending on the state of the <see cref="Position"/> property, either of the
+    ///     <see cref="Exception"/>, <see cref="EffAwaiter"/> or <see cref="TaskAwaiter"/> properties will be populated.
+    ///   </para>
+    ///   <para>
+    ///     The class doubles as an <see cref="EffAwaiter"/> for <see cref="Eff"/> types. 
+    ///   </para>
+    /// </remarks>
     public abstract class EffStateMachine<TResult> : EffAwaiter<TResult>, IEffStateMachine
     {
         internal EffStateMachine()
@@ -102,7 +157,7 @@ namespace Nessos.Effects.Handlers
         public StateMachinePosition Position { get; protected set; } = StateMachinePosition.NotStarted;
 
         /// <summary>
-        ///   Gets the awaiter instance, if state machine is in the <see cref="StateMachinePosition.EffAwaiter"/> state.
+        ///   Gets the eff awaiter instance, if state machine is in the <see cref="StateMachinePosition.EffAwaiter"/> state.
         /// </summary>
         /// <remarks>
         ///   Indicates that the state machine is awaiting an Eff operation, 
@@ -111,7 +166,7 @@ namespace Nessos.Effects.Handlers
         public EffAwaiter? EffAwaiter { get; protected set; }
 
         /// <summary>
-        ///   Gets the task instance, if state machine is in the <see cref="StateMachinePosition.TaskAwaiter"/> state.
+        ///   Gets the task awaiter instance, if state machine is in the <see cref="StateMachinePosition.TaskAwaiter"/> state.
         /// </summary>
         /// <remarks>
         ///   Indicates that the state machine is awaiting an asynchronous operation, such as a Task or ValueTask.
@@ -123,6 +178,11 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Advances the state machine to its next stage.
         /// </summary>
+        /// <remarks>
+        ///   If current position is in either of the <see cref="StateMachinePosition.EffAwaiter"/> 
+        ///   or <see cref="StateMachinePosition.TaskAwaiter"/> states, the awaiters will have to completed before
+        ///   advancing the state machine state.
+        /// </remarks>
         public abstract void MoveNext();
 
         /// <summary>
@@ -153,13 +213,8 @@ namespace Nessos.Effects.Handlers
 
         public override Task Accept(IEffectHandler handler) => handler.Handle(this);
 
-        IEffStateMachine? IEffStateMachine.AwaitingStateMachine
-        {
-            get => AwaitingStateMachine;
-            set => AwaitingStateMachine = value;
-        }
-
         IEffStateMachine IEffStateMachine.Clone() => Clone();
+        object? IEffStateMachine.Result => Result;
 
         // Method builder helper methods
 

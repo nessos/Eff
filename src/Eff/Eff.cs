@@ -6,10 +6,16 @@ using System.Threading.Tasks;
 namespace Nessos.Effects
 {
     /// <summary>
-    ///   Represents an effectful computation built using the Eff library.
-    ///   Execution of the computation is delayed (a.k.a. "cold semantics").
-    ///   To start an Eff computation, an effect handler must by supplied using the Eff.Run() method.
+    ///   Exposes an effectful computation that can be executed using an <see cref="IEffectHandler"/>.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    ///   Execution of the computation is delayed ("cold semantics").
+    /// </para>
+    /// <para>
+    ///   To start an <see cref="Eff"/> computation, an effect handler must by supplied via the <see cref="Run"/> method.
+    /// </para>
+    /// </remarks>
     [AsyncMethodBuilder(typeof(EffMethodBuilder))]
     public abstract partial class Eff
     {
@@ -35,7 +41,7 @@ namespace Nessos.Effects
         }
 
         /// <summary>
-        ///   Implements the awaitable/awaiter pattern for Eff.
+        ///   Gets an <see cref="EffAwaiter" /> instance containing this Eff.
         /// </summary>
         public EffAwaiter GetAwaiter() => GetAwaiterCore();
 
@@ -43,7 +49,11 @@ namespace Nessos.Effects
         ///    Executes the Eff computation using semantics from the provided effect handler.
         /// </summary>
         /// <param name="effectHandler">Effect handler to be used in execution.</param>
-        /// <returns>A task computing the result of the eff computation.</returns>
+        /// <returns>A task waiting on the result of the eff computation.</returns>
+        /// <remarks>
+        ///   Each <see cref="Run"/> operation will execute a fresh copy of the underlying async state machine.
+        ///   A single Eff instance can be safely executed multiple times.
+        /// </remarks>
         public async Task Run(IEffectHandler effectHandler)
         {
             var awaiter = GetAwaiterCore();
@@ -57,11 +67,17 @@ namespace Nessos.Effects
     }
 
     /// <summary>
-    ///   Represents an effectful computation built using the Eff library.
-    ///   Execution of the computation is delayed (a.k.a. "cold semantics").
-    ///   To start an Eff computation, an effect handler must by supplied using the Eff.Run() method.
+    ///   Exposes an effectful computation that can be executed using an <see cref="IEffectHandler"/>.
     /// </summary>
     /// <typeparam name="TResult">The return type of the computation.</typeparam>
+    /// <remarks>
+    /// <para>
+    ///   Execution of the computation is delayed ("cold semantics").
+    /// </para>
+    /// <para>
+    ///   To start an <see cref="Eff"/> computation, an effect handler must by supplied via the <see cref="Run"/> method.
+    /// </para>
+    /// </remarks>
     [AsyncMethodBuilder(typeof(EffMethodBuilder<>))]
     public abstract class Eff<TResult> : Eff
     {
@@ -73,6 +89,10 @@ namespace Nessos.Effects
         /// <summary>
         ///   Gets a new state machine instance for executing the eff computation.
         /// </summary>
+        /// <remarks>
+        ///   Each call will return a shallow copy of the underlying async state machine.
+        ///   These can be run independently, with semantics identical to invoking delegates.
+        /// </remarks>
         public abstract EffStateMachine<TResult> GetStateMachine();
 
         /// <summary>
@@ -95,7 +115,7 @@ namespace Nessos.Effects
         }
 
         /// <summary>
-        ///   Implements the awaitable/awaiter pattern for Eff
+        ///   Gets an <see cref="EffAwaiter{TResult}" /> instance containing this Eff.
         /// </summary>
         public new EffAwaiter<TResult> GetAwaiter() => GetStateMachine();
 
@@ -103,7 +123,11 @@ namespace Nessos.Effects
         ///   Executes the Eff computation using semantics from the provided effect handler.
         /// </summary>
         /// <param name="effectHandler">Effect handler to be used in execution.</param>
-        /// <returns>A task computing the result of the eff computation.</returns>
+        /// <returns>A task waiting on the result of the eff computation.</returns>
+        /// <remarks>
+        ///   Each <see cref="Run"/> operation will execute a fresh copy of the underlying async state machine.
+        ///   A single Eff instance can be safely executed multiple times.
+        /// </remarks>
         public new async Task<TResult> Run(IEffectHandler effectHandler)
         {
             var stateMachine = GetStateMachine();
@@ -111,8 +135,8 @@ namespace Nessos.Effects
             return stateMachine.GetResult();
         }
 
-        protected sealed override EffAwaiter GetAwaiterCore() => GetStateMachine();
-
         public static implicit operator Eff<TResult>(Effect<TResult> effect) => Eff.FromEffect(effect);
+
+        protected sealed override EffAwaiter GetAwaiterCore() => GetStateMachine();
     }
 }
