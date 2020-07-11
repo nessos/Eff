@@ -7,7 +7,7 @@
     <NoWarn>CS1998;CS1591;$(NoWarn)</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <!-- Use NuGet build for easier debugging -->
-    <UseNugetEff>true</UseNugetEff>
+    <UseNugetEff>false</UseNugetEff>
   </PropertyGroup>
 
   <ItemGroup>

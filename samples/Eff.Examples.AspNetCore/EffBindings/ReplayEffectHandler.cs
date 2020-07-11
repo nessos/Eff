@@ -20,7 +20,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
             _replayResults = replayResults;
         }
 
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override async ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             if (_pos == _replayResults.Length)
             {

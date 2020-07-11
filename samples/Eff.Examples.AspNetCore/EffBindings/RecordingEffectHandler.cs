@@ -27,7 +27,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
             _response = response;
         }
 
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override async ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             try
             {
