@@ -73,7 +73,7 @@ public class RandomCoinTossHandler : EffectHandler
 {
     private readonly Random _random = new Random();
 
-    public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+    public override async ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
     {
         switch (awaiter)
         {
@@ -98,7 +98,7 @@ public class BiasedCoinTossHandler : EffectHandler
 {
     private readonly Random _random = new Random();
 
-    public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+    public override async ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
     {
         switch (awaiter)
         {
