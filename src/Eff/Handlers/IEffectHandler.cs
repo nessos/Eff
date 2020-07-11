@@ -7,7 +7,6 @@ namespace Nessos.Effects.Handlers
     /// </summary>
     public interface IEffectHandler
     {
-
         /// <summary>
         ///    Provides handling logic for abstract Effect awaiters.
         /// </summary>
