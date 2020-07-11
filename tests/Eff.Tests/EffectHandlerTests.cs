@@ -342,7 +342,7 @@ namespace Nessos.Effects.Tests
             }
 
             var eff = Test(0);
-            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler));
+            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler).AsTask());
         }
 
         [Fact]
@@ -354,7 +354,7 @@ namespace Nessos.Effects.Tests
             }
 
             var eff = Test(0);
-            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler));
+            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler).AsTask());
         }
 
         [Fact]
@@ -372,7 +372,7 @@ namespace Nessos.Effects.Tests
             }
 
             var eff = Test(0);
-            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler));
+            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler).AsTask());
         }
 
         [Fact]
@@ -389,14 +389,14 @@ namespace Nessos.Effects.Tests
             }
 
             var eff = Test(0);
-            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler));
+            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler).AsTask());
         }
 
         public class AwaiterThatThrows<T> : EffAwaiter<T>
         {
             public override string Id => throw new NotImplementedException();
 
-            public override Task Accept(IEffectHandler handler)
+            public override ValueTask Accept(IEffectHandler handler)
             {
                 SetException(new DivideByZeroException());
                 throw new NotImplementedException();
@@ -419,7 +419,7 @@ namespace Nessos.Effects.Tests
                 }
             }
 
-            await Assert.ThrowsAsync<NotImplementedException>(() => Test().Run(Handler));
+            await Assert.ThrowsAsync<NotImplementedException>(() => Test().Run(Handler).AsTask());
             Assert.True(isFinallyBlockExecuted);
         }
 
@@ -450,7 +450,7 @@ namespace Nessos.Effects.Tests
         public async Task FromFunc_Typed_Exception()
         {
             var eff = Eff.FromFunc<int>(async () => throw new DivideByZeroException());
-            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler));
+            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler).AsTask());
         }
 
         [Fact]
@@ -467,7 +467,7 @@ namespace Nessos.Effects.Tests
         public async Task FromFunc_Untyped_Exception()
         {
             var eff = Eff.FromFunc(async () => { throw new DivideByZeroException(); });
-            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler));
+            await Assert.ThrowsAsync<DivideByZeroException>(() => eff.Run(Handler).AsTask());
         }
     }
 }

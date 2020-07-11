@@ -6,7 +6,7 @@ namespace Nessos.Effects.Examples.Config
 {
     public class ConfigurationManagerEffectHandler : EffectHandler
     {
-        public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             switch (awaiter)
             {
@@ -16,7 +16,7 @@ namespace Nessos.Effects.Examples.Config
                     break;
             };
 
-            return Task.CompletedTask;
+            return default;
         }
     }
 }

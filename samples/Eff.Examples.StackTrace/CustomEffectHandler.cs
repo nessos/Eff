@@ -1,5 +1,4 @@
-﻿#pragma warning disable 1998
-using Nessos.Effects.Handlers;
+﻿using Nessos.Effects.Handlers;
 using Nessos.Effects.Utils;
 using System;
 using System.Collections.Generic;
@@ -9,22 +8,22 @@ namespace Nessos.Effects.Examples.StackTrace
 {
     public class CustomEffectHandler : EffectHandler
     {
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
-
+            return default;
         }
 
-        public override async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
+        public override async ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             await base.Handle(stateMachine);
 
             if (stateMachine.Exception is Exception ex)
             {
-                await Log(ex, stateMachine);
+                Log(ex, stateMachine);
             }
         }
 
-        public async Task Log(Exception ex, EffAwaiter awaiter)
+        public void Log(Exception ex, EffAwaiter awaiter)
         {
             var stateMachine = awaiter.AwaitingStateMachine?.GetAsyncStateMachine();
             if (stateMachine is null)

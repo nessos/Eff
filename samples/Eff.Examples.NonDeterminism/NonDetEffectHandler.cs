@@ -29,7 +29,7 @@ namespace Nessos.Effects.Examples.NonDeterminism
 
         public NonDetResultHolder ResultHolder { get; }
 
-        public async Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
+        public async ValueTask Handle<TValue>(EffectAwaiter<TValue> awaiter)
         {
             switch (awaiter.Effect)
             {
@@ -47,7 +47,7 @@ namespace Nessos.Effects.Examples.NonDeterminism
             }
         }
 
-        public async Task Handle<TValue>(EffStateMachine<TValue> stateMachine)
+        public async ValueTask Handle<TValue>(EffStateMachine<TValue> stateMachine)
         {
             while (!_isContinuationCaptured)
             {

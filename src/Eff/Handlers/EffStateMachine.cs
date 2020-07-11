@@ -128,7 +128,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Processes the awaiter using the provided effect handler.
         /// </summary>
-        Task Accept(IEffectHandler handler);
+        ValueTask Accept(IEffectHandler handler);
     }
 
     /// <summary>
@@ -211,7 +211,7 @@ namespace Nessos.Effects.Handlers
 
         public override string Id => nameof(EffStateMachine<TResult>);
 
-        public override Task Accept(IEffectHandler handler) => handler.Handle(this);
+        public override ValueTask Accept(IEffectHandler handler) => handler.Handle(this);
 
         IEffStateMachine IEffStateMachine.Clone() => Clone();
         object? IEffStateMachine.Result => Result;

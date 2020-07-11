@@ -1,5 +1,4 @@
-﻿#pragma warning disable 1998
-using Nessos.Effects.Handlers;
+﻿using Nessos.Effects.Handlers;
 using System;
 
 namespace Nessos.Effects.Examples.RecordReplay

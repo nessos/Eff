@@ -23,6 +23,6 @@ namespace Nessos.Effects.Handlers
         public Effect<TResult> Effect { get; }
 
         public override string Id => Effect.GetType().Name;
-        public override Task Accept(IEffectHandler handler) => handler.Handle(this);
+        public override ValueTask Accept(IEffectHandler handler) => handler.Handle(this);
     }
 }

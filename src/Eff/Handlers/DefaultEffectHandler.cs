@@ -16,7 +16,7 @@ namespace Nessos.Effects.Handlers
         ///   An effect handler that always throws.
         /// </summary>
         /// <exception cref="NotSupportedException" />
-        public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             throw new NotSupportedException("Abstract effects not supported by this handler.");
         }

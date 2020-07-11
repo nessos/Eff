@@ -9,22 +9,15 @@ namespace Nessos.Effects.Benchmarks
     [MemoryDiagnoser]
     public class Benchmark
     {
-        private int[] _data = null!;
-        private IEffectHandler _handler = null!;
-
-        [GlobalSetup]
-        public void Setup()
-        {
-            const int offset = 50_000; // prevent task caching from kicking in
-            _data = Enumerable.Range(0, 100).Select(x => x + offset).ToArray(); 
-            _handler = new DefaultEffectHandler();
-        }
+        const int ResultOffset = 50_000; // prevent task caching from kicking in
+        private readonly int[] _data = Enumerable.Range(0, 100).Select(x => x + ResultOffset).ToArray();
+        private readonly IEffectHandler _handler = new DefaultEffectHandler();
 
         [Benchmark(Description = "Task Builder", Baseline = true)]
-        public Task TaskBuilder() => TaskFlow.SumOfOddSquares(_data);
+        public async ValueTask TaskBuilder() => await TaskFlow.SumOfOddSquares(_data);
 
         [Benchmark(Description = "Eff Builder")]
-        public Task EffBuilder() => EffFlow.SumOfOddSquares(_data).Run(_handler);
+        public async ValueTask EffBuilder() => await EffFlow.SumOfOddSquares(_data).Run(_handler);
 
         private static class TaskFlow
         {

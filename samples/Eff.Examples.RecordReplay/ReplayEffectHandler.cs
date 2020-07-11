@@ -1,5 +1,4 @@
-﻿#pragma warning disable 1998
-using Nessos.Effects.Handlers;
+﻿using Nessos.Effects.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +16,7 @@ namespace Nessos.Effects.Examples.RecordReplay
             _results = results.ToArray();
         }
 
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> effect)
+        public override ValueTask Handle<TResult>(EffectAwaiter<TResult> effect)
         {
             if (_index == _results.Length)
             {
@@ -26,6 +25,7 @@ namespace Nessos.Effects.Examples.RecordReplay
 
             var result = _results[_index++];
             result.ToAwaiter(effect);
+            return default;
         }
     }
 }

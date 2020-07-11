@@ -17,7 +17,7 @@ namespace Nessos.Effects.DependencyInjection
             Container = container;
         }
 
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override async ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             switch (awaiter.Effect)
             {

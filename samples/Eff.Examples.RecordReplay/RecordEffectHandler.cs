@@ -14,7 +14,7 @@ namespace Nessos.Effects.Examples.RecordReplay
 
         }
 
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override async ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             await base.Handle(awaiter);
             var result = RecordedResult.FromAwaiter(awaiter);

@@ -31,7 +31,7 @@ namespace Nessos.Effects.Examples.Continuation
             _onException = onException;
         }
 
-        public async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public async ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             switch (awaiter.Effect)
             {
@@ -42,7 +42,7 @@ namespace Nessos.Effects.Examples.Continuation
             }
         }
 
-        public async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
+        public async ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             while (!_isContinuationCaptured)
             {

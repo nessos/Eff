@@ -17,7 +17,7 @@ namespace Nessos.Effects.Tests
             async Eff<int> Test() => 42;
 
             var handler = new CancellationEffectHandler(new CancellationToken(canceled: true));
-            await Assert.ThrowsAsync<OperationCanceledException>(() => Test().Run(handler));
+            await Assert.ThrowsAsync<OperationCanceledException>(() => Test().Run(handler).AsTask());
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace Nessos.Effects.Tests
 
             using var cts = new CancellationTokenSource(1_000);
             var handler = new CancellationEffectHandler(cts.Token);
-            await Assert.ThrowsAsync<OperationCanceledException>(() => Test().Run(handler));
+            await Assert.ThrowsAsync<OperationCanceledException>(() => Test().Run(handler).AsTask());
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace Nessos.Effects.Tests
 
             using var cts = new CancellationTokenSource(1_000);
             var handler = new CancellationEffectHandler(cts.Token);
-            await Assert.ThrowsAsync<TaskCanceledException>(() => Test().Run(handler));
+            await Assert.ThrowsAsync<TaskCanceledException>(() => Test().Run(handler).AsTask());
         }
 
         [Fact]
@@ -77,7 +77,7 @@ namespace Nessos.Effects.Tests
 
             using var cts = new CancellationTokenSource(1_000);
             var handler = new CancellationEffectHandler(cts.Token);
-            await Assert.ThrowsAsync<OperationCanceledException>(() => Test().Run(handler));
+            await Assert.ThrowsAsync<OperationCanceledException>(() => Test().Run(handler).AsTask());
             Assert.True(isFinallyBlockExecuted);
         }
     }

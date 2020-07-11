@@ -39,7 +39,7 @@ namespace Nessos.Effects.Tests
             }
 
             var handler = new CustomEffectHandler();
-            var ex = await Assert.ThrowsAsync<DivideByZeroException>(() => Test(0).Run(handler));
+            var ex = await Assert.ThrowsAsync<DivideByZeroException>(() => Test(0).Run(handler).AsTask());
 
             Assert.Single(handler.ExceptionLogs);
             Assert.Equal(ex, handler.ExceptionLogs[0].Exception);

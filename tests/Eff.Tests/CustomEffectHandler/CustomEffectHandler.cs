@@ -1,6 +1,4 @@
-﻿#pragma warning disable 1998
-
-using Nessos.Effects.Handlers;
+﻿using Nessos.Effects.Handlers;
 using Nessos.Effects.Utils;
 using System;
 using System.Collections.Generic;
@@ -23,7 +21,7 @@ namespace Nessos.Effects.Tests
         public CustomEffectHandler() : this(DateTime.Now)
         { }
 
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             switch (awaiter)
             {
@@ -35,12 +33,14 @@ namespace Nessos.Effects.Tests
                     awaiter.SetResult(result);
                     break;
             }
+
+            return default;
         }
 
         public (string name, object? value)[]? CaptureStateParameters { private set; get; }
         public (string name, object? value)[]? CaptureStateLocalVariables { private set; get; }
 
-        public override async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
+        public override async ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             await base.Handle(stateMachine);
 

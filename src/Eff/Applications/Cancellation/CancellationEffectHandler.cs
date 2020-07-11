@@ -23,7 +23,7 @@ namespace Nessos.Effects.Cancellation
             CancellationToken = token;
         }
 
-        public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             CancellationToken.ThrowIfCancellationRequested();
 
@@ -34,10 +34,10 @@ namespace Nessos.Effects.Cancellation
                     break;
             };
 
-            return Task.CompletedTask;
+            return default;
         }
 
-        public override Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
+        public override ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             CancellationToken.ThrowIfCancellationRequested();
             return base.Handle(stateMachine);

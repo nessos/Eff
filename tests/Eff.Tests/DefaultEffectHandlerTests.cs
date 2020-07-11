@@ -21,7 +21,7 @@ namespace Nessos.Effects.Tests
                 return await new TestEffect<int>();
             }
 
-            await Assert.ThrowsAsync<NotSupportedException>(() => Test().Run(Handler));
+            await Assert.ThrowsAsync<NotSupportedException>(() => Test().Run(Handler).AsTask());
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace Nessos.Effects.Tests
                 await new TestEffect();
             }
 
-            await Assert.ThrowsAsync<NotSupportedException>(() => Test().Run(Handler));
+            await Assert.ThrowsAsync<NotSupportedException>(() => Test().Run(Handler).AsTask());
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace Nessos.Effects.Tests
             var handler = Handler;
 
             Assert.Equal(0, counter);
-            await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => Task.Run(() => eff.Run(handler))));
+            await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => eff.Run(handler).AsTask()));
             Assert.Equal(1000, counter);
         }
 
@@ -85,13 +85,13 @@ namespace Nessos.Effects.Tests
             var handler = Handler;
 
             Assert.Equal(0, counter);
-            await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => Task.Run(() => eff.Run(handler))));
+            await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => eff.Run(handler).AsTask()));
             Assert.Equal(1000, counter);
         }
 
         public class EffectHandlerThatDoesntCompleteAwaiter : EffectHandler
         {
-            public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter) => Task.CompletedTask;
+            public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter) => default;
         }
 
         [Fact]
@@ -103,16 +103,16 @@ namespace Nessos.Effects.Tests
             }
 
             var handler = new EffectHandlerThatDoesntCompleteAwaiter();
-            await Assert.ThrowsAsync<InvalidOperationException>(() => Test().Run(handler));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => Test().Run(handler).AsTask());
         }
 
         public class EffectHandlerThatSetsExceptionToAwaiter<TException> : EffectHandler
             where TException : Exception, new()
         {
-            public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+            public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
             {
                 awaiter.SetException(new TException());
-                return Task.CompletedTask;
+                return default;
             }
         }
 
@@ -125,13 +125,13 @@ namespace Nessos.Effects.Tests
             }
 
             var handler = new EffectHandlerThatSetsExceptionToAwaiter<DivideByZeroException>();
-            await Assert.ThrowsAsync<DivideByZeroException>(() => Test().Run(handler));
+            await Assert.ThrowsAsync<DivideByZeroException>(() => Test().Run(handler).AsTask());
         }
 
         public class EffectHandlerThatThrowsException<TException> : EffectHandler
             where TException : Exception, new()
         {
-            public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+            public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
             {
                 throw new TException();
             }
@@ -146,7 +146,7 @@ namespace Nessos.Effects.Tests
             }
 
             var handler = new EffectHandlerThatThrowsException<DivideByZeroException>();
-            await Assert.ThrowsAsync<DivideByZeroException>(() => Test().Run(handler));
+            await Assert.ThrowsAsync<DivideByZeroException>(() => Test().Run(handler).AsTask());
         }
 
         [Fact]

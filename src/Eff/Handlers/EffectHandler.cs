@@ -9,9 +9,9 @@ namespace Nessos.Effects.Handlers
     /// </summary>
     public abstract class EffectHandler : IEffectHandler
     {
-        public abstract Task Handle<TResult>(EffectAwaiter<TResult> awaiter);
+        public abstract ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter);
 
-        public virtual async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
+        public virtual async ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             while (true)
             {

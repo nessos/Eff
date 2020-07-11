@@ -1,5 +1,4 @@
-﻿#pragma warning disable 1998
-using Nessos.Effects.Handlers;
+﻿using Nessos.Effects.Handlers;
 using System;
 using System.Threading.Tasks;
 
@@ -30,7 +29,7 @@ namespace Nessos.Effects.Examples.Maybe
     {
         private bool _breakExecution = false;
 
-        public async Task Handle<TValue>(EffectAwaiter<TValue> awaiter)
+        public ValueTask Handle<TValue>(EffectAwaiter<TValue> awaiter)
         {
             switch (awaiter.Effect)
             {
@@ -46,9 +45,11 @@ namespace Nessos.Effects.Examples.Maybe
 
                     break;
             }
+
+            return default;
         }
 
-        public async Task Handle<TValue>(EffStateMachine<TValue> stateMachine)
+        public async ValueTask Handle<TValue>(EffStateMachine<TValue> stateMachine)
         {
             while (!_breakExecution)
             {

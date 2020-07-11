@@ -105,7 +105,7 @@ namespace Nessos.Effects.Tests
                 await IO<UninhabitedType>.Do(d => d.Test());
             }
 
-            await Assert.ThrowsAsync<KeyNotFoundException>(() => Test().Run(Handler));
+            await Assert.ThrowsAsync<KeyNotFoundException>(() => Test().Run(Handler).AsTask());
         }
 
         public class UninhabitedType

@@ -68,7 +68,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Processes the awaiter using the provided effect handler.
         /// </summary>
-        public abstract Task Accept(IEffectHandler handler);
+        public abstract ValueTask Accept(IEffectHandler handler);
 
         /// <summary>
         ///   Configures the EffAwaiter instance with supplied parameters.

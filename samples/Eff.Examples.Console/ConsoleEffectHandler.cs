@@ -9,7 +9,7 @@ namespace Nessos.Effects.Examples.Console
     /// </summary>
     public class ConsoleEffectHandler : EffectHandler
     {
-        public override Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
+        public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             switch (awaiter)
             {
@@ -25,7 +25,7 @@ namespace Nessos.Effects.Examples.Console
                     throw new NotSupportedException(awaiter.Effect.GetType().Name);
             }
 
-            return Task.CompletedTask;
+            return default;
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿#pragma warning disable 1998
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nessos.Effects.Utils;
 using Nessos.Effects.Handlers;
@@ -10,22 +9,19 @@ namespace Nessos.Effects.Examples.TraceLog
     {
         public List<ResultLog> TraceLogs = new List<ResultLog>();
 
-        public override async Task Handle<TResult>(EffectAwaiter<TResult> awaiter)
-        {
+        public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter) => default;
 
-        }
-
-        public override async Task Handle<TResult>(EffStateMachine<TResult> stateMachine)
+        public override async ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             await base.Handle(stateMachine);
 
             if (stateMachine.HasResult)
             {
-                await Log(stateMachine.Result, stateMachine);
+                Log(stateMachine.Result, stateMachine);
             }
         }
 
-        public async Task Log(object? result, EffAwaiter awaiter)
+        public void Log(object? result, EffAwaiter awaiter)
         {
             var stateMachine = awaiter.AwaitingStateMachine?.GetAsyncStateMachine();
 

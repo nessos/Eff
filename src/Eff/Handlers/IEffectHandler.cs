@@ -18,7 +18,7 @@ namespace Nessos.Effects.Handlers
         ///   Typically a pattern match against subtypes of <see cref="Effect{TResult}"/>
         ///   that are recognized by the particular effect handler implementation.
         /// </remarks>
-        Task Handle<TResult>(EffectAwaiter<TResult> awaiter);
+        ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter);
 
         /// <summary>
         ///   Provides evaluation logic for Eff state machines.
@@ -31,6 +31,6 @@ namespace Nessos.Effects.Handlers
         ///   and querying the <see cref="EffStateMachine{TResult}.Position"/> property.
         ///   On completion the state machine should be completed with either a result or exception.
         /// </remarks>
-        Task Handle<TResult>(EffStateMachine<TResult> stateMachine);
+        ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine);
     }
 }

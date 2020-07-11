@@ -54,7 +54,7 @@ namespace Nessos.Effects
         ///   Each <see cref="Run"/> operation will execute a fresh copy of the underlying async state machine.
         ///   A single Eff instance can be safely executed multiple times.
         /// </remarks>
-        public async Task Run(IEffectHandler effectHandler)
+        public async ValueTask Run(IEffectHandler effectHandler)
         {
             var awaiter = GetAwaiterCore();
             await awaiter.Accept(effectHandler).ConfigureAwait(false);
@@ -128,7 +128,7 @@ namespace Nessos.Effects
         ///   Each <see cref="Run"/> operation will execute a fresh copy of the underlying async state machine.
         ///   A single Eff instance can be safely executed multiple times.
         /// </remarks>
-        public new async Task<TResult> Run(IEffectHandler effectHandler)
+        public new async ValueTask<TResult> Run(IEffectHandler effectHandler)
         {
             var stateMachine = GetStateMachine();
             await effectHandler.Handle(stateMachine).ConfigureAwait(false);
