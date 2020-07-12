@@ -38,6 +38,32 @@ namespace Nessos.Effects
         /// <returns>A delayed eff computation wrapping the abstract effect.</returns>
         public static async Eff<TResult> FromEffect<TResult>(Effect<TResult> effect) => await effect.ConfigureAwait();
 
+        /// <summary>
+        ///   Extracts a typed Eff computation from an untyped equivalent.
+        /// </summary>
+        /// <param name="eff">The eff computation to wrap.</param>
+        /// <returns>A computation wrapping the argument and returning a value of type <see cref="Unit"/>.</returns>
+        /// <remarks>
+        ///   Accelerator used in scenaria where the underlying type of the computation is not known at compile time.
+        /// </remarks>
+        public static Eff<Unit> FromUntypedEff(Eff eff)
+        {
+            if (eff is Eff<Unit> effU)
+            {
+                // the untyped method builder use instances of type unit,
+                // so we optimize for that path.
+                return effU;
+            }
+
+            return WrapUntyped(eff);
+
+            static async Eff<Unit> WrapUntyped(Eff eff) 
+            { 
+                await eff.ConfigureAwait(); 
+                return Unit.Value; 
+            }
+        }
+
 
         private static async Eff CompletedEffMethod()
         {

@@ -16,6 +16,16 @@ namespace Nessos.Effects.Examples.Continuation
             var stateMachine = eff.GetStateMachine();
             await continuationHandler.Handle(stateMachine);
         }
+
+        /// <summary>
+        ///   Executes an Eff computation with a call/cc effect handler,
+        ///   using provided success and exception continuations.
+        /// </summary>
+        public static Task StartWithContinuations(this Eff eff, Func<Task> onSuccess, Func<Exception, Task>? onException = null)
+        {
+            var effU = Eff.FromUntypedEff(eff);
+            return StartWithContinuations<Unit>(effU, _ => onSuccess(), onException);
+        }
     }
 
     public class ContinuationHandler<TRootResult> : IEffectHandler

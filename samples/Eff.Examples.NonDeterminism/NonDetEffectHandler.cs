@@ -15,6 +15,8 @@ namespace Nessos.Effects.Examples.NonDeterminism
             await handler.Handle(stateMachine);
             return handler.ResultHolder.GetResults();
         }
+
+        public static Task Run(Eff eff) => Run(Eff.FromUntypedEff(eff));
     }
 
     public class NonDetEffectHandler<TResult> : IEffectHandler

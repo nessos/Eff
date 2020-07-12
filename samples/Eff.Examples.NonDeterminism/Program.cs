@@ -5,22 +5,18 @@ namespace Nessos.Effects.Examples.NonDeterminism
 {
     class Program
     {
-        static async Eff<(int, string, bool)> Test()
+        static async Eff Test()
         {
             var x = await NonDetEffect.Choose(1, 2, 3);
             var y = await NonDetEffect.Choose("one", "two", "three");
             var z = await NonDetEffect.Choose(false, true);
 
-            return (x, y, z);
+            Console.WriteLine($"x = {x}, y = {y}, z = {z}");
         }
 
         static async Task Main()
         {
-            var results = await NonDetEffectHandler.Run(Test());
-            foreach (var result in results)
-            {
-                Console.WriteLine(result);
-            }
+            await NonDetEffectHandler.Run(Test());
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Nessos.Effects.Examples.Continuation
 {
     class Program
     {
-        static async Eff<(int, string, bool)> Test()
+        static async Eff Test()
         {
             async Eff<(int, string)> Nested()
             {
@@ -17,17 +17,12 @@ namespace Nessos.Effects.Examples.Continuation
             var (x, y) = await Nested();
             var z = await NonDeterminism.Choice(false, true);
 
-            return (x, y, z);
+            Console.WriteLine($"x = {x}, y = {y}, z = {z}");
         }
 
         static async Task Main()
         {
-            var results = await NonDeterminism.Run(Test());
-
-            foreach (var result in results)
-            {
-                Console.WriteLine(result);
-            }
+            await NonDeterminism.Run(Test());
         }
     }
 }
