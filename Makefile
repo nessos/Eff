@@ -14,6 +14,7 @@ build: clean
 	dotnet build -c Release
 
 test: build
+	# Debug and Release builds of method builders exercise different code paths
 	dotnet test --no-build -c Debug && \
 	dotnet test --no-build -c Release
 
