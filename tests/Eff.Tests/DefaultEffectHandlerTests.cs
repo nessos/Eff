@@ -63,7 +63,7 @@ namespace Nessos.Effects.Tests
             var handler = Handler;
 
             Assert.Equal(0, counter);
-            await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => eff.Run(handler).AsTask()));
+            await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => Task.Run(() => eff.Run(handler).AsTask())));
             Assert.Equal(1000, counter);
         }
 
@@ -85,7 +85,7 @@ namespace Nessos.Effects.Tests
             var handler = Handler;
 
             Assert.Equal(0, counter);
-            await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => eff.Run(handler).AsTask()));
+            await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => Task.Run(() => eff.Run(handler).AsTask())));
             Assert.Equal(1000, counter);
         }
 
