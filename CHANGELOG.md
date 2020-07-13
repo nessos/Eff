@@ -6,8 +6,8 @@
 
 ## 2.0.0
 
-- Expose an untyped Eff type and method builder.
-- Rework and simplify EffectHandler and EffAwaiter design.
+- Expose an untyped `Eff` type and method builder.
+- Rework and simplify `IEffectHandler` and `EffAwaiter` design.
 - Support waiting arbitrary awaitables without explicit conversions.
 - Expose Eff helper methods and combinators.
 - Expose effects and handlers for dependency injection and cancellation.
