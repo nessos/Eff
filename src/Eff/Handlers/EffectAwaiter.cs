@@ -12,6 +12,11 @@ namespace Nessos.Effects.Handlers
     /// </remarks>
     public class EffectAwaiter<TResult> : EffAwaiter<TResult>
     {
+
+        /// <summary>
+        ///   Creates a new effect awaiter instance using the supplied abstract effect.
+        /// </summary>
+        /// <param name="effect">The abstract effect to be awaited.</param>
         public EffectAwaiter(Effect<TResult> effect)
         {
             Effect = effect;
@@ -22,7 +27,14 @@ namespace Nessos.Effects.Handlers
         /// </summary>
         public Effect<TResult> Effect { get; }
 
+        /// <summary>
+        ///   Gets an identifier for the particular awaiter instance.
+        /// </summary>
         public override string Id => Effect.GetType().Name;
+
+        /// <summary>
+        ///   Processes the awaiter using the provided effect handler.
+        /// </summary>
         public override ValueTask Accept(IEffectHandler handler) => handler.Handle(this);
     }
 }

@@ -9,8 +9,24 @@ namespace Nessos.Effects.Handlers
     /// </summary>
     public abstract class EffectHandler : IEffectHandler
     {
+        /// <summary>
+        ///    Provides handling logic for abstract Effect awaiters.
+        /// </summary>
+        /// <typeparam name="TResult">The result type of the abstract effect.</typeparam>
+        /// <param name="awaiter">The effect awaiter to be completed with a value.</param>
+        /// <returns>A task waiting on the asynchronous handler.</returns>
+        /// <remarks>
+        ///   Typically a pattern match against subtypes of <see cref="Effect{TResult}"/>
+        ///   that are recognized by the particular effect handler implementation.
+        /// </remarks>
         public abstract ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter);
 
+        /// <summary>
+        ///   Provides evaluation logic for Eff state machines.
+        /// </summary>
+        /// <typeparam name="TResult">The result type of the eff state machine.</typeparam>
+        /// <param name="stateMachine">The state machine to be evaluated.</param>
+        /// <returns>A task waiting on the asynchronous evaluation.</returns>
         public virtual async ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             while (true)

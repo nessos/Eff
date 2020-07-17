@@ -61,8 +61,8 @@ namespace Nessos.Effects
             awaiter.GetResult();
         }
         
-        // Helper method for exposing untyped variants of Run and GetAwaiter methods
-        // Can be removed once Covariant return types are brought to C#.
+        /// Helper method for exposing untyped variants of Run and GetAwaiter methods
+        /// Can be removed once Covariant return types are brought to C#.
         protected abstract EffAwaiter GetAwaiterCore();
     }
 
@@ -135,8 +135,14 @@ namespace Nessos.Effects
             return stateMachine.GetResult();
         }
 
+        /// <summary>
+        ///   Implicitly converts an abstract effect to to an Eff instance.
+        /// </summary>
+        /// <param name="effect">The effect to be wrapped.</param>
         public static implicit operator Eff<TResult>(Effect<TResult> effect) => Eff.FromEffect(effect);
 
+        /// Helper method for exposing untyped variants of Run and GetAwaiter methods
+        /// Can be removed once Covariant return types are brought to C#.
         protected sealed override EffAwaiter GetAwaiterCore() => GetStateMachine();
     }
 }

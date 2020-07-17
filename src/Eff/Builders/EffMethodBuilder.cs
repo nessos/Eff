@@ -6,16 +6,25 @@ using System.Runtime.CompilerServices;
 namespace Nessos.Effects.Builders
 {
     /// <summary>
-    ///   Untyped Eff method builder
+    ///   Untyped Eff method builder.
     /// </summary>
     public struct EffMethodBuilder : IEffMethodBuilder<Unit>
     {
         private EffStateMachine<Unit>? _effStateMachine;
 
+        /// <summary>
+        ///   Creates a new method builder. For use by the generated state machine.
+        /// </summary>
         public static EffMethodBuilder Create() => default;
 
+        /// <summary>
+        ///   Returns the built eff instance. For use by the generated state machine.
+        /// </summary>
         public Eff? Task { get; private set; }
 
+        /// <summary>
+        ///   Passes the async state machine to the method builder. For use by the generated state machine.
+        /// </summary>
         [DebuggerStepThrough]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Start<TStateMachine>(ref TStateMachine stateMachine) where TStateMachine : IAsyncStateMachine
@@ -23,6 +32,9 @@ namespace Nessos.Effects.Builders
             Task = new StateMachineEff<EffMethodBuilder, TStateMachine, Unit>(in stateMachine);
         }
 
+        /// <summary>
+        ///   Sets a Eff state machine instance. For use by the generated state machine.
+        /// </summary>
         public void SetStateMachine(IAsyncStateMachine stateMachine)
         {
             // hijacks the IAsyncStateMachine.SetStateMachine mechanism
@@ -36,18 +48,27 @@ namespace Nessos.Effects.Builders
             _effStateMachine = stateMachine;
         }
 
+        /// <summary>
+        ///   Sets the result of the computation. For use by the generated state machine.
+        /// </summary>
         public void SetResult()
         {
             Debug.Assert(_effStateMachine != null);
             _effStateMachine!.BuilderSetResult(Unit.Value);
         }
 
+        /// <summary>
+        ///   Sets an exception for the computation. For use by the generated state machine.
+        /// </summary>
         public void SetException(Exception exception)
         {
             Debug.Assert(_effStateMachine != null);
             _effStateMachine!.BuilderSetException(exception);
         }
 
+        /// <summary>
+        ///   Sets an awaiter instance. For use by the generated state machine.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AwaitOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
             where TAwaiter : INotifyCompletion
@@ -57,6 +78,9 @@ namespace Nessos.Effects.Builders
             _effStateMachine!.BuilderSetAwaiter(ref awaiter);
         }
 
+        /// <summary>
+        ///   Sets an awaiter instance. For use by the generated state machine.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AwaitUnsafeOnCompleted<TAwaiter, TStateMachine>(ref TAwaiter awaiter, ref TStateMachine _)
             where TAwaiter : ICriticalNotifyCompletion

@@ -23,6 +23,9 @@ namespace Nessos.Effects.Cancellation
             CancellationToken = token;
         }
 
+        /// <summary>
+        ///   Handles awaiters containing a <see cref="CancellationTokenEffect"/>.
+        /// </summary>
         public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
         {
             CancellationToken.ThrowIfCancellationRequested();
@@ -37,6 +40,9 @@ namespace Nessos.Effects.Cancellation
             return default;
         }
 
+        /// <summary>
+        ///   Handles Eff state machines while also checking for cancellation.
+        /// </summary>
         public override ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
         {
             CancellationToken.ThrowIfCancellationRequested();

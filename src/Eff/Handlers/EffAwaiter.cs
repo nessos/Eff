@@ -142,6 +142,10 @@ namespace Nessos.Effects.Handlers
             HasResult = true;
         }
 
+        /// <summary>
+        ///   Sets an exception value for the awaiter.
+        /// </summary>
+        /// <exception cref="ArgumentNullException" />
         public sealed override void SetException(Exception exception)
         {
             if (exception is null)

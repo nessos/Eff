@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Nessos.Effects.Handlers
 {
     /// <summary>
-    ///   Gets the position of an <see cref="EffStateMachine{TResult}" instance. />
+    ///   Gets the position of an <see cref="EffStateMachine{TResult}"/> instance.
     /// </summary>
     public enum StateMachinePosition
     {
@@ -189,7 +189,7 @@ namespace Nessos.Effects.Handlers
         ///   Creates a cloned copy of the state machine, in its current configuration.
         /// </summary>
         /// <remarks>
-        ///   If the state machine contains an <see cref="AwaitingStateMachine"/> instance,
+        ///   If the state machine contains an <see cref="IEffStateMachine.AwaitingStateMachine"/> instance,
         ///   it will also be cloned recursively.
         /// </remarks>
         public abstract EffStateMachine<TResult> Clone();
@@ -209,8 +209,14 @@ namespace Nessos.Effects.Handlers
         /// </summary>
         public abstract IAsyncStateMachine GetAsyncStateMachine();
 
+        /// <summary>
+        ///   Gets an identifier for the particular awaiter instance.
+        /// </summary>
         public override string Id => nameof(EffStateMachine<TResult>);
 
+        /// <summary>
+        ///   Processes the awaiter using the provided effect handler.
+        /// </summary>
         public override ValueTask Accept(IEffectHandler handler) => handler.Handle(this);
 
         IEffStateMachine IEffStateMachine.Clone() => Clone();

@@ -6,6 +6,9 @@ using System.Runtime.CompilerServices;
 
 namespace Nessos.Effects.Utils
 {
+    /// <summary>
+    ///   Helper methods for extracting state machine environment metadata.
+    /// </summary>
     public static class TraceHelpers
     {
         private static readonly ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]> s_parametersInfoCache = new ConcurrentDictionary<Type, (string name, FieldInfo fieldInfo)[]>();

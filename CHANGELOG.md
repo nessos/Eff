@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2
+
+- Bundle XML docs in the NuGet package.
+
 ## 2.0.1
 
 - Add a changelog.
