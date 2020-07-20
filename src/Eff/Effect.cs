@@ -76,6 +76,10 @@ namespace Nessos.Effects
     /// </remarks>
     public abstract class Effect : Effect<Unit>
     {
-
+        /// <summary>
+        ///   Gets an <see cref="EffectAwaiter{TResult}"/> instance containing this Effect.
+        /// </summary>
+        /// <returns></returns>
+        public new EffectAwaiter GetAwaiter() => new EffectAwaiter(this);
     }
 }

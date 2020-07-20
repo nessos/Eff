@@ -12,7 +12,6 @@ namespace Nessos.Effects.Handlers
     /// </remarks>
     public class EffectAwaiter<TResult> : EffAwaiter<TResult>
     {
-
         /// <summary>
         ///   Creates a new effect awaiter instance using the supplied abstract effect.
         /// </summary>
@@ -36,5 +35,29 @@ namespace Nessos.Effects.Handlers
         ///   Processes the awaiter using the provided effect handler.
         /// </summary>
         public override ValueTask Accept(IEffectHandler handler) => handler.Handle(this);
+    }
+
+    /// <summary>
+    ///   Provides an awaiter instance for <see cref="Effect"/> instances.
+    /// </summary>
+    /// <remarks>
+    ///   Implementers of handlers typically assign semantics to abstract effects 
+    ///   by setting a result (or exception) to effect awaiter instances.
+    /// </remarks>
+    public class EffectAwaiter : EffectAwaiter<Unit>
+    {
+        /// <summary>
+        ///   Creates a new effect awaiter instance using the supplied abstract effect.
+        /// </summary>
+        /// <param name="effect">The abstract effect to be awaited.</param>
+        public EffectAwaiter(Effect effect) : base(effect) 
+        {
+
+        }
+
+        /// <summary>
+        ///   Sets a result value for the awaiter.
+        /// </summary>
+        public void SetResult() => SetResult(Unit.Value);
     }
 }

@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
-    <PackageReference Include="Eff" Version="2.0.0" Condition="'$(UseNugetEff)' == 'True'" />
+    <PackageReference Include="Eff" Version="2.0.2" Condition="'$(UseNugetEff)' == 'True'" />
   </ItemGroup>
 
   <ItemGroup>

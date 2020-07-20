@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.3
+
+- Expose an untyped EffectAwaiter for untyped Effect types
+
 ## 2.0.2
 
 - Bundle XML docs in the NuGet package.

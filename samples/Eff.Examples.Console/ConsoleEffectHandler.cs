@@ -13,9 +13,9 @@ namespace Nessos.Effects.Examples.Console
         {
             switch (awaiter)
             {
-                case EffectAwaiter<Unit> { Effect: ConsolePrintEffect printEffect } awtr:
+                case EffectAwaiter { Effect: ConsolePrintEffect printEffect } awtr:
                     System.Console.Write(printEffect.Message);
-                    awtr.SetResult(Unit.Value);
+                    awtr.SetResult();
                     break;
                 case EffectAwaiter<string> { Effect: ConsoleReadEffect _ } awtr:
                     string message = System.Console.ReadLine();
