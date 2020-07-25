@@ -30,16 +30,15 @@ namespace Nessos.Effects.Examples.TraceLog
                 return;
             }
 
-            var log =
-                new ResultLog
-                {
-                    Result = result,
-                    CallerFilePath = awaiter.CallerFilePath,
-                    CallerLineNumber = awaiter.CallerLineNumber,
-                    CallerMemberName = awaiter.CallerMemberName,
-                    Parameters = stateMachine.GetParameterValues(),
-                    LocalVariables = stateMachine.GetLocalVariableValues(),
-                };
+            var log = new ResultLog
+            {
+                Result = result,
+                CallerFilePath = awaiter.CallerFilePath,
+                CallerLineNumber = awaiter.CallerLineNumber,
+                CallerMemberName = awaiter.CallerMemberName,
+                Parameters = stateMachine.GetParameterValues(),
+                LocalVariables = stateMachine.GetLocalVariableValues(),
+            };
 
             TraceLogs.Add(log);
         }

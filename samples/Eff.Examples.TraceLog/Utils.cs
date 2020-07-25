@@ -1,14 +1,9 @@
-﻿using Nessos.Effects;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Nessos.Effects.Examples.TraceLog
 {
-
     public class ResultLog
     {
         public string? CallerMemberName { get; set; }
@@ -18,6 +13,7 @@ namespace Nessos.Effects.Examples.TraceLog
         public (string name, object? value)[]? Parameters { get; set; }
         public (string name, object? value)[]? LocalVariables { get; set; }
     }
+
     static class Utils
     {
         public static string Dump(this IList<ResultLog> traceLogs)

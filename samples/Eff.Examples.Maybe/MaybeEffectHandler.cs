@@ -75,6 +75,5 @@ namespace Nessos.Effects.Examples.Maybe
                 }
             }
         }
-
     }
 }

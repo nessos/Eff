@@ -1,5 +1,4 @@
 ﻿#pragma warning disable 1998
-using Nessos.Effects;
 using System;
 using System.Threading.Tasks;
 
@@ -7,7 +6,6 @@ namespace Nessos.Effects.Examples.TraceLog
 {
     class Program
     {
-
         static async Eff<int> Bar(int x)
         {
             return x + 1;
