@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Nessos.Effects
 {
@@ -25,5 +26,8 @@ namespace Nessos.Effects
         public static bool operator ==(Unit x, Unit y) => true;
         /// Implements unit inequality
         public static bool operator !=(Unit x, Unit y) => false;
+
+        /// allow to shortcut effect
+        public static implicit operator ValueTask(Unit value) => default;
     }
 }

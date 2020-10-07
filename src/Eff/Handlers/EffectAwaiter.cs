@@ -58,6 +58,6 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Sets a result value for the awaiter.
         /// </summary>
-        public void SetResult() => SetResult(Unit.Value);
+        public Unit SetResult() => SetResult(Unit.Value);
     }
 }
