@@ -17,8 +17,7 @@ namespace Nessos.Effects.Examples.AspNetCore
         {
             services
                 .AddControllers()
-                .AddControllersAsServices()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                .AddControllersAsServices();
 
             services
                 .AddSingleton<IUserService>(_ => new InMemoryUserService())

@@ -78,7 +78,9 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
                 _provider = provider;
             }
 
+#pragma warning disable CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
             public T Resolve<T>() => _provider.GetRequiredService<T>();
+#pragma warning restore CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
         }
     }
 }

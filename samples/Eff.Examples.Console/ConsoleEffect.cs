@@ -10,7 +10,7 @@
         public string Message { get; }
     }
 
-    public class ConsoleReadEffect : Effect<string>
+    public class ConsoleReadEffect : Effect<string?>
     {
 
     }

@@ -3,7 +3,7 @@
     /// <summary>
     ///   Defines an abstract effect for looking up configuration by key
     /// </summary>
-    public class ConfigEffect : Effect<string>
+    public class ConfigEffect : Effect<string?>
     {
         public ConfigEffect(string key)
         {

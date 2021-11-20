@@ -24,8 +24,8 @@ namespace Nessos.Effects.Benchmarks
             public static async Task<int> SumOfOddSquares(int[] inputs)
             {
                 int sum = 0;
-                foreach(var i in inputs)
-                    if(i % 2 == 1) sum += await Square(i);
+                foreach (var i in inputs)
+                    if (i % 2 == 1) sum += await Square(i);
 
                 return sum;
 

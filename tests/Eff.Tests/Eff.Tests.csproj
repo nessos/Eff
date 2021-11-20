@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <RootNamespace>Nessos.Effects.Tests</RootNamespace>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <NoWarn>$(NoWarn);CS1998</NoWarn>
     <CollectCoverage>false</CollectCoverage>
   </PropertyGroup>

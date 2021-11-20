@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
@@ -52,7 +51,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Returns true if the awaiter has been completed with an exception value.
         /// </summary>
-        public bool HasException => !(Exception is null);
+        public bool HasException => Exception is not null;
 
         /// <summary>
         ///   Returns true if the awaiter has been completed with either a result or an exception.
@@ -104,12 +103,12 @@ namespace Nessos.Effects.Handlers
             if (Exception is Exception exn)
             {
                 ExceptionDispatchInfo.Capture(exn).Throw();
-                return;
             }
 
             if (!HasResult)
             {
-                throw new InvalidOperationException($"{nameof(EffAwaiter)} of type {Id} has not been completed.");
+                Throw(Id);
+                static void Throw(string id) => throw new InvalidOperationException($"{nameof(EffAwaiter)} of type {id} has not been completed.");
             }
         }
 
@@ -123,8 +122,7 @@ namespace Nessos.Effects.Handlers
     /// <typeparam name="TResult">Result type required by the awaiter.</typeparam>
     public abstract class EffAwaiter<TResult> : EffAwaiter
     {
-        [AllowNull]
-        private TResult _result = default;
+        private TResult? _result = default;
 
         /// <summary>
         ///   Gets either the result value or throws the exception that have been stored in the awaiter.
@@ -150,7 +148,8 @@ namespace Nessos.Effects.Handlers
         {
             if (exception is null)
             {
-                throw new ArgumentNullException(nameof(exception));
+                Throw();
+                static void Throw() => throw new ArgumentNullException(nameof(exception));
             }
 
             HasResult = false;
@@ -169,15 +168,15 @@ namespace Nessos.Effects.Handlers
             if (Exception is Exception exn)
             {
                 ExceptionDispatchInfo.Capture(exn).Throw();
-                return default!;
             }
 
             if (!HasResult)
             {
-                throw new InvalidOperationException($"Awaiter of type {Id} has not been completed.");
+                Throw(Id);
+                static void Throw(string id) => throw new InvalidOperationException($"Awaiter of type {id} has not been completed.");
             }
 
-            return _result;
+            return _result!;
         }
 
         /// <summary>

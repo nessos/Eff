@@ -10,8 +10,8 @@ namespace Nessos.Effects.Examples.Config
         {
             switch (awaiter)
             {
-                case EffectAwaiter<string> { Effect: ConfigEffect eff } awtr:
-                    var value = ConfigurationManager.AppSettings[eff.Key];
+                case EffectAwaiter<string?> { Effect: ConfigEffect eff } awtr:
+                    string? value = ConfigurationManager.AppSettings[eff.Key];
                     awtr.SetResult(value);
                     break;
             };

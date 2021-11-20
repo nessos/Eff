@@ -17,8 +17,8 @@ namespace Nessos.Effects.Examples.Console
                     System.Console.Write(printEffect.Message);
                     awtr.SetResult();
                     break;
-                case EffectAwaiter<string> { Effect: ConsoleReadEffect _ } awtr:
-                    string message = System.Console.ReadLine();
+                case EffectAwaiter<string?> { Effect: ConsoleReadEffect _ } awtr:
+                    string? message = System.Console.ReadLine();
                     awtr.SetResult(message);
                     break;
                 default:
