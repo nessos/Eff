@@ -1,9 +1,0 @@
-os: linux
-language: bash
-
-services:
-  - make
-  - docker
-
-script:
-  - make docker-build
