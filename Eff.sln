@@ -1,49 +1,49 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2002
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff", "src\Eff\Eff.csproj", "{228F077D-77E9-493E-81B6-3024C59A9770}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff", "src\Eff\Eff.csproj", "{228F077D-77E9-493E-81B6-3024C59A9770}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.AspNetCore", "samples\Eff.Examples.AspNetCore\Eff.Examples.AspNetCore.csproj", "{7F24B897-2EED-46E7-9A09-A063F5E8B55A}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.AspNetCore", "samples\Eff.Examples.AspNetCore\Eff.Examples.AspNetCore.csproj", "{7F24B897-2EED-46E7-9A09-A063F5E8B55A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.CancellationToken", "samples\Eff.Examples.CancellationToken\Eff.Examples.CancellationToken.csproj", "{6CF4CFFA-011E-421A-9555-33EC0C3A2383}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.CancellationToken", "samples\Eff.Examples.CancellationToken\Eff.Examples.CancellationToken.csproj", "{6CF4CFFA-011E-421A-9555-33EC0C3A2383}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Config", "samples\Eff.Examples.Config\Eff.Examples.Config.csproj", "{09123999-DAD1-454E-94DD-29ACFB467FCF}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Config", "samples\Eff.Examples.Config\Eff.Examples.Config.csproj", "{09123999-DAD1-454E-94DD-29ACFB467FCF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Console", "samples\Eff.Examples.Console\Eff.Examples.Console.csproj", "{2F18005E-5BD3-4A72-9E98-E111019AD518}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Console", "samples\Eff.Examples.Console\Eff.Examples.Console.csproj", "{2F18005E-5BD3-4A72-9E98-E111019AD518}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Continuation", "samples\Eff.Examples.Continuation\Eff.Examples.Continuation.csproj", "{54EB30BC-5449-40F1-959F-AEF6F22A0D41}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Continuation", "samples\Eff.Examples.Continuation\Eff.Examples.Continuation.csproj", "{54EB30BC-5449-40F1-959F-AEF6F22A0D41}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.DependencyInjection", "samples\Eff.Examples.DependencyInjection\Eff.Examples.DependencyInjection.csproj", "{F4757E53-B83F-4799-9867-5EF678437E4B}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.DependencyInjection", "samples\Eff.Examples.DependencyInjection\Eff.Examples.DependencyInjection.csproj", "{F4757E53-B83F-4799-9867-5EF678437E4B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Maybe", "samples\Eff.Examples.Maybe\Eff.Examples.Maybe.csproj", "{306A7873-67EC-4E0F-8D7B-D69921C8893C}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.Maybe", "samples\Eff.Examples.Maybe\Eff.Examples.Maybe.csproj", "{306A7873-67EC-4E0F-8D7B-D69921C8893C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.NonDeterminism", "samples\Eff.Examples.NonDeterminism\Eff.Examples.NonDeterminism.csproj", "{A6331E84-9C45-4D67-9539-417E363D1080}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.NonDeterminism", "samples\Eff.Examples.NonDeterminism\Eff.Examples.NonDeterminism.csproj", "{A6331E84-9C45-4D67-9539-417E363D1080}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.RecordReplay", "samples\Eff.Examples.RecordReplay\Eff.Examples.RecordReplay.csproj", "{790CF59F-C503-4157-8677-ED8596635B3E}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.RecordReplay", "samples\Eff.Examples.RecordReplay\Eff.Examples.RecordReplay.csproj", "{790CF59F-C503-4157-8677-ED8596635B3E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.StackTrace", "samples\Eff.Examples.StackTrace\Eff.Examples.StackTrace.csproj", "{093D75EF-7B82-4D20-8CAC-8452846F5B91}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.StackTrace", "samples\Eff.Examples.StackTrace\Eff.Examples.StackTrace.csproj", "{093D75EF-7B82-4D20-8CAC-8452846F5B91}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.TraceLog", "samples\Eff.Examples.TraceLog\Eff.Examples.TraceLog.csproj", "{81472788-79D0-42C4-9C44-B433C6BF36B5}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Examples.TraceLog", "samples\Eff.Examples.TraceLog\Eff.Examples.TraceLog.csproj", "{81472788-79D0-42C4-9C44-B433C6BF36B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Benchmarks", "tests\Eff.Benchmarks\Eff.Benchmarks.csproj", "{BE5AC914-3F5E-445B-B296-0A7129542B82}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Benchmarks", "tests\Eff.Benchmarks\Eff.Benchmarks.csproj", "{BE5AC914-3F5E-445B-B296-0A7129542B82}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Tests", "tests\Eff.Tests\Eff.Tests.csproj", "{BC82C07E-C3B1-4324-A3E8-C0D7A790727F}" 
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eff.Tests", "tests\Eff.Tests\Eff.Tests.csproj", "{BC82C07E-C3B1-4324-A3E8-C0D7A790727F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{E1DCF0A3-5136-4BE4-88BC-AAD58C03F0AF}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{E1DCF0A3-5136-4BE4-88BC-AAD58C03F0AF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{A4CC1E7C-0AE8-403A-9CCE-B14C05836ADD}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{A4CC1E7C-0AE8-403A-9CCE-B14C05836ADD}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".vscode", ".vscode", "{FDE5B6AC-B0DF-4D8E-8C40-8DA7133049A8}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".vscode", ".vscode", "{FDE5B6AC-B0DF-4D8E-8C40-8DA7133049A8}"
 	ProjectSection(SolutionItems) = preProject
 		.vscode\settings.json = .vscode\settings.json
 		.vscode\tasks.json = .vscode\tasks.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9AA6B5E9-339C-48E6-B069-3999EBF290A4}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9AA6B5E9-339C-48E6-B069-3999EBF290A4}"
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
 		.gitattributes = .gitattributes
@@ -58,11 +58,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{65C6BC20-E28B-41E3-B330-2171E13AA45A}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{65C6BC20-E28B-41E3-B330-2171E13AA45A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0D6A1C50-FD47-4F28-9293-F6B89C811E9D}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0D6A1C50-FD47-4F28-9293-F6B89C811E9D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9255AF8D-00AC-4182-811B-9B0A5AB5F2C7}" 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9255AF8D-00AC-4182-811B-9B0A5AB5F2C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eff.Examples.Resumable", "samples\Eff.Examples.Resumable\Eff.Examples.Resumable.csproj", "{8C3452A0-5F33-4B05-B807-9BDDE3ECF47C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +72,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{228F077D-77E9-493E-81B6-3024C59A9770}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{228F077D-77E9-493E-81B6-3024C59A9770}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{228F077D-77E9-493E-81B6-3024C59A9770}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{228F077D-77E9-493E-81B6-3024C59A9770}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7F24B897-2EED-46E7-9A09-A063F5E8B55A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7F24B897-2EED-46E7-9A09-A063F5E8B55A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F24B897-2EED-46E7-9A09-A063F5E8B55A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -114,10 +120,6 @@ Global
 		{81472788-79D0-42C4-9C44-B433C6BF36B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81472788-79D0-42C4-9C44-B433C6BF36B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81472788-79D0-42C4-9C44-B433C6BF36B5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{228F077D-77E9-493E-81B6-3024C59A9770}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{228F077D-77E9-493E-81B6-3024C59A9770}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{228F077D-77E9-493E-81B6-3024C59A9770}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{228F077D-77E9-493E-81B6-3024C59A9770}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BE5AC914-3F5E-445B-B296-0A7129542B82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BE5AC914-3F5E-445B-B296-0A7129542B82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE5AC914-3F5E-445B-B296-0A7129542B82}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -126,12 +128,16 @@ Global
 		{BC82C07E-C3B1-4324-A3E8-C0D7A790727F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC82C07E-C3B1-4324-A3E8-C0D7A790727F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC82C07E-C3B1-4324-A3E8-C0D7A790727F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C3452A0-5F33-4B05-B807-9BDDE3ECF47C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C3452A0-5F33-4B05-B807-9BDDE3ECF47C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C3452A0-5F33-4B05-B807-9BDDE3ECF47C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C3452A0-5F33-4B05-B807-9BDDE3ECF47C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A4CC1E7C-0AE8-403A-9CCE-B14C05836ADD} = {E1DCF0A3-5136-4BE4-88BC-AAD58C03F0AF}
+		{228F077D-77E9-493E-81B6-3024C59A9770} = {0D6A1C50-FD47-4F28-9293-F6B89C811E9D}
 		{7F24B897-2EED-46E7-9A09-A063F5E8B55A} = {65C6BC20-E28B-41E3-B330-2171E13AA45A}
 		{6CF4CFFA-011E-421A-9555-33EC0C3A2383} = {65C6BC20-E28B-41E3-B330-2171E13AA45A}
 		{09123999-DAD1-454E-94DD-29ACFB467FCF} = {65C6BC20-E28B-41E3-B330-2171E13AA45A}
@@ -143,9 +149,10 @@ Global
 		{790CF59F-C503-4157-8677-ED8596635B3E} = {65C6BC20-E28B-41E3-B330-2171E13AA45A}
 		{093D75EF-7B82-4D20-8CAC-8452846F5B91} = {65C6BC20-E28B-41E3-B330-2171E13AA45A}
 		{81472788-79D0-42C4-9C44-B433C6BF36B5} = {65C6BC20-E28B-41E3-B330-2171E13AA45A}
-		{228F077D-77E9-493E-81B6-3024C59A9770} = {0D6A1C50-FD47-4F28-9293-F6B89C811E9D}
 		{BE5AC914-3F5E-445B-B296-0A7129542B82} = {9255AF8D-00AC-4182-811B-9B0A5AB5F2C7}
 		{BC82C07E-C3B1-4324-A3E8-C0D7A790727F} = {9255AF8D-00AC-4182-811B-9B0A5AB5F2C7}
+		{A4CC1E7C-0AE8-403A-9CCE-B14C05836ADD} = {E1DCF0A3-5136-4BE4-88BC-AAD58C03F0AF}
+		{8C3452A0-5F33-4B05-B807-9BDDE3ECF47C} = {65C6BC20-E28B-41E3-B330-2171E13AA45A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC6EEA4C-C755-49B0-82D2-B057DD7351C9}
