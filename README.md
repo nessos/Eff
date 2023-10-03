@@ -48,7 +48,6 @@ A key concept of the Eff library are _abstract effects_:
 ```csharp
 public class CoinToss : Effect<bool>
 {
-
 }
 ```
 
