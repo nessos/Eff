@@ -14,11 +14,11 @@ namespace Nessos.Effects
         /// <summary>
         ///   Gets the Unit instance.
         /// </summary>
-        public static Unit Value => new Unit();
+        public static Unit Value => new();
         /// Implements unit hashcode
         public override int GetHashCode() => 1;
         /// Implements unit equality
-        public override bool Equals(object other) => other is Unit;
+        public override bool Equals(object? obj) => obj is Unit;
         /// Implements unit equality
         public bool Equals(Unit other) => true;
         /// Implements unit equality

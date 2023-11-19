@@ -20,10 +20,10 @@ namespace Nessos.Effects.Utils
             public object? Scheduler;
         }
 
-        private volatile int _isTaskCompleted = 0;
-        private volatile int _subscriptionsInProgress = 0;
-        private volatile int _isFirstContinuationQueued = 0;
-        private ContinuationContext _firstContinuation = default;
+        private volatile int _isTaskCompleted;
+        private volatile int _subscriptionsInProgress;
+        private volatile int _isFirstContinuationQueued;
+        private ContinuationContext _firstContinuation;
         private ConcurrentQueue<ContinuationContext>? _additionalContinuations;
 
         public ValueTask Task => new ValueTask(this, 0);

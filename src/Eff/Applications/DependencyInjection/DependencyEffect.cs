@@ -15,7 +15,7 @@ namespace Nessos.Effects.DependencyInjection
         public abstract ValueTask<TResult> Handle(IContainer container);
     }
 
-    internal class FuncDependencyEffect<TDependency, TResult> : DependencyEffect<TResult>
+    internal sealed class FuncDependencyEffect<TDependency, TResult> : DependencyEffect<TResult>
     {
         public Func<TDependency, ValueTask<TResult>> Func { get; }
 
@@ -31,7 +31,7 @@ namespace Nessos.Effects.DependencyInjection
         }
     }
 
-    internal class ContainerFuncDependencyEffect<TResult> : DependencyEffect<TResult>
+    internal sealed class ContainerFuncDependencyEffect<TResult> : DependencyEffect<TResult>
     {
         public Func<IContainer, ValueTask<TResult>> Func { get; }
 

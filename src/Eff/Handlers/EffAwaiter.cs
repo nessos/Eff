@@ -31,7 +31,7 @@ namespace Nessos.Effects.Handlers
         /// <summary>
         ///   Gets or sets the line number at the source file at which the method is called.
         /// </summary>
-        public int CallerLineNumber { get; set; } = 0;
+        public int CallerLineNumber { get; set; }
 
         /// <summary>
         ///   Returns true if the awaiter has been completed with a result value.
@@ -122,7 +122,7 @@ namespace Nessos.Effects.Handlers
     /// <typeparam name="TResult">Result type required by the awaiter.</typeparam>
     public abstract class EffAwaiter<TResult> : EffAwaiter
     {
-        private TResult? _result = default;
+        private TResult? _result;
 
         /// <summary>
         ///   Gets either the result value or throws the exception that have been stored in the awaiter.

@@ -1,0 +1,29 @@
+<Project>
+    <Import Project="..\Directory.Build.props" />
+
+    <PropertyGroup>
+        <AnalysisLevel>latest-recommended</AnalysisLevel>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <WarningsAsErrors>Nullable</WarningsAsErrors>
+        <WarningLevel>9999</WarningLevel>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <IncludeSymbols>true</IncludeSymbols>
+        <Company>Nessos Information Technologies</Company>
+        <Authors>Nessos Information Technologies</Authors>
+        <Owners>Nessos Information Technologies</Owners>
+        <RepositoryUrl>https://github.com/nessos/Eff</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Programming with effects and handlers in C#</description>
+        <PackageReleaseNotes>https://github.com/nessos/Eff/blob/master/CHANGELOG.md</PackageReleaseNotes>
+        <copyright>Copyright 2020</copyright>
+        <tags>C# effects handlers</tags>
+    </PropertyGroup>
+</Project>

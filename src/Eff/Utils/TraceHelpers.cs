@@ -27,22 +27,21 @@ namespace Nessos.Effects.Utils
         {
             var fieldInfos = state.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-            var parametersInfo = fieldInfos
-                                       .Where(fieldInfo => !fieldInfo.Name.StartsWith("<"))
-                                       .Select(fieldInfo => (fieldInfo.Name, fieldInfo))
-                                       .ToArray();
-            return parametersInfo;
+            return fieldInfos
+                .Where(fieldInfo => !fieldInfo.Name.StartsWith("<", StringComparison.Ordinal))
+                .Select(fieldInfo => (fieldInfo.Name, fieldInfo))
+                .ToArray();
         }
+
         private static (string name, FieldInfo fieldInfo)[] GetLocalVariablesInfo(object state)
         {
             var fieldInfos = state.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-            var localVariablesInfo = fieldInfos
-                                           .Where(fieldInfo => !fieldInfo.Name.StartsWith("<>"))
-                                           .Where(fieldInfo => fieldInfo.Name.StartsWith("<"))
-                                           .Select(fieldInfo => (fieldInfo.Name.Substring(1, fieldInfo.Name.LastIndexOf(">") - 1), fieldInfo))
-                                           .ToArray();
-            return localVariablesInfo;
+            return fieldInfos
+                .Where(fieldInfo => !fieldInfo.Name.StartsWith("<>", StringComparison.Ordinal))
+                .Where(fieldInfo => fieldInfo.Name.StartsWith("<", StringComparison.Ordinal))
+                .Select(fieldInfo => (fieldInfo.Name[1..fieldInfo.Name.LastIndexOf('>')], fieldInfo))
+                .ToArray();
         }
 
         /// <summary>
@@ -95,8 +94,8 @@ namespace Nessos.Effects.Utils
             }
 
             var name = stateMachine.GetType().Name;
-            if (name.StartsWith("<"))
-                return name.Substring(1, name.LastIndexOf(">") - 1);
+            if (name.StartsWith("<", StringComparison.Ordinal))
+                return name[1..name.LastIndexOf('>')];
             else
                 return name;
         }

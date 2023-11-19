@@ -83,7 +83,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
             if (IsException)
             {
                 var exn = JsonConvert.DeserializeObject<Exception>(Value);
-                awaiter.SetException(exn);
+                awaiter.SetException(exn!);
             }
             else
             {

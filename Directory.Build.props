@@ -1,19 +1,8 @@
-<Project ToolsVersion="15.0">
+<Project>
   <PropertyGroup>
-    <IsPackable>false</IsPackable>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <IncludeSymbols>true</IncludeSymbols>
-    <Company>Nessos Information Technologies</Company>
-    <Authors>Nessos Information Technologies</Authors>
-    <Owners>Nessos Information Technologies</Owners>
-    <RepositoryUrl>https://github.com/nessos/Eff</RepositoryUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryType>git</RepositoryType>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Programming with effects and handlers in C#</description>
-    <PackageReleaseNotes>https://github.com/nessos/Eff/blob/master/CHANGELOG.md</PackageReleaseNotes>
-    <copyright>Copyright 2020</copyright>
-    <tags>C# effects handlers</tags>
     <Nullable>enable</Nullable>
+    <LangVersion>12.0</LangVersion>
+    <IsPackable>false</IsPackable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 </Project>

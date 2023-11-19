@@ -58,7 +58,7 @@ namespace Nessos.Effects.Handlers
 
                     default:
                         Debug.Fail($"Unrecognized state machine position {stateMachine.Position}.");
-                        throw new Exception($"Internal error: unrecognized state machine position {stateMachine.Position}.");
+                        throw new InvalidOperationException($"Internal error: unrecognized state machine position {stateMachine.Position}.");
                 }
             }
         }

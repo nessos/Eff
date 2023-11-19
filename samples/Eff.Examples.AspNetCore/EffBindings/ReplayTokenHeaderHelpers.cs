@@ -24,7 +24,7 @@ namespace Nessos.Effects.Examples.AspNetCore.EffBindings
 
         public static void AddReplayTokenHeader(this HttpResponse response, string replayToken)
         {
-            response.Headers.Add(EffReplayTokenHeaderName, replayToken);
+            response.Headers.Append(EffReplayTokenHeaderName, replayToken);
         }
     }
 
