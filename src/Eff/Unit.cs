@@ -6,7 +6,7 @@ namespace Nessos.Effects
     ///   A type inhabited by a single value.
     /// </summary>
     /// <remarks>
-    ///   While similar to <see cref="void"/>, the unit type is inhabited 
+    ///   While similar to <see cref="Void"/>, the unit type is inhabited 
     ///   by a single materialized value and can be used as a generic parameter.
     /// </remarks>
     public readonly struct Unit : IEquatable<Unit>
