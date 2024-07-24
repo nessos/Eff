@@ -9,7 +9,7 @@ namespace Nessos.Effects
     ///   While similar to <see cref="Void"/>, the unit type is inhabited 
     ///   by a single materialized value and can be used as a generic parameter.
     /// </remarks>
-    public readonly struct Unit : IEquatable<Unit>
+    public readonly record struct Unit
     {
         /// <summary>
         ///   Gets the Unit instance.
@@ -17,13 +17,7 @@ namespace Nessos.Effects
         public static Unit Value => new();
         /// Implements unit hashcode
         public override int GetHashCode() => 1;
-        /// Implements unit equality
-        public override bool Equals(object? obj) => obj is Unit;
-        /// Implements unit equality
-        public bool Equals(Unit other) => true;
-        /// Implements unit equality
-        public static bool operator ==(Unit x, Unit y) => true;
-        /// Implements unit inequality
-        public static bool operator !=(Unit x, Unit y) => false;
+        /// Implements string representation of unit
+        public override string ToString() => "()";
     }
 }
