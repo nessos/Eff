@@ -16,7 +16,6 @@ namespace Nessos.Effects
         /// </summary>
         public static Unit Value => new();
         /// Implements unit hashcode
-        public override int GetHashCode() => 1;
         /// Implements string representation of unit
         public override string ToString() => "()";
     }
