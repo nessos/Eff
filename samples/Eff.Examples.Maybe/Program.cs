@@ -1,33 +1,115 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Nessos.Effects;
+using Nessos.Effects.Handlers;
 
-namespace Nessos.Effects.Examples.Maybe
+static async Eff<int> Divide(int m, int n)
 {
-    class Program
+    return (n == 0) ? await MaybeEffect.Nothing<int>() : await MaybeEffect.Just(m / n);
+}
+
+static async Eff DivideAndReportToConsole(int m, int n)
+{
+    Console.Write($"Calculating {m} / {n}: ");
+    var result = await Divide(m, n);
+    Console.WriteLine($"Got {result}!");
+}
+
+static async Eff Test()
+{
+    for (var i = 0; i < 100; i++)
     {
-        static async Eff<int> Divide(int m, int n)
+        await DivideAndReportToConsole(23, 5 - i);
+    }
+}
+
+await MaybeEffectHandler.Run(Test());
+
+public readonly struct Maybe<T>
+{
+    public bool HasValue { get; }
+    public T Value { get; }
+
+    private Maybe(T value) => (HasValue, Value) = (true, value);
+
+    public static Maybe<T> Nothing { get; } = new();
+    public static Maybe<T> Just(T value) => new(value);
+}
+
+public class MaybeEffect<T> : Effect<T>
+{
+    public Maybe<T> Result { get; init; }
+}
+
+public static class MaybeEffect
+{
+    public static MaybeEffect<T> Nothing<T>() => new() { Result = Maybe<T>.Nothing };
+    public static MaybeEffect<T> Just<T>(T t) => new() { Result = Maybe<T>.Just(t) };
+}
+
+public static class MaybeEffectHandler
+{
+    public static async Task<Maybe<TResult>> Run<TResult>(Eff<TResult> eff)
+    {
+        var stateMachine = eff.GetStateMachine();
+        var handler = new MaybeEffectHandler<TResult>();
+        await handler.Handle(stateMachine);
+
+        return stateMachine.IsCompleted ?
+            Maybe<TResult>.Just(stateMachine.GetResult()) :
+            Maybe<TResult>.Nothing;
+    }
+
+    public static Task<Maybe<Unit>> Run(Eff eff)
+    {
+        return Run(Helper());
+
+        async Eff<Unit> Helper() { await eff; return Unit.Value; }
+    }
+}
+
+public class MaybeEffectHandler<TResult> : IEffectHandler
+{
+    private bool _breakExecution;
+
+    public ValueTask Handle<TValue>(EffectAwaiter<TValue> awaiter)
+    {
+        switch (awaiter.Effect)
         {
-            return (n == 0) ? await MaybeEffect.Nothing<int>() : await MaybeEffect.Just<int>(m / n);
+            case MaybeEffect<TValue> { Result: { HasValue: true, Value: var value } }:
+                awaiter.SetResult(value);
+                break;
+
+            case MaybeEffect<TValue>:
+                _breakExecution = true;
+                break;
         }
 
-        static async Eff DivideAndReportToConsole(int m, int n)
-        {
-            Console.Write($"Calculating {m} / {n}: ");
-            var result = await Divide(m, n);
-            Console.WriteLine($"Got {result}!");
-        }
+        return default;
+    }
 
-        static async Eff Test()
+    public async ValueTask Handle<TValue>(EffStateMachine<TValue> stateMachine)
+    {
+        while (!_breakExecution)
         {
-            for (int i = 0; i < 100; i++)
+            stateMachine.MoveNext();
+
+            switch (stateMachine)
             {
-                await DivideAndReportToConsole(23, 5 - i);
-            }
-        }
+                case { Position: StateMachinePosition.Result or StateMachinePosition.Exception }:
+                    return;
 
-        static async Task Main()
-        {
-            await MaybeEffectHandler.Run(Test());
+                case { Position: StateMachinePosition.TaskAwaiter, TaskAwaiter: { } awaiter }:
+                    await awaiter;
+                    break;
+
+                case { Position: StateMachinePosition.EffAwaiter, EffAwaiter: { } awaiter }:
+                    await awaiter.Accept(this);
+                    break;
+
+                default:
+                    throw new Exception($"Invalid state machine position {stateMachine.Position}.");
+            }
         }
     }
 }
