@@ -1,24 +1,21 @@
-﻿using System;
+﻿namespace Nessos.Effects.Tests;
 
-namespace Nessos.Effects.Tests
+public interface IDateTimeNowEffect
 {
-    public interface IDateTimeNowEffect
-    {
-        DateTimeNowEffect DateTimeNow();
-    }
+    DateTimeNowEffect DateTimeNow();
+}
 
-    public interface IFuncEffect
-    {
-        FuncEffect<TResult> Func<TResult>(Func<TResult> func);
+public interface IFuncEffect
+{
+    FuncEffect<TResult> Func<TResult>(Func<TResult> func);
 
-        FuncEffect<Unit> Action(Action action);
-    }
-    public struct CustomEffect : IDateTimeNowEffect, IFuncEffect
-    {
-        public DateTimeNowEffect DateTimeNow() => new DateTimeNowEffect();
+    FuncEffect<Unit> Action(Action action);
+}
+public struct CustomEffect : IDateTimeNowEffect, IFuncEffect
+{
+    public DateTimeNowEffect DateTimeNow() => new DateTimeNowEffect();
 
-        public FuncEffect<TResult> Func<TResult>(Func<TResult> func) => new FuncEffect<TResult>(func);
+    public FuncEffect<TResult> Func<TResult>(Func<TResult> func) => new FuncEffect<TResult>(func);
 
-        public FuncEffect<Unit> Action(Action action) => new FuncEffect<Unit>(() => { action(); return Unit.Value; });
-    }
+    public FuncEffect<Unit> Action(Action action) => new FuncEffect<Unit>(() => { action(); return Unit.Value; });
 }

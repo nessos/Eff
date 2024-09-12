@@ -1,19 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using Nessos.Effects;
+﻿using Nessos.Effects;
 using Nessos.Effects.Handlers;
 
-static async Eff<int> Divide(int m, int n)
-{
-    return (n == 0) ? await MaybeEffect.Nothing<int>() : await MaybeEffect.Just(m / n);
-}
-
-static async Eff DivideAndReportToConsole(int m, int n)
-{
-    Console.Write($"Calculating {m} / {n}: ");
-    var result = await Divide(m, n);
-    Console.WriteLine($"Got {result}!");
-}
+await MaybeEffectHandler.Run(Test());
 
 static async Eff Test()
 {
@@ -23,7 +11,17 @@ static async Eff Test()
     }
 }
 
-await MaybeEffectHandler.Run(Test());
+static async Eff DivideAndReportToConsole(int m, int n)
+{
+    Console.Write($"Calculating {m} / {n}: ");
+    var result = await Divide(m, n);
+    Console.WriteLine($"Got {result}!");
+}
+
+static async Eff<int> Divide(int m, int n)
+{
+    return (n == 0) ? await MaybeEffect.Nothing<int>() : await MaybeEffect.Just(m / n);
+}
 
 public readonly struct Maybe<T>
 {

@@ -1,19 +1,8 @@
-namespace Nessos.Effects.Examples.AspNetCore
-{
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Hosting;
+using Nessos.Effects.Examples.AspNetCore;
 
-    public static class Program
-    {
-        public static async Task Main(string[] args)
-        {
-            var host = Host
-                .CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
-                .Build();
+var host = Host
+    .CreateDefaultBuilder(args)
+    .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
+    .Build();
 
-            await host.RunAsync();
-        }
-    }
-}
+await host.RunAsync();

@@ -1,45 +1,41 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿namespace Nessos.Effects.DependencyInjection;
 
-namespace Nessos.Effects.DependencyInjection
+/// <summary>
+///   Represents an effect that performs an operation against a supplied dependency container.
+/// </summary>
+public abstract class DependencyEffect<TResult> : Effect<TResult>
 {
     /// <summary>
-    ///   Represents an effect that performs an operation against a supplied dependency container.
+    ///   Callback to be run against the provider container instance.
     /// </summary>
-    public abstract class DependencyEffect<TResult> : Effect<TResult>
+    /// <param name="container">Container to be supplied by the effect handler.</param>
+    public abstract ValueTask<TResult> Handle(IContainer container);
+}
+
+internal sealed class FuncDependencyEffect<TDependency, TResult> : DependencyEffect<TResult>
+{
+    public Func<TDependency, ValueTask<TResult>> Func { get; }
+
+    public FuncDependencyEffect(Func<TDependency, ValueTask<TResult>> func)
     {
-        /// <summary>
-        ///   Callback to be run against the provider contaner instance.
-        /// </summary>
-        /// <param name="container">Container to be supplied by the effect handler.</param>
-        public abstract ValueTask<TResult> Handle(IContainer container);
+        Func = func;
     }
 
-    internal sealed class FuncDependencyEffect<TDependency, TResult> : DependencyEffect<TResult>
+    public override ValueTask<TResult> Handle(IContainer container)
     {
-        public Func<TDependency, ValueTask<TResult>> Func { get; }
+        TDependency? dependency = container.Resolve<TDependency>();
+        return Func(dependency);
+    }
+}
 
-        public FuncDependencyEffect(Func<TDependency, ValueTask<TResult>> func)
-        {
-            Func = func;
-        }
+internal sealed class ContainerFuncDependencyEffect<TResult> : DependencyEffect<TResult>
+{
+    public Func<IContainer, ValueTask<TResult>> Func { get; }
 
-        public override ValueTask<TResult> Handle(IContainer container)
-        {
-            var dependency = container.Resolve<TDependency>();
-            return Func(dependency);
-        }
+    public ContainerFuncDependencyEffect(Func<IContainer, ValueTask<TResult>> func)
+    {
+        Func = func;
     }
 
-    internal sealed class ContainerFuncDependencyEffect<TResult> : DependencyEffect<TResult>
-    {
-        public Func<IContainer, ValueTask<TResult>> Func { get; }
-
-        public ContainerFuncDependencyEffect(Func<IContainer, ValueTask<TResult>> func)
-        {
-            Func = func;
-        }
-
-        public override ValueTask<TResult> Handle(IContainer container) => Func(container);
-    }
+    public override ValueTask<TResult> Handle(IContainer container) => Func(container);
 }

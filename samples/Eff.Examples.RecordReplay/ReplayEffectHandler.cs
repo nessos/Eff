@@ -1,31 +1,26 @@
-﻿using Nessos.Effects.Handlers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿namespace Nessos.Effects.Examples.RecordReplay;
 
-namespace Nessos.Effects.Examples.RecordReplay
+using Nessos.Effects.Handlers;
+
+public class ReplayEffectHandler : EffectHandler
 {
-    public class ReplayEffectHandler : EffectHandler
+    private readonly RecordedResult[] _results;
+    private int _index = 0;
+
+    public ReplayEffectHandler(IEnumerable<RecordedResult> results)
     {
-        private readonly RecordedResult[] _results;
-        private int _index = 0;
+        _results = results.ToArray();
+    }
 
-        public ReplayEffectHandler(IEnumerable<RecordedResult> results)
+    public override ValueTask Handle<TResult>(EffectAwaiter<TResult> effect)
+    {
+        if (_index == _results.Length)
         {
-            _results = results.ToArray();
+            throw new InvalidOperationException();
         }
 
-        public override ValueTask Handle<TResult>(EffectAwaiter<TResult> effect)
-        {
-            if (_index == _results.Length)
-            {
-                throw new InvalidOperationException();
-            }
-
-            var result = _results[_index++];
-            result.ToAwaiter(effect);
-            return default;
-        }
+        var result = _results[_index++];
+        result.ToAwaiter(effect);
+        return default;
     }
 }

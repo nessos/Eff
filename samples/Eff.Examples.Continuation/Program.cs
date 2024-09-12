@@ -1,28 +1,19 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using Nessos.Effects;
+using Nessos.Effects.Examples.Continuation;
 
-namespace Nessos.Effects.Examples.Continuation
+await NonDeterminism.Run(Test());
+
+static async Eff Test()
 {
-    class Program
+    static async Eff<(int, string)> Nested()
     {
-        static async Eff Test()
-        {
-            async Eff<(int, string)> Nested()
-            {
-                var x = await NonDeterminism.Choice(1, 2, 3);
-                var y = await NonDeterminism.Choice("a", "b", "c");
-                return (x, y);
-            }
-
-            var (x, y) = await Nested();
-            var z = await NonDeterminism.Choice(false, true);
-
-            Console.WriteLine($"x = {x}, y = {y}, z = {z}");
-        }
-
-        static async Task Main()
-        {
-            await NonDeterminism.Run(Test());
-        }
+        var x = await NonDeterminism.Choice(1, 2, 3);
+        var y = await NonDeterminism.Choice("a", "b", "c");
+        return (x, y);
     }
+
+    var (x, y) = await Nested();
+    var z = await NonDeterminism.Choice(false, true);
+
+    Console.WriteLine($"x = {x}, y = {y}, z = {z}");
 }

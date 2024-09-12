@@ -1,14 +1,13 @@
-﻿using System.Threading.Tasks;
-using Nessos.Effects;
+﻿using Nessos.Effects;
 using Nessos.Effects.Handlers;
+
+await Test().Run(new ConsoleEffectHandler());
 
 static async Eff Test()
 {
     await ConsoleEffect.Print("Enter your name: ");
     await ConsoleEffect.Print($"Hello, {await ConsoleEffect.Read()}!\n");
 }
-
-await Test().Run(new ConsoleEffectHandler());
 
 public class ConsolePrintEffect(string message) : Effect
 {

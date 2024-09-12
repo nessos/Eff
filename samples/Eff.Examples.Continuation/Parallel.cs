@@ -1,46 +1,45 @@
-﻿using System;
+﻿namespace Nessos.Effects.Examples.Continuation;
+
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Nessos.Effects.Examples.Continuation
+public static class Async
 {
-    public static class Async
+    // F#-style Async.Parallel combinator using call/cc
+    public static Effect<T[]> Parallel<T>(params Eff<T>[] children)
     {
-        // F#-style Async.Parallel combinator using call/cc
-        public static Effect<T[]> Parallel<T>(params Eff<T>[] children)
+        return Effects.CallCC<T[]>((sk, ek) =>
         {
-            return Effects.CallCC<T[]>((sk, ek) =>
+            var results = new T[children.Length];
+            int completedTasks = 0;
+            int isFaulted = 0;
+
+            for (int i = 0; i < children.Length; i++)
             {
-                var results = new T[children.Length];
-                int completedTasks = 0;
-                int isFaulted = 0;
+                _ = children[i].StartWithContinuations(
+                    onSuccess: value => OnSuccess(i, value),
+                    onException: OnException);
+            }
 
-                for (int i = 0; i < children.Length; i++)
+            return Task.CompletedTask;
+
+            async Task OnSuccess(int i, T value)
+            {
+                results![i] = value;
+                if (Interlocked.Increment(ref completedTasks) == results.Length)
                 {
-                    _ = children[i].StartWithContinuations(
-                        onSuccess: value => OnSuccess(i, value),
-                        onException: OnException);
+                    await sk(results);
                 }
+            }
 
-                return Task.CompletedTask;
-
-                async Task OnSuccess(int i, T value)
+            async Task OnException(Exception e)
+            {
+                if (Interlocked.CompareExchange(ref isFaulted, 1, 0) == 0)
                 {
-                    results![i] = value;
-                    if (Interlocked.Increment(ref completedTasks) == results.Length)
-                    {
-                        await sk(results);
-                    }
+                    await ek(e);
                 }
-
-                async Task OnException(Exception e)
-                {
-                    if (Interlocked.CompareExchange(ref isFaulted, 1, 0) == 0)
-                    {
-                        await ek(e);
-                    }
-                }
-            });
-        }
+            }
+        });
     }
 }

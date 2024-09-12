@@ -1,38 +1,34 @@
-﻿using Nessos.Effects.Handlers;
-using System;
-using System.Threading.Tasks;
+﻿namespace Nessos.Effects.Tests;
+
 using Xunit;
 
-namespace Nessos.Effects.Tests
+public static class EffTests
 {
-    public static class EffTests
+    [Fact]
+    public static void ConfigureAwait_ShouldAddCallerInfo()
     {
-        [Fact]
-        public static void ConfigureAwait_ShouldAddCallerInfo()
-        {
-            var eff = Test();
+        var eff = Test();
 
-            var awaiter = eff.ConfigureAwait();
+        var awaiter = eff.ConfigureAwait();
 
-            Assert.True(awaiter.CallerMemberName?.Length > 0);
-            Assert.True(awaiter.CallerFilePath?.Length > 0);
-            Assert.True(awaiter.CallerLineNumber > 0);
+        Assert.True(awaiter.CallerMemberName?.Length > 0);
+        Assert.True(awaiter.CallerFilePath?.Length > 0);
+        Assert.True(awaiter.CallerLineNumber > 0);
 
-            async Eff<int> Test() => 42;
-        }
+        async Eff<int> Test() => 42;
+    }
 
-        [Fact]
-        public static void ConfigureAwait_Untyped_ShouldAddCallerInfo()
-        {
-            var eff = Test();
+    [Fact]
+    public static void ConfigureAwait_Untyped_ShouldAddCallerInfo()
+    {
+        var eff = Test();
 
-            var awaiter = eff.ConfigureAwait();
+        var awaiter = eff.ConfigureAwait();
 
-            Assert.True(awaiter.CallerMemberName?.Length > 0);
-            Assert.True(awaiter.CallerFilePath?.Length > 0);
-            Assert.True(awaiter.CallerLineNumber > 0);
+        Assert.True(awaiter.CallerMemberName?.Length > 0);
+        Assert.True(awaiter.CallerFilePath?.Length > 0);
+        Assert.True(awaiter.CallerLineNumber > 0);
 
-            async Eff Test() { };
-        }
+        async Eff Test() { };
     }
 }

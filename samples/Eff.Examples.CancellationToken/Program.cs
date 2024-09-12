@@ -1,34 +1,23 @@
-﻿using Nessos.Effects.Cancellation;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Nessos.Effects;
+using Nessos.Effects.Cancellation;
 
-namespace Nessos.Effects.Examples.CancellationToken
+var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+var handler = new CancellationEffectHandler(cts.Token);
+try
 {
-    class Program
-    {
-        static async Eff Test()
-        {
-            while (true)
-            {
-                var token = await CancellationTokenEffect.Value;
-                Console.WriteLine($"IsCancellationRequested:{token.IsCancellationRequested}");
-                await Task.Delay(1000);
-            }
-        }
+    await Test().Run(handler);
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex);
+}
 
-        static async Task Main()
-        {
-            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            var handler = new CancellationEffectHandler(cts.Token);
-            try
-            {
-                await Test().Run(handler);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
+static async Eff Test()
+{
+    while (true)
+    {
+        CancellationToken token = await CancellationTokenEffect.Value;
+        Console.WriteLine($"IsCancellationRequested:{token.IsCancellationRequested}");
+        await Task.Delay(1000);
     }
 }

@@ -1,9 +1,3 @@
-﻿using System;
+﻿namespace Nessos.Effects.Tests;
 
-namespace Nessos.Effects.Tests
-{
-    public class DateTimeNowEffect : Effect<DateTime>
-    {
-
-    }
-}
+public class DateTimeNowEffect : Effect<DateTime>;

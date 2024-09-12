@@ -1,143 +1,140 @@
-﻿using Nessos.Effects.Handlers;
-using System;
-using System.Threading.Tasks;
+﻿namespace Nessos.Effects.Examples.Continuation;
 
-namespace Nessos.Effects.Examples.Continuation
+using Nessos.Effects.Handlers;
+
+public static class ContinuationHandler
 {
-    public static class ContinuationHandler
+    /// <summary>
+    ///   Executes an Eff computation with a call/cc effect handler,
+    ///   using provided success and exception continuations.
+    /// </summary>
+    public static async Task StartWithContinuations<T>(this Eff<T> eff, Func<T, Task> onSuccess, Func<Exception, Task>? onException = null)
     {
-        /// <summary>
-        ///   Executes an Eff computation with a call/cc effect handler,
-        ///   using provided success and exception continuations.
-        /// </summary>
-        public static async Task StartWithContinuations<T>(this Eff<T> eff, Func<T, Task> onSuccess, Func<Exception, Task>? onException = null)
-        {
-            var continuationHandler = new ContinuationHandler<T>(onSuccess, onException ?? (_ => Task.CompletedTask));
-            var stateMachine = eff.GetStateMachine();
-            await continuationHandler.Handle(stateMachine);
-        }
+        var continuationHandler = new ContinuationHandler<T>(onSuccess, onException ?? (_ => Task.CompletedTask));
+        var stateMachine = eff.GetStateMachine();
+        await continuationHandler.Handle(stateMachine);
+    }
 
-        /// <summary>
-        ///   Executes an Eff computation with a call/cc effect handler,
-        ///   using provided success and exception continuations.
-        /// </summary>
-        public static Task StartWithContinuations(this Eff eff, Func<Task> onSuccess, Func<Exception, Task>? onException = null)
+    /// <summary>
+    ///   Executes an Eff computation with a call/cc effect handler,
+    ///   using provided success and exception continuations.
+    /// </summary>
+    public static Task StartWithContinuations(this Eff eff, Func<Task> onSuccess, Func<Exception, Task>? onException = null)
+    {
+        var effU = Eff.FromUntypedEff(eff);
+        return StartWithContinuations<Unit>(effU, _ => onSuccess(), onException);
+    }
+}
+
+public class ContinuationHandler<TRootResult> : IEffectHandler
+{
+    private int _depth = 0;
+    private bool _isContinuationCaptured = false;
+    private readonly Func<TRootResult, Task> _onSuccess;
+    private readonly Func<Exception, Task> _onException;
+
+    public ContinuationHandler(Func<TRootResult, Task> onSuccess, Func<Exception, Task> onException)
+    {
+        _onSuccess = onSuccess;
+        _onException = onException;
+    }
+
+    public async ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
+    {
+        switch (awaiter.Effect)
         {
-            var effU = Eff.FromUntypedEff(eff);
-            return StartWithContinuations<Unit>(effU, _ => onSuccess(), onException);
+            case CallCcEffect<TResult> callCC:
+                _isContinuationCaptured = true; // abandon execution on the current evaluation stack
+                await callCC.Body(r => OnSuccess(awaiter, r), e => OnException(awaiter, e));
+                break;
         }
     }
 
-    public class ContinuationHandler<TRootResult> : IEffectHandler
+    public async ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
     {
-        private int _depth = 0;
-        private bool _isContinuationCaptured = false;
-        private readonly Func<TRootResult, Task> _onSuccess;
-        private readonly Func<Exception, Task> _onException;
-
-        public ContinuationHandler(Func<TRootResult, Task> onSuccess, Func<Exception, Task> onException)
+        while (!_isContinuationCaptured)
         {
-            _onSuccess = onSuccess;
-            _onException = onException;
-        }
+            stateMachine.MoveNext();
 
-        public async ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
-        {
-            switch (awaiter.Effect)
+            switch (stateMachine.Position)
             {
-                case CallCcEffect<TResult> callCC:
-                    _isContinuationCaptured = true; // abandon execution on the current evaluation stack
-                    await callCC.Body(r => OnSuccess(awaiter, r), e => OnException(awaiter, e));
+                case StateMachinePosition.Result:
+                    if (_depth == 0)
+                    {
+                        var rootStateMachine = (EffStateMachine<TRootResult>)(object)stateMachine;
+                        await _onSuccess(rootStateMachine.Result);
+                    }
+                    return;
+
+                case StateMachinePosition.Exception:
+                    if (_depth == 0)
+                    {
+                        await _onException(stateMachine.Exception!);
+                    }
+                    return;
+
+                case StateMachinePosition.TaskAwaiter:
+                    await stateMachine.TaskAwaiter!.Value;
                     break;
+
+                case StateMachinePosition.EffAwaiter:
+                    var awaiter = stateMachine.EffAwaiter!;
+                    _depth++;
+                    try
+                    {
+                        await awaiter.Accept(this);
+                    }
+                    catch (Exception ex)
+                    {
+                        awaiter.SetException(ex);
+                    }
+                    _depth--;
+                    break;
+
+                default:
+                    throw new Exception("Invalid state machine position.");
             }
         }
+    }
 
-        public async ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
+    private async Task OnSuccess<TResult>(EffectAwaiter<TResult> awaiter, TResult result)
+    {
+        var clonedAwaiter = CloneAwaiter(awaiter);
+        clonedAwaiter.SetResult(result);
+        await ExecuteContinuation(clonedAwaiter);
+    }
+
+    private async Task OnException<TResult>(EffectAwaiter<TResult> awaiter, Exception exception)
+    {
+        var clonedAwaiter = CloneAwaiter(awaiter);
+        clonedAwaiter.SetException(exception);
+        await ExecuteContinuation(clonedAwaiter);
+    }
+
+    private async Task ExecuteContinuation<TResult>(EffectAwaiter<TResult> awaiter)
+    {
+        var handler = new ContinuationHandler<TRootResult>(_onSuccess, _onException) { _depth = _depth };
+        IEffStateMachine? effStateMachine = awaiter.AwaitingStateMachine;
+
+        while (effStateMachine != null)
         {
-            while (!_isContinuationCaptured)
-            {
-                stateMachine.MoveNext();
+            handler._depth--;
+            await effStateMachine.Accept(handler);
+            effStateMachine = effStateMachine.AwaitingStateMachine;
+        }
+    }
 
-                switch (stateMachine.Position)
-                {
-                    case StateMachinePosition.Result:
-                        if (_depth == 0)
-                        {
-                            var rootStateMachine = (EffStateMachine<TRootResult>)(object)stateMachine;
-                            await _onSuccess(rootStateMachine.Result);
-                        }
-                        return;
+    private static EffectAwaiter<TResult> CloneAwaiter<TResult>(EffectAwaiter<TResult> awaiter)
+    {
+        var newAwaiter = new EffectAwaiter<TResult>(awaiter.Effect);
 
-                    case StateMachinePosition.Exception:
-                        if (_depth == 0)
-                        {
-                            await _onException(stateMachine.Exception!);
-                        }
-                        return;
-
-                    case StateMachinePosition.TaskAwaiter:
-                        await stateMachine.TaskAwaiter!.Value;
-                        break;
-
-                    case StateMachinePosition.EffAwaiter:
-                        var awaiter = stateMachine.EffAwaiter!;
-                        _depth++;
-                        try
-                        {
-                            await awaiter.Accept(this);
-                        }
-                        catch (Exception ex)
-                        {
-                            awaiter.SetException(ex);
-                        }
-                        _depth--;
-                        break;
-
-                    default:
-                        throw new Exception("Invalid state machine position.");
-                }
-            }
+        if (awaiter.AwaitingStateMachine is IEffStateMachine sm)
+        {
+            var clonedSm = sm.Clone();
+            clonedSm.UnsafeSetAwaiter(newAwaiter);
+            newAwaiter.AwaitingStateMachine = clonedSm;
         }
 
-        private async Task OnSuccess<TResult>(EffectAwaiter<TResult> awaiter, TResult result)
-        {
-            var clonedAwaiter = CloneAwaiter(awaiter);
-            clonedAwaiter.SetResult(result);
-            await ExecuteContinuation(clonedAwaiter);
-        }
-
-        private async Task OnException<TResult>(EffectAwaiter<TResult> awaiter, Exception exception)
-        {
-            var clonedAwaiter = CloneAwaiter(awaiter);
-            clonedAwaiter.SetException(exception);
-            await ExecuteContinuation(clonedAwaiter);
-        }
-
-        private async Task ExecuteContinuation<TResult>(EffectAwaiter<TResult> awaiter)
-        {
-            var handler = new ContinuationHandler<TRootResult>(_onSuccess, _onException) { _depth = _depth };
-            IEffStateMachine? effStateMachine = awaiter.AwaitingStateMachine;
-
-            while (effStateMachine != null)
-            {
-                handler._depth--;
-                await effStateMachine.Accept(handler);
-                effStateMachine = effStateMachine.AwaitingStateMachine;
-            }
-        }
-
-        private static EffectAwaiter<TResult> CloneAwaiter<TResult>(EffectAwaiter<TResult> awaiter)
-        {
-            var newAwaiter = new EffectAwaiter<TResult>(awaiter.Effect);
-
-            if (awaiter.AwaitingStateMachine is IEffStateMachine sm)
-            {
-                var clonedSm = sm.Clone();
-                clonedSm.UnsafeSetAwaiter(newAwaiter);
-                newAwaiter.AwaitingStateMachine = clonedSm;
-            }
-
-            return newAwaiter;
-        }
+        return newAwaiter;
     }
 }

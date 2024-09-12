@@ -1,15 +1,12 @@
-﻿using System.Threading;
+﻿namespace Nessos.Effects.Cancellation;
 
-namespace Nessos.Effects.Cancellation
+/// <summary>
+///   An abstract effect returning a cancellation token.
+/// </summary>
+public class CancellationTokenEffect : Effect<CancellationToken>
 {
     /// <summary>
-    ///   An abstract effect returning a cancellation token.
+    ///   Gets the singleton cancellation token effect.
     /// </summary>
-    public class CancellationTokenEffect : Effect<CancellationToken>
-    {
-        /// <summary>
-        ///   Gets the singleton cancellation token effect.
-        /// </summary>
-        public static Effect<CancellationToken> Value { get; } = new CancellationTokenEffect();
-    }
+    public static Effect<CancellationToken> Value { get; } = new CancellationTokenEffect();
 }

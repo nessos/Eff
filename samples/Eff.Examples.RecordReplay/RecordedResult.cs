@@ -1,30 +1,28 @@
-﻿using Nessos.Effects.Handlers;
-using System;
+﻿namespace Nessos.Effects.Examples.RecordReplay;
 
-namespace Nessos.Effects.Examples.RecordReplay
+using Nessos.Effects.Handlers;
+
+public class RecordedResult
 {
-    public class RecordedResult
+    public Exception? Exception { get; set; }
+    public object? Value { get; set; }
+
+    public static RecordedResult FromAwaiter<TResult>(EffAwaiter<TResult> awaiter)
     {
-        public Exception? Exception { get; set; }
-        public object? Value { get; set; }
+        return (awaiter.Exception is Exception e) ?
+            new RecordedResult() { Exception = e } :
+            new RecordedResult() { Value = awaiter.Result };
+    }
 
-        public static RecordedResult FromAwaiter<TResult>(EffAwaiter<TResult> awaiter)
+    public void ToAwaiter<TResult>(EffAwaiter<TResult> awaiter)
+    {
+        if (Exception is Exception e)
         {
-            return (awaiter.Exception is Exception e) ?
-                new RecordedResult() { Exception = e } :
-                new RecordedResult() { Value = awaiter.Result };
+            awaiter.SetException(e);
         }
-
-        public void ToAwaiter<TResult>(EffAwaiter<TResult> awaiter)
+        else
         {
-            if (Exception is Exception e)
-            {
-                awaiter.SetException(e);
-            }
-            else
-            {
-                awaiter.SetResult((TResult)Value!);
-            }
+            awaiter.SetResult((TResult)Value!);
         }
     }
 }

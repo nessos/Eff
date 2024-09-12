@@ -1,52 +1,49 @@
-﻿using Nessos.Effects.Handlers;
-using System.Threading;
-using System.Threading.Tasks;
+﻿namespace Nessos.Effects.Cancellation;
 
-namespace Nessos.Effects.Cancellation
+using Nessos.Effects.Handlers;
+
+/// <summary>
+///   Defines an effect handler that automatically cancels Eff workflows based on the provided cancellation token.
+/// </summary>
+public class CancellationEffectHandler : EffectHandler
 {
     /// <summary>
-    ///   Defines an effect handler that automatically cancels Eff workflows based on the provided cancellation token.
+    ///   The cancellation token flowing through the Eff workflow.
     /// </summary>
-    public class CancellationEffectHandler : EffectHandler
+    protected CancellationToken CancellationToken { get; }
+
+    /// <summary>
+    ///   Creates a cancellation effect handler using provided cancellation token.
+    /// </summary>
+    /// <param name="token"></param>
+    public CancellationEffectHandler(CancellationToken token)
     {
-        /// <summary>
-        ///   The cancellation token flowing through the Eff workflow.
-        /// </summary>
-        protected CancellationToken CancellationToken { get; }
+        CancellationToken = token;
+    }
 
-        /// <summary>
-        ///   Creates a cancellation effect handler using provided cancellation token.
-        /// </summary>
-        /// <param name="token"></param>
-        public CancellationEffectHandler(CancellationToken token)
+    /// <summary>
+    ///   Handles awaiters containing a <see cref="CancellationTokenEffect"/>.
+    /// </summary>
+    public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
+    {
+        CancellationToken.ThrowIfCancellationRequested();
+
+        switch (awaiter)
         {
-            CancellationToken = token;
-        }
+            case EffectAwaiter<CancellationToken> { Effect: CancellationTokenEffect } awtr:
+                awtr.SetResult(CancellationToken);
+                break;
+        };
 
-        /// <summary>
-        ///   Handles awaiters containing a <see cref="CancellationTokenEffect"/>.
-        /// </summary>
-        public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter)
-        {
-            CancellationToken.ThrowIfCancellationRequested();
+        return default;
+    }
 
-            switch (awaiter)
-            {
-                case EffectAwaiter<CancellationToken> { Effect: CancellationTokenEffect _ } awter :
-                    awter.SetResult(CancellationToken);
-                    break;
-            };
-
-            return default;
-        }
-
-        /// <summary>
-        ///   Handles Eff state machines while also checking for cancellation.
-        /// </summary>
-        public override ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
-        {
-            CancellationToken.ThrowIfCancellationRequested();
-            return base.Handle(stateMachine);
-        }
+    /// <summary>
+    ///   Handles Eff state machines while also checking for cancellation.
+    /// </summary>
+    public override ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
+    {
+        CancellationToken.ThrowIfCancellationRequested();
+        return base.Handle(stateMachine);
     }
 }

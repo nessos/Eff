@@ -1,22 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using Nessos.Effects;
+using Nessos.Effects.Examples.NonDeterminism;
 
-namespace Nessos.Effects.Examples.NonDeterminism
+await NonDetEffectHandler.Run(Test());
+
+static async Eff Test()
 {
-    class Program
-    {
-        static async Eff Test()
-        {
-            var x = await NonDetEffect.Choose(1, 2, 3);
-            var y = await NonDetEffect.Choose("one", "two", "three");
-            var z = await NonDetEffect.Choose(false, true);
+    var x = await NonDetEffect.Choose(1, 2, 3);
+    var y = await NonDetEffect.Choose("one", "two", "three");
+    var z = await NonDetEffect.Choose(false, true);
 
-            Console.WriteLine($"x = {x}, y = {y}, z = {z}");
-        }
-
-        static async Task Main()
-        {
-            await NonDetEffectHandler.Run(Test());
-        }
-    }
+    Console.WriteLine($"x = {x}, y = {y}, z = {z}");
 }

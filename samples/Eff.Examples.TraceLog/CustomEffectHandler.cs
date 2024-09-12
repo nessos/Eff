@@ -1,46 +1,43 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Nessos.Effects.Utils;
+﻿namespace Nessos.Effects.Examples.TraceLog;
+
 using Nessos.Effects.Handlers;
+using Nessos.Effects.Utils;
 
-namespace Nessos.Effects.Examples.TraceLog
+public class CustomEffectHandler : EffectHandler
 {
-    public class CustomEffectHandler : EffectHandler
+    public List<ResultLog> TraceLogs = [];
+
+    public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter) => default;
+
+    public override async ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
     {
-        public List<ResultLog> TraceLogs = new List<ResultLog>();
+        await base.Handle(stateMachine);
 
-        public override ValueTask Handle<TResult>(EffectAwaiter<TResult> awaiter) => default;
-
-        public override async ValueTask Handle<TResult>(EffStateMachine<TResult> stateMachine)
+        if (stateMachine.HasResult)
         {
-            await base.Handle(stateMachine);
+            Log(stateMachine.Result, stateMachine);
+        }
+    }
 
-            if (stateMachine.HasResult)
-            {
-                Log(stateMachine.Result, stateMachine);
-            }
+    public void Log(object? result, EffAwaiter awaiter)
+    {
+        var stateMachine = awaiter.AwaitingStateMachine?.GetAsyncStateMachine();
+
+        if (stateMachine is null)
+        {
+            return;
         }
 
-        public void Log(object? result, EffAwaiter awaiter)
+        var log = new ResultLog
         {
-            var stateMachine = awaiter.AwaitingStateMachine?.GetAsyncStateMachine();
+            Result = result,
+            CallerFilePath = awaiter.CallerFilePath,
+            CallerLineNumber = awaiter.CallerLineNumber,
+            CallerMemberName = awaiter.CallerMemberName,
+            Parameters = stateMachine.GetParameterValues(),
+            LocalVariables = stateMachine.GetLocalVariableValues(),
+        };
 
-            if (stateMachine is null)
-            {
-                return;
-            }
-
-            var log = new ResultLog
-            {
-                Result = result,
-                CallerFilePath = awaiter.CallerFilePath,
-                CallerLineNumber = awaiter.CallerLineNumber,
-                CallerMemberName = awaiter.CallerMemberName,
-                Parameters = stateMachine.GetParameterValues(),
-                LocalVariables = stateMachine.GetLocalVariableValues(),
-            };
-
-            TraceLogs.Add(log);
-        }
+        TraceLogs.Add(log);
     }
 }

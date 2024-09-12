@@ -1,15 +1,11 @@
-﻿using Nessos.Effects;
-using System;
+﻿namespace Nessos.Effects.Tests;
 
-namespace Nessos.Effects.Tests
+public class FuncEffect<TResult> : Effect<TResult>
 {
-    public class FuncEffect<TResult> : Effect<TResult>
+    public FuncEffect(Func<TResult> func)
     {
-        public FuncEffect(Func<TResult> func)
-        {
-            Func = func;
-        }
-
-        public Func<TResult> Func { get; }
+        Func = func;
     }
+
+    public Func<TResult> Func { get; }
 }

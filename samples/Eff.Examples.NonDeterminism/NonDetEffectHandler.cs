@@ -1,149 +1,145 @@
-﻿using Nessos.Effects.Handlers;
-using System;
-using System.Collections.Generic;
+﻿namespace Nessos.Effects.Examples.NonDeterminism;
+
+using Nessos.Effects.Handlers;
 using System.Runtime.ExceptionServices;
-using System.Threading.Tasks;
 
-namespace Nessos.Effects.Examples.NonDeterminism
+public static class NonDetEffectHandler
 {
-    public static class NonDetEffectHandler
+    public static async Task<TResult[]> Run<TResult>(Eff<TResult> eff)
     {
-        public static async Task<TResult[]> Run<TResult>(Eff<TResult> eff)
-        {
-            var stateMachine = eff.GetStateMachine();
-            var handler = new NonDetEffectHandler<TResult>();
-            await handler.Handle(stateMachine);
-            return handler.ResultHolder.GetResults();
-        }
-
-        public static Task Run(Eff eff) => Run(Eff.FromUntypedEff(eff));
+        var stateMachine = eff.GetStateMachine();
+        var handler = new NonDetEffectHandler<TResult>();
+        await handler.Handle(stateMachine);
+        return handler.ResultHolder.GetResults();
     }
 
-    public class NonDetEffectHandler<TResult> : IEffectHandler
+    public static Task Run(Eff eff) => Run(Eff.FromUntypedEff(eff));
+}
+
+public class NonDetEffectHandler<TResult> : IEffectHandler
+{
+    private int _depth = 0;
+    private bool _isContinuationCaptured = false;
+
+    public NonDetEffectHandler(NonDetResultHolder? result = null)
     {
-        private int _depth = 0;
-        private bool _isContinuationCaptured = false;
+        ResultHolder = result ?? new NonDetResultHolder();
+    }
 
-        public NonDetEffectHandler(NonDetResultHolder? result = null)
+    public NonDetResultHolder ResultHolder { get; }
+
+    public async ValueTask Handle<TValue>(EffectAwaiter<TValue> awaiter)
+    {
+        switch (awaiter.Effect)
         {
-            ResultHolder = result ?? new NonDetResultHolder();
+            case NonDetEffect<TValue> nde:
+                _isContinuationCaptured = true; // abandon execution on the current evaluation stack
+
+                foreach (var result in nde.Choices)
+                {
+                    var clonedAwaiter = CloneAwaiter(awaiter);
+                    clonedAwaiter.SetResult(result);
+                    await ExecuteAwaiterContinuation(clonedAwaiter);
+                }
+
+                break;
         }
+    }
 
-        public NonDetResultHolder ResultHolder { get; }
-
-        public async ValueTask Handle<TValue>(EffectAwaiter<TValue> awaiter)
+    public async ValueTask Handle<TValue>(EffStateMachine<TValue> stateMachine)
+    {
+        while (!_isContinuationCaptured)
         {
-            switch (awaiter.Effect)
-            {
-                case NonDetEffect<TValue> nde:
-                    _isContinuationCaptured = true; // abandon execution on the current evaluation stack
+            stateMachine.MoveNext();
 
-                    foreach (var result in nde.Choices)
+            switch (stateMachine.Position)
+            {
+                case StateMachinePosition.Result:
+                    if (_depth == 0)
                     {
-                        var clonedAwaiter = CloneAwaiter(awaiter);
-                        clonedAwaiter.SetResult(result);
-                        await ExecuteAwaiterContinuation(clonedAwaiter);
+                        var rootStateMachine = (EffStateMachine<TResult>)(object)stateMachine;
+                        ResultHolder.Values.Add(rootStateMachine.Result);
                     }
+                    return;
+
+                case StateMachinePosition.Exception:
+                    if (_depth == 0)
+                    {
+                        ResultHolder.Exception = stateMachine.Exception;
+                    }
+                    return;
+
+                case StateMachinePosition.TaskAwaiter:
+                    await stateMachine.TaskAwaiter!.Value;
+                    break;
+
+                case StateMachinePosition.EffAwaiter:
+                    var awaiter = stateMachine.EffAwaiter!;
+                    _depth++;
+                    try
+                    {
+                        await awaiter.Accept(this);
+                    }
+                    catch (Exception e)
+                    {
+                        awaiter.SetException(e);
+                    }
+                    _depth--;
 
                     break;
+
+                default:
+                    throw new Exception($"Invalid state machine position {stateMachine.Position}.");
             }
         }
+    }
 
-        public async ValueTask Handle<TValue>(EffStateMachine<TValue> stateMachine)
+    // Executes the awaiter continuation using a fresh copy of the effect handler
+    private async Task ExecuteAwaiterContinuation<TValue>(EffAwaiter<TValue> awaiter)
+    {
+        if (ResultHolder.Exception != null)
         {
-            while (!_isContinuationCaptured)
-            {
-                stateMachine.MoveNext();
-
-                switch (stateMachine.Position)
-                {
-                    case StateMachinePosition.Result:
-                        if (_depth == 0)
-                        {
-                            var rootStateMachine = (EffStateMachine<TResult>)(object)stateMachine;
-                            ResultHolder.Values.Add(rootStateMachine.Result);
-                        }
-                        return;
-
-                    case StateMachinePosition.Exception:
-                        if (_depth == 0)
-                        {
-                            ResultHolder.Exception = stateMachine.Exception;
-                        }
-                        return;
-
-                    case StateMachinePosition.TaskAwaiter:
-                        await stateMachine.TaskAwaiter!.Value;
-                        break;
-
-                    case StateMachinePosition.EffAwaiter:
-                        var awaiter = stateMachine.EffAwaiter!;
-                        _depth++;
-                        try
-                        {
-                            await awaiter.Accept(this);
-                        }
-                        catch (Exception e)
-                        {
-                            awaiter.SetException(e);
-                        }
-                        _depth--;
-
-                        break;
-
-                    default:
-                        throw new Exception($"Invalid state machine position {stateMachine.Position}.");
-                }
-            }
+            // another nondeterministic branch has completed with an exception, yield.
+            return;
         }
 
-        // Executes the awaiter continuation using a fresh copy of the effect handler
-        private async Task ExecuteAwaiterContinuation<TValue>(EffAwaiter<TValue> awaiter)
+        var handler = new NonDetEffectHandler<TResult>(ResultHolder) { _depth = _depth };
+        IEffStateMachine? effStateMachine = awaiter.AwaitingStateMachine;
+
+        while (effStateMachine != null)
         {
-            if (ResultHolder.Exception != null)
-            {
-                // another nondeterministic branch has completed with an exception, yield.
-                return;
-            }
+            handler._depth--;
+            await effStateMachine.Accept(handler);
+            effStateMachine = effStateMachine.AwaitingStateMachine;
+        }
+    }
 
-            var handler = new NonDetEffectHandler<TResult>(ResultHolder) { _depth = _depth };
-            IEffStateMachine? effStateMachine = awaiter.AwaitingStateMachine;
+    private static EffectAwaiter<TValue> CloneAwaiter<TValue>(EffectAwaiter<TValue> awaiter)
+    {
+        var newAwaiter = new EffectAwaiter<TValue>(awaiter.Effect);
 
-            while (effStateMachine != null)
-            {
-                handler._depth--;
-                await effStateMachine.Accept(handler);
-                effStateMachine = effStateMachine.AwaitingStateMachine;
-            }
+        if (awaiter.AwaitingStateMachine is IEffStateMachine sm)
+        {
+            var clonedSm = sm.Clone();
+            clonedSm.UnsafeSetAwaiter(newAwaiter);
+            newAwaiter.AwaitingStateMachine = clonedSm;
         }
 
-        private static EffectAwaiter<TValue> CloneAwaiter<TValue>(EffectAwaiter<TValue> awaiter)
-        {
-            var newAwaiter = new EffectAwaiter<TValue>(awaiter.Effect);
+        return newAwaiter;
+    }
 
-            if (awaiter.AwaitingStateMachine is IEffStateMachine sm)
+    public class NonDetResultHolder
+    {
+        public List<TResult> Values { get; } = new List<TResult>();
+        public Exception? Exception { get; set; }
+        public TResult[] GetResults()
+        {
+            if (Exception is Exception e)
             {
-                var clonedSm = sm.Clone();
-                clonedSm.UnsafeSetAwaiter(newAwaiter);
-                newAwaiter.AwaitingStateMachine = clonedSm;
+                ExceptionDispatchInfo.Capture(e).Throw();
             }
 
-            return newAwaiter;
-        }
-
-        public class NonDetResultHolder
-        {
-            public List<TResult> Values { get; } = new List<TResult>();
-            public Exception? Exception { get; set; }
-            public TResult[] GetResults()
-            {
-                if (Exception is Exception e)
-                {
-                    ExceptionDispatchInfo.Capture(e).Throw();
-                }
-
-                return Values.ToArray();
-            }
+            return Values.ToArray();
         }
     }
 }

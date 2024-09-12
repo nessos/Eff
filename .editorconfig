@@ -5,3 +5,24 @@ dotnet_diagnostic.CA1000.severity = none
 
 # CA1865: Use 'string.Method(char)' instead of 'string.Method(string)' for string with single char
 dotnet_diagnostic.CA1865.severity = none
+
+# IDE0290: Use primary constructor
+dotnet_diagnostic.IDE0290.severity = none
+
+# IDE0130: Namespace does not match folder structure
+dotnet_diagnostic.IDE0130.severity = none
+
+# IDE0022: Use block body for method
+dotnet_diagnostic.IDE0022.severity = none
+
+# IDE0023: Use block body for conversion operator
+dotnet_diagnostic.IDE0023.severity = none
+
+# IDE0061: Use block body for local function
+dotnet_diagnostic.IDE0061.severity = none
+
+# IDE0160: Convert to block scoped namespace
+dotnet_diagnostic.IDE0160.severity = none
+
+# IDE0065: Misplaced using directive
+dotnet_diagnostic.IDE0065.severity = none
