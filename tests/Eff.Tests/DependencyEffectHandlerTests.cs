@@ -13,7 +13,7 @@ public class DependencyEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task DependencyEffect_IntDependency_HappyPath()
     {
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             return await IO<int>.Do(x => x + 1);
         }
@@ -97,7 +97,7 @@ public class DependencyEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task DependencyEffect_MissingDependency_ShouldThrowKeyNotFoundException()
     {
-        async Eff Test()
+        static async Eff Test()
         {
             await IO<UninhabitedType>.Do(d => d.Test());
         }
@@ -120,7 +120,7 @@ public class DependencyEffectHandlerTests : EffectHandlerTests
 
     private class Container : IContainer, IEnumerable
     {
-        private readonly Dictionary<Type, object?> _dict = new Dictionary<Type, object?>();
+        private readonly Dictionary<Type, object?> _dict = [];
 
         public void Add<TDependency>(TDependency dependency) => _dict[typeof(TDependency)] = dependency;
 

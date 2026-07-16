@@ -5,7 +5,7 @@ using Nessos.Effects.Handlers;
 
 public class RecordEffectHandler : DependencyEffectHandler
 {
-    private readonly List<RecordedResult> _results = new List<RecordedResult>();
+    private readonly List<RecordedResult> _results = [];
 
     public RecordEffectHandler(IContainer dependencies) : base(dependencies)
     {

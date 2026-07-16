@@ -91,7 +91,7 @@ public static class EffAwaiterTests
     [Fact]
     public static void StateMachine_GetAsyncStateMachine_ShouldReturnCopies()
     {
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             return await Task.FromResult(42);
         }

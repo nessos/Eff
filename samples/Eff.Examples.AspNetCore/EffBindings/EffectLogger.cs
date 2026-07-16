@@ -13,7 +13,7 @@ using System.Collections.Immutable;
 public class EffectLogger
 {
     private ConcurrentDictionary<string, ImmutableArray<PersistedEffect>> _store = 
-        new ConcurrentDictionary<string, ImmutableArray<PersistedEffect>>();
+        new();
 
     /// <summary>
     ///   Commit an effect trace log, returning a unique identifier that can be used for future retrievals.

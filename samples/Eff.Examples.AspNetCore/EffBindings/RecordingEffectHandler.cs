@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 /// </summary>
 public class RecordingEffectHandler : DependencyEffectHandler, IDisposableEffectHandler
 {
-    private readonly List<PersistedEffect> _results = new List<PersistedEffect>();
+    private readonly List<PersistedEffect> _results = [];
     private readonly EffectLogger _store;
     private readonly HttpResponse _response;
 

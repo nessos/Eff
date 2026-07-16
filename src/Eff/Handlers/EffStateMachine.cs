@@ -210,7 +210,7 @@ public abstract class EffStateMachine<TResult> : EffAwaiter<TResult>, IEffStateM
     /// <summary>
     ///   Gets an identifier for the particular awaiter instance.
     /// </summary>
-    public override string Id => nameof(EffStateMachine<TResult>);
+    public override string Id => nameof(EffStateMachine<>);
 
     /// <summary>
     ///   Processes the awaiter using the provided effect handler.

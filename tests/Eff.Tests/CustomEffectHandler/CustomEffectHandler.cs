@@ -7,8 +7,8 @@ public class CustomEffectHandler : EffectHandler
 {
     private readonly DateTime _now;
 
-    public List<ExceptionLog> ExceptionLogs { get; } = new List<ExceptionLog>();
-    public List<ResultLog> TraceLogs { get; } = new List<ResultLog>();
+    public List<ExceptionLog> ExceptionLogs { get; } = [];
+    public List<ResultLog> TraceLogs { get; } = [];
 
     public CustomEffectHandler(DateTime now)
     {

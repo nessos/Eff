@@ -16,7 +16,7 @@ public static class EffStateMachineTests
         Assert.Null(stateMachine.TaskAwaiter);
         Assert.False(stateMachine.IsCompleted);
 
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             await Task.Delay(10);
             return 42;
@@ -36,7 +36,7 @@ public static class EffStateMachineTests
         Assert.Null(stateMachine.TaskAwaiter);
         Assert.True(stateMachine.IsCompleted);
 
-        async Eff<int> Test() => 42;
+        static async Eff<int> Test() => 42;
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public static class EffStateMachineTests
         Assert.Null(stateMachine.TaskAwaiter);
         Assert.False(stateMachine.IsCompleted);
 
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             return await Eff.FromResult(42);
         }
@@ -85,7 +85,7 @@ public static class EffStateMachineTests
         Assert.Null(stateMachine.TaskAwaiter);
         Assert.False(stateMachine.IsCompleted);
 
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             return await new TestEffect<int>();
         }
@@ -103,7 +103,7 @@ public static class EffStateMachineTests
         Assert.NotNull(stateMachine.TaskAwaiter);
         Assert.False(stateMachine.IsCompleted);
 
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             return await new TaskCompletionSource<int>().Task;
         }
@@ -122,7 +122,7 @@ public static class EffStateMachineTests
         stateMachine.MoveNext();
         Assert.Equal(42, stateMachine.Result);
 
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             await Task.Delay(1_000);
             return 42;
@@ -143,11 +143,11 @@ public static class EffStateMachineTests
 
         Assert.Equal(42, stateMachine.Result);
 
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             return await TaskMethod();
 
-            async Task<int> TaskMethod()
+            static async Task<int> TaskMethod()
             {
                 await Task.Delay(1000);
                 return 42;

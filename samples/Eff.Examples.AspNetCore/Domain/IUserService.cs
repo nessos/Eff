@@ -22,7 +22,7 @@ public interface IUserService
 /// </summary>
 public class InMemoryUserService : IUserService
 {
-    private ConcurrentDictionary<string, string> _users = new ConcurrentDictionary<string, string>();
+    private ConcurrentDictionary<string, string> _users = new();
 
     public async Task<bool> Exists(string username) => _users.ContainsKey(username);
     public async Task Create(string username, string password)

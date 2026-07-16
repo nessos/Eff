@@ -11,7 +11,7 @@ public class CancellationEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task Stub_CanceledToken_ShouldThrowOperationCanceledException()
     {
-        async Eff<int> Test() => 42;
+        static async Eff<int> Test() => 42;
 
         var handler = new CancellationEffectHandler(new CancellationToken(canceled: true));
         await Assert.ThrowsAsync<OperationCanceledException>(() => Test().Run(handler).AsTask());
@@ -20,7 +20,7 @@ public class CancellationEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task DivergingWorkflow_CanceledToken_ShouldThrowOperationCanceledException()
     {
-        async Eff Test()
+        static async Eff Test()
         {
             while (await ShouldContinue())
             {
@@ -28,7 +28,7 @@ public class CancellationEffectHandlerTests : EffectHandlerTests
 
             }
 
-            async Eff<bool> ShouldContinue() => true;
+            static async Eff<bool> ShouldContinue() => true;
         }
 
         using var cts = new CancellationTokenSource(1_000);
@@ -39,7 +39,7 @@ public class CancellationEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task CancellationTokenEffect_PassedToTask_ShouldThrowTaskCanceledException()
     {
-        async Eff Test()
+        static async Eff Test()
         {
             var token = await CancellationTokenEffect.Value;
             await Task.Delay(60_000, token);

@@ -12,7 +12,7 @@ public class DefaultEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task EffTyped_AwaitEffect_ShouldThrowNotSupportedException()
     {
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             return await new TestEffect<int>();
         }
@@ -31,7 +31,7 @@ public class DefaultEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task EffUntyped_AwaitEffect_ShouldThrowNotSupportedException()
     {
-        async Eff Test()
+        static async Eff Test()
         {
             await new TestEffect();
         }
@@ -93,7 +93,7 @@ public class DefaultEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task EffectHandlerThatDoesntCompleteAwaiter_ShouldThrowInvalidOperationException()
     {
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             return await new TestEffect<int>();
         }
@@ -115,7 +115,7 @@ public class DefaultEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task EffectHandlerThatSetsExceptionToAwaiter_ShouldThrowTheException()
     {
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             return await new TestEffect<int>();
         }
@@ -136,7 +136,7 @@ public class DefaultEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task EffectHandlerThatThrowsException_ShouldPropagateTheException()
     {
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
             return await new TestEffect<int>();
         }
@@ -148,14 +148,14 @@ public class DefaultEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task Exception_Stacktrace_ShouldHaveCorrectDepth()
     {
-        async Eff Test()
+        static async Eff Test()
         {
             try
             {
                 await Nested(0);
                 throw new Exception("Should throw an exception");
 
-                async Eff<int> Nested(int x) => 1 / x;
+                static async Eff<int> Nested(int x) => 1 / x;
             }
             catch (DivideByZeroException exception)
             {
@@ -165,10 +165,10 @@ public class DefaultEffectHandlerTests : EffectHandlerTests
 
                 var expected = new[]
                 {
-                    nameof(EffStateMachine<int>.MoveNext),
+                    nameof(EffStateMachine<>.MoveNext),
                     nameof(ExceptionDispatchInfo.Throw),
                     nameof(EffAwaiter.GetResult),
-                    nameof(EffStateMachine<int>.MoveNext)
+                    nameof(EffStateMachine<>.MoveNext)
                 };
 
                 Assert.Equal(expected, methodNames);

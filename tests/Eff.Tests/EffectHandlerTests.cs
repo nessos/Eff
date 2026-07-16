@@ -10,7 +10,7 @@ public abstract class EffectHandlerTests
     [Fact]
     public async Task EffTyped_Stub()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             return x + 1;
         }
@@ -35,12 +35,12 @@ public abstract class EffectHandlerTests
     [Fact]
     public async Task EffTyped_NestedAwait()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             var y = await Nested(x);
             return y + 1;
 
-            async Eff<int> Nested(int x)
+            static async Eff<int> Nested(int x)
             {
                 return x + 1;
             }
@@ -252,12 +252,12 @@ public abstract class EffectHandlerTests
     [Fact]
     public async Task EffTyped_AwaitSequenceOfTaskEffects()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             var y = await Nested(x).ConfigureAwait();
             return y + 1;
 
-            async Eff<int> Nested(int x)
+            static async Eff<int> Nested(int x)
             {
                 await Task.Delay(50);
                 var y = await Task.FromResult(x + 1);
@@ -293,13 +293,13 @@ public abstract class EffectHandlerTests
     [Fact]
     public async Task EffTyped_AwaitCombinationOfEffAndTaskEffects()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             await Task.Delay(1000);
             var y = await Nested(x);
             return y + 1;
 
-            async Eff<int> Nested(int x)
+            static async Eff<int> Nested(int x)
             {
                 var y = await Task.FromResult(x + 1);
                 return y;
@@ -334,7 +334,7 @@ public abstract class EffectHandlerTests
     [Fact]
     public async Task EffTyped_SimpleExceptionPropagation()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             return 1 / x;
         }
@@ -346,7 +346,7 @@ public abstract class EffectHandlerTests
     [Fact]
     public async Task EffUntyped_SimpleExceptionPropagation()
     {
-        async Eff Test(int x)
+        static async Eff Test(int x)
         {
             _ = 1 / x;
         }
@@ -358,12 +358,12 @@ public abstract class EffectHandlerTests
     [Fact]
     public async Task EffTyped_NestedExceptionPropagation()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             var y = await Nested(x);
             return y;
 
-            async Eff<int> Nested(int x)
+            static async Eff<int> Nested(int x)
             {
                 return 1 / x;
             }
@@ -376,11 +376,11 @@ public abstract class EffectHandlerTests
     [Fact]
     public async Task EffUntyped_NestedExceptionPropagation()
     {
-        async Eff Test(int x)
+        static async Eff Test(int x)
         {
             await Nested(x);
 
-            async Eff Nested(int x)
+            static async Eff Nested(int x)
             {
                 _ = 1 / x;
             }
