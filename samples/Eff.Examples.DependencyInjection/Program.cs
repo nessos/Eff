@@ -1,7 +1,7 @@
 ﻿using Nessos.Effects.DependencyInjection;
 using Nessos.Effects.Examples.DependencyInjection;
 
-Container container = new();
+Container container = [];
 container.Add<ILogger>(new ConsoleLogger());
 container.Add<IUserService>(new MockUserService());
 
@@ -20,7 +20,7 @@ class ConsoleLogger : ILogger
 
 class MockUserService : IUserService
 {
-    private readonly HashSet<string> _users = new HashSet<string>();
+    private readonly HashSet<string> _users = [];
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     public async Task<bool> CreateUser(string username, string password) => _users.Add(username);
     public async Task<bool> Exists(string username) => _users.Contains(username);

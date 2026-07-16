@@ -3,7 +3,7 @@ using Nessos.Effects.Handlers;
 using System.Diagnostics;
 
 // Define a resumable computation
-async Eff ResumableWorkflow()
+static async Eff ResumableWorkflow()
 {
     for (int i = 0; i < 20; i++)
     {

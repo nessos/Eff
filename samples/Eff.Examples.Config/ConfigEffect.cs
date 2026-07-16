@@ -12,5 +12,5 @@ public class ConfigEffect : Effect<string?>
 
     public string Key { get; }
 
-    public static ConfigEffect Get(string key) => new ConfigEffect(key);
+    public static ConfigEffect Get(string key) => new(key);
 }

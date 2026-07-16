@@ -54,9 +54,9 @@ public static class DomainLogic
 
     public static async Eff<int> CreateNewUsers((string userName, string password)[] credentials)
     {
-        foreach (var cred in credentials)
+        foreach (var (userName, password) in credentials)
         {
-            await DomainLogic.CreateNewUser(cred.userName, cred.password);
+            await DomainLogic.CreateNewUser(userName, password);
         }
 
         return credentials.Length;

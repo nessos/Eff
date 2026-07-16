@@ -10,7 +10,7 @@ public class CustomEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task AwaitCustomEffect()
     {
-        async Eff<DateTime> Foo<T>()
+        static async Eff<DateTime> Foo<T>()
             where T : struct, IDateTimeNowEffect
         {
             var y = await default(T).DateTimeNow().ConfigureAwait();
@@ -25,12 +25,12 @@ public class CustomEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task TestExceptionLog()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             var y = await Nested(x);
             return y;
 
-            async Eff<int> Nested(int x)
+            static async Eff<int> Nested(int x)
             {
                 return 1 / x;
             }
@@ -46,12 +46,12 @@ public class CustomEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task TestTraceLog()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             var y = await Nested(x);
             return y;
 
-            async Eff<int> Nested(int x)
+            static async Eff<int> Nested(int x)
             {
                 return x + 1;
             }
@@ -68,7 +68,7 @@ public class CustomEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task TestParametersLogging()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             var y = await Eff.FromResult(1);
             return x + y;
@@ -87,7 +87,7 @@ public class CustomEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task TestLocalVariablesLogging()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             var y = await Eff.FromResult(1);
             await Eff.CompletedEff;
@@ -137,7 +137,7 @@ public class CustomEffectHandlerTests : EffectHandlerTests
     [Fact]
     public async Task AwaitCaptureStateEffect()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             var y = await Eff.FromResult(1);
             await Eff.CompletedEff;

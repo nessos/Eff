@@ -6,7 +6,7 @@ using System.Collections;
 // Poor man's DI container
 public class Container : IContainer, IEnumerable
 {
-    private Dictionary<Type, object> _dict = new Dictionary<Type, object>();
+    private Dictionary<Type, object> _dict = [];
 
     public void Add<T>(T value) => _dict[typeof(T)] = value!;
 

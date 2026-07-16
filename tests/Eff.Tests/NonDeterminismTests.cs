@@ -8,7 +8,7 @@ public static class NonDeterminismTests
     [Fact]
     public static async Task SimpleValue_HappyPath()
     {
-        async Eff<int> Test() => 42;
+        static async Eff<int> Test() => 42;
 
         var expected = new int[] { 42 };
         var results = await NonDetEffectHandler.Run(Test());
@@ -18,7 +18,7 @@ public static class NonDeterminismTests
     [Fact]
     public static async Task SimpleException_ShouldPropagate()
     {
-        async Eff<int> Test(int x)
+        static async Eff<int> Test(int x)
         {
             return 42 / x;
         }
@@ -42,7 +42,7 @@ public static class NonDeterminismTests
     [Fact]
     public static async Task SimpleEffect_HappyPath()
     {
-        async Eff<int> Test() => await NonDetEffect.Choose(1, 2, 3, 4);
+        static async Eff<int> Test() => await NonDetEffect.Choose(1, 2, 3, 4);
 
         var expected = new int[] { 1, 2, 3, 4 };
         var results = await NonDetEffectHandler.Run(Test());
@@ -52,7 +52,7 @@ public static class NonDeterminismTests
     [Fact]
     public static async Task MultipleValues_HappyPath()
     {
-        async Eff<(bool, int, string)> Test()
+        static async Eff<(bool, int, string)> Test()
         {
             var x = await NonDetEffect.Choose(false, true);
             var y = await NonDetEffect.Choose(1, 2, 3);
@@ -73,9 +73,9 @@ public static class NonDeterminismTests
     [Fact]
     public static async Task MultipleValues_Nested_HappyPath()
     {
-        async Eff<(bool, int, string)> Test()
+        static async Eff<(bool, int, string)> Test()
         {
-            async Eff<(bool, int)> Nested()
+            static async Eff<(bool, int)> Nested()
             {
                 var x = await NonDetEffect.Choose(false, true);
                 var y = await NonDetEffect.Choose(1, 2, 3);
@@ -101,9 +101,9 @@ public static class NonDeterminismTests
     [Fact]
     public static async Task NestedException_ShouldPropagate()
     {
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
-            async Eff<int> Divide(int y)
+            static async Eff<int> Divide(int y)
             {
                 var x = await NonDetEffect.Choose(1, 2, 3);
                 return x / y;
@@ -119,9 +119,9 @@ public static class NonDeterminismTests
     [Fact]
     public static async Task NestedExceptionHandler_ShouldExecuteAsExpected()
     {
-        async Eff<int> Test()
+        static async Eff<int> Test()
         {
-            async Eff<int> Divide(int y)
+            static async Eff<int> Divide(int y)
             {
                 try
                 {

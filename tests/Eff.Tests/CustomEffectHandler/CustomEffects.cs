@@ -13,9 +13,9 @@ public interface IFuncEffect
 }
 public struct CustomEffect : IDateTimeNowEffect, IFuncEffect
 {
-    public DateTimeNowEffect DateTimeNow() => new DateTimeNowEffect();
+    public DateTimeNowEffect DateTimeNow() => new();
 
-    public FuncEffect<TResult> Func<TResult>(Func<TResult> func) => new FuncEffect<TResult>(func);
+    public FuncEffect<TResult> Func<TResult>(Func<TResult> func) => new(func);
 
-    public FuncEffect<Unit> Action(Action action) => new FuncEffect<Unit>(() => { action(); return Unit.Value; });
+    public FuncEffect<Unit> Action(Action action) => new(() => { action(); return Unit.Value; });
 }

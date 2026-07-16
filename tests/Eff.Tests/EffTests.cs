@@ -15,7 +15,7 @@ public static class EffTests
         Assert.True(awaiter.CallerFilePath?.Length > 0);
         Assert.True(awaiter.CallerLineNumber > 0);
 
-        async Eff<int> Test() => 42;
+        static async Eff<int> Test() => 42;
     }
 
     [Fact]
@@ -29,6 +29,6 @@ public static class EffTests
         Assert.True(awaiter.CallerFilePath?.Length > 0);
         Assert.True(awaiter.CallerLineNumber > 0);
 
-        async Eff Test() { };
+        static async Eff Test() { };
     }
 }

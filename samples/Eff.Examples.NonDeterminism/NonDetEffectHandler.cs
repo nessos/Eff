@@ -130,7 +130,7 @@ public class NonDetEffectHandler<TResult> : IEffectHandler
 
     public class NonDetResultHolder
     {
-        public List<TResult> Values { get; } = new List<TResult>();
+        public List<TResult> Values { get; } = [];
         public Exception? Exception { get; set; }
         public TResult[] GetResults()
         {
